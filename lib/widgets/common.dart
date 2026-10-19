@@ -306,8 +306,10 @@ class ErrorState extends StatelessWidget {
 
 /// `.kpi-card` : disque d'icône teinté, valeur Outfit 22, libellé 12, tendance optionnelle.
 class KpiCard extends StatelessWidget {
-  const KpiCard({super.key, required this.icon, required this.value, required this.label, this.tone = KitTone.primary, this.unit, this.delta, this.up, this.onTap});
+  const KpiCard({super.key, required this.icon, required this.value, required this.label, this.tone = KitTone.primary, this.unit, this.delta, this.up, this.onTap, this.goodWhenUp = true});
 
+  /// `false` pour un indicateur où la hausse est mauvaise (impayés, latence…).
+  final bool goodWhenUp;
   final IconData icon;
   final String value, label;
   final String? unit, delta;
@@ -341,9 +343,10 @@ class KpiCard extends StatelessWidget {
               style: TextStyle(fontFamily: Fonts.heading, fontSize: 22, fontWeight: FontWeight.w700, color: c.textPrimary, height: 1.2, fontFeatures: KitText.tabular),
             ),
             const SizedBox(height: 2),
-            Row(children: [
-              Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: c.textSecondary))),
-              if (delta != null) ...[const SizedBox(width: 6), TrendChip(delta!, up: up ?? true)],
+            // Libellé et variation passent à la ligne au lieu de déborder (« +12,4 % vs année précédente »).
+            Wrap(spacing: 6, runSpacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+              Text(label, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: c.textSecondary)),
+              if (delta != null) TrendChip(delta!, up: up ?? true, goodWhenUp: goodWhenUp),
             ]),
           ]),
         ),

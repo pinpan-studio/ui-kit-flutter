@@ -186,7 +186,7 @@ class _SurveyState extends State<SurveyFormExample> {
                     IconButton(
                       visualDensity: VisualDensity.compact,
                       tooltip: '$s étoile${s > 1 ? 's' : ''}',
-                      icon: Icon(s <= e.value ? Icons.star : Icons.star_border, color: Colors.amber.shade700),
+                      icon: Icon(s <= e.value ? Icons.star : Icons.star_border, color: context.kc.warning),
                       onPressed: () => setState(() => _ratings[e.key] = s),
                     ),
                 ]),
