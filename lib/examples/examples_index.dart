@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import '../theme/kit_colors.dart';
 import '../theme/tokens.dart';
 import '../widgets/common.dart';
+import 'auth_examples.dart';
 import 'forms_examples.dart';
 
 /// Entrée d'exemple : (id, titre, description, icône, page).
 typedef ExEntry = (String, String, String, IconData, WidgetBuilder);
 
 final List<(String, List<ExEntry>)> kExampleGroups = [
+  ('Authentification', [
+    for (final id in kAuthVariants.keys)
+      ('auth/$id', kAuthLabels[id]!, '/examples/auth/$id', Icons.lock_outline, (_) => AuthExample(variant: id)),
+  ]),
   ('Formulaires', [
     ('forms/contact', 'Contact', 'Formulaire de contact avec coordonnées', Icons.mail_outline, (_) => const ContactFormExample()),
     ('forms/checkout', 'Commande', 'Tunnel de paiement en 3 étapes', Icons.shopping_bag_outlined, (_) => const CheckoutFormExample()),
