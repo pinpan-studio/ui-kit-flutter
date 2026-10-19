@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -165,14 +167,9 @@ class _DashboardState extends State<DashboardExample> {
         KitButton(label: 'Exporter', icon: Icons.download, variant: KitButtonVariant.outline, onPressed: () => exDemo(context, 'Export')),
         KitButton(label: 'Nouvelle facture', icon: Icons.add, onPressed: () => exDemo(context, 'Nouvelle facture')),
       ]),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(children: [
-          for (final (i, t) in kDashTabs.indexed)
-            Padding(padding: const EdgeInsets.only(right: Space.s2), child: ChoiceChip(avatar: Icon(t.$2, size: 18), label: Text(t.$1), selected: _tab == i, onSelected: (_) => setState(() => _tab = i))),
-        ]),
-      ),
+      _DashTabs(index: _tab, onChanged: (i) => setState(() => _tab = i)),
       const SizedBox(height: Space.s4),
+      if (_tab != 0) _DashAnalytics(tab: _tab, period: p) else ...[
       Container(
         padding: const EdgeInsets.all(Space.s3),
         decoration: BoxDecoration(color: c.warningLight, borderRadius: BorderRadius.circular(Radii.md)),
@@ -184,7 +181,7 @@ class _DashboardState extends State<DashboardExample> {
         ]),
       ),
       const SizedBox(height: Space.s4),
-      ResponsiveGrid(minItemWidth: 230, children: [
+      ResponsiveGrid(minItemWidth: 300, children: [
         for (final (i, k) in kDashKpis.indexed)
           KpiCard(
             icon: k.$2,
@@ -211,9 +208,7 @@ class _DashboardState extends State<DashboardExample> {
                 Text(g.$3, style: TextStyle(fontSize: 12, color: c.textMuted)),
               ]),
           ])),
-          KitCard(title: 'Répartition des clients', icon: Icons.pie_chart_outline, child: Wrap(spacing: Space.s2, runSpacing: Space.s2, children: [
-            for (final e in counts.entries) StatusBadge('${e.key.label} · ${e.value}', tone: e.key.tone, uppercase: false),
-          ])),
+          KitCard(title: 'Portefeuille clients', icon: Icons.pie_chart_outline, child: _ClientDonut(counts: counts)),
         ]);
         if (box.maxWidth < Breakpoints.xl) return ExGap([chart, side]);
         return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(flex: 3, child: chart), const SizedBox(width: Space.s4), Expanded(flex: 2, child: side)]);
@@ -233,78 +228,264 @@ class _DashboardState extends State<DashboardExample> {
               trailing: StatusBadge(x.status.label, tone: x.status.tone),
             ),
         ]));
-        if (box.maxWidth < Breakpoints.xl) return ExGap([activity, late]);
-        return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(child: activity), const SizedBox(width: Space.s4), Expanded(child: late)]);
+        final top = _TopClients(onOpen: (x) => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => ClientDetailExample(client: x))));
+        if (box.maxWidth < Breakpoints.xl) return ExGap([top, activity, late]);
+        return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(child: top), const SizedBox(width: Space.s4), Expanded(child: activity), const SizedBox(width: Space.s4), Expanded(child: late)]);
       }),
+      ],
     ]);
   }
 }
 
 // ─── Clients ────────────────────────────────────────────────────────────────
+String _thousands(int n) => NumberFormat.decimalPattern('fr_FR').format(n).replaceAll('\u202f', ' ').replaceAll('\u00a0', ' ');
+
+/// Menu déroulant compact « Libellé : valeur » (filtres Ville / Responsable).
+class _FilterMenu extends StatelessWidget {
+  const _FilterMenu({required this.label, required this.value, required this.options, required this.onSelected});
+  final String label;
+  final String? value;
+  final List<String> options;
+  final ValueChanged<String?> onSelected;
+
+  @override
+  Widget build(BuildContext context) => PopupMenuButton<String>(
+        tooltip: label,
+        onSelected: (v) => onSelected(v == '' ? null : v),
+        itemBuilder: (_) => [const PopupMenuItem(value: '', child: Text('Tous')), for (final o in options) PopupMenuItem(value: o, child: Text(o))],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.s3),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Text('$label : ', style: TextStyle(fontSize: 13, color: context.kc.textMuted)),
+              Text(value ?? 'Tous', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+              const Icon(Icons.arrow_drop_down),
+            ]),
+          ),
+        ),
+      );
+}
+
 class ClientsExample extends StatefulWidget {
   const ClientsExample({super.key});
   @override
   State<ClientsExample> createState() => _ClientsState();
 }
 
+enum _ClientCol { sector, contact, owner, city }
+
 class _ClientsState extends State<ClientsExample> {
+  static const _pageSize = 10;
   String _q = '';
   ClientStatus? _filter;
+  String? _city, _owner;
+  bool? _cards; // null = automatique (cartes en mobile, liste dès 1024 px)
+  String _sort = 'none';
+  bool _asc = true;
+  int _page = 0;
+  final _selected = <String>{};
+  final _expanded = <String>{};
+  final _cols = {_ClientCol.sector, _ClientCol.contact, _ClientCol.city};
 
   void _open(ExClient c) => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => ClientDetailExample(client: c)));
 
+  List<ExClient> get _rows {
+    final q = _q.toLowerCase();
+    final rows = kExClients.where((c) => (_filter == null || c.status == _filter) && (_city == null || c.city == _city) && (_owner == null || c.owner == _owner) && '${c.name} ${c.contact} ${c.city}'.toLowerCase().contains(q)).toList();
+    int cmp(ExClient a, ExClient b) => switch (_sort) {
+          'revenue' => a.revenue.compareTo(b.revenue),
+          'invoices' => a.invoices.compareTo(b.invoices),
+          'city' => a.city.compareTo(b.city),
+          'sector' => a.sector.compareTo(b.sector),
+          'contact' => a.contact.compareTo(b.contact),
+          'owner' => a.owner.compareTo(b.owner),
+          'status' => a.status.index.compareTo(b.status.index),
+          _ => a.name.compareTo(b.name),
+        };
+    if (_sort != 'none') rows.sort((a, b) => _asc ? cmp(a, b) : cmp(b, a));
+    return rows;
+  }
+
+  void _sortBy(String k) => setState(() { if (_sort == k) { _asc = !_asc; } else { _sort = k; _asc = true; } });
+
+  Widget _head(String label, String key, {int flex = 2, bool end = false}) {
+    final c = context.kc;
+    return Expanded(
+      flex: flex,
+      child: InkWell(
+        onTap: () => _sortBy(key),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Row(mainAxisAlignment: end ? MainAxisAlignment.end : MainAxisAlignment.start, children: [
+            Flexible(child: Text(label, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: c.textSecondary))),
+            Icon(_sort == key ? (_asc ? Icons.arrow_upward : Icons.arrow_downward) : Icons.unfold_more, size: 14, color: c.textMuted),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _cell(String t, {int flex = 2, bool end = false, bool bold = false}) => Expanded(flex: flex, child: Text(t, overflow: TextOverflow.ellipsis, textAlign: end ? TextAlign.right : TextAlign.left, style: TextStyle(fontWeight: bold ? FontWeight.w700 : FontWeight.w400)));
+
+  Widget _table(List<ExClient> rows) {
+    final c = context.kc;
+    final pages = (rows.length / _pageSize).ceil().clamp(1, 999);
+    final page = _page.clamp(0, pages - 1);
+    final slice = rows.skip(page * _pageSize).take(_pageSize).toList();
+    final allSel = slice.isNotEmpty && slice.every((x) => _selected.contains(x.id));
+    final total = rows.fold(0, (s, x) => s + x.revenue);
+    Widget line(List<Widget> cells, {Color? bg, VoidCallback? onTap}) => Material(
+          color: bg ?? Colors.transparent,
+          child: InkWell(onTap: onTap, child: Container(
+            constraints: const BoxConstraints(minHeight: 48),
+            padding: const EdgeInsets.symmetric(horizontal: Space.s2),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
+            child: Row(children: cells),
+          )),
+        );
+    return KitCard(padding: EdgeInsets.zero, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Padding(
+        padding: const EdgeInsets.all(Space.s3),
+        child: Row(children: [
+          SizedBox(width: 280, child: TextField(onChanged: (v) => setState(() { _q = v; _page = 0; }), decoration: const InputDecoration(isDense: true, prefixIcon: Icon(Icons.search), hintText: 'Rechercher…'))),
+          const Spacer(),
+          if (_selected.isNotEmpty) Padding(padding: const EdgeInsets.only(right: Space.s2), child: Text('${_selected.length} sélectionné(s)', style: TextStyle(color: c.textMuted))),
+          MenuAnchor(
+            builder: (ctx, ctrl, _) => OutlinedButton.icon(style: OutlinedButton.styleFrom(minimumSize: const Size(44, 44)), onPressed: () => ctrl.isOpen ? ctrl.close() : ctrl.open(), icon: const Icon(Icons.view_column_outlined), label: Text('Colonnes · ${_cols.length}')),
+            menuChildren: [
+              for (final (col, label) in [(_ClientCol.sector, 'Secteur'), (_ClientCol.contact, 'Contact'), (_ClientCol.owner, 'Responsable'), (_ClientCol.city, 'Ville')])
+                CheckboxMenuButton(value: _cols.contains(col), closeOnActivate: false, onChanged: (v) => setState(() => v! ? _cols.add(col) : _cols.remove(col)), child: Text(label)),
+            ],
+          ),
+          const SizedBox(width: Space.s2),
+          IconButton(tooltip: 'Exporter (CSV)', icon: const Icon(Icons.download), onPressed: () => exDemo(context, 'Export CSV')),
+        ]),
+      ),
+      line(bg: c.tableHeader, [
+        SizedBox(width: 44, child: Checkbox(value: allSel, onChanged: (v) => setState(() { for (final x in slice) { v! ? _selected.add(x.id) : _selected.remove(x.id); } }))),
+        const SizedBox(width: 44),
+        _head('Client', 'name', flex: 3),
+        if (_cols.contains(_ClientCol.sector)) _head('Secteur', 'sector'),
+        if (_cols.contains(_ClientCol.contact)) _head('Contact', 'contact'),
+        if (_cols.contains(_ClientCol.owner)) _head('Responsable', 'owner'),
+        if (_cols.contains(_ClientCol.city)) _head('Ville', 'city'),
+        _head('Statut', 'status'),
+        _head('Factures', 'invoices', flex: 2, end: true),
+        _head('Chiffre d’affaires', 'revenue', end: true),
+        const SizedBox(width: Space.s2),
+      ]),
+      for (final x in slice) ...[
+        line(onTap: () => _open(x), bg: _selected.contains(x.id) ? c.primaryLight : null, [
+          SizedBox(width: 44, child: Checkbox(value: _selected.contains(x.id), onChanged: (v) => setState(() => v! ? _selected.add(x.id) : _selected.remove(x.id)))),
+          SizedBox(width: 44, child: IconButton(tooltip: _expanded.contains(x.id) ? 'Réduire' : 'Détails', icon: Icon(_expanded.contains(x.id) ? Icons.expand_more : Icons.chevron_right), onPressed: () => setState(() => _expanded.contains(x.id) ? _expanded.remove(x.id) : _expanded.add(x.id)))),
+          _cell(x.name, flex: 3, bold: true),
+          if (_cols.contains(_ClientCol.sector)) _cell(x.sector),
+          if (_cols.contains(_ClientCol.contact)) _cell(x.contact),
+          if (_cols.contains(_ClientCol.owner)) _cell(x.owner),
+          if (_cols.contains(_ClientCol.city)) _cell(x.city),
+          Expanded(flex: 2, child: Align(alignment: Alignment.centerLeft, child: StatusBadge(x.status.label, tone: x.status.tone, uppercase: false))),
+          _cell('${x.invoices}', flex: 2, end: true),
+          _cell('${_thousands(x.revenue)} F', end: true),
+          const SizedBox(width: Space.s2),
+        ]),
+        if (_expanded.contains(x.id))
+          Container(
+            padding: const EdgeInsets.fromLTRB(Space.s10 * 2 + Space.s2, Space.s3, Space.s4, Space.s3),
+            decoration: BoxDecoration(color: c.hover, border: Border(bottom: BorderSide(color: c.border))),
+            child: Wrap(spacing: Space.s8, runSpacing: Space.s2, children: [
+              for (final (k, v) in [('E-mail', x.email), ('Téléphone', x.phone), ('Responsable', x.owner), ('Client depuis', DateFormat('d MMM y', 'fr_FR').format(x.since))])
+                Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [Text(k, style: TextStyle(fontSize: 12, color: c.textMuted)), Text(v)]),
+              TextButton(onPressed: () => _open(x), child: const Text('Ouvrir la fiche')),
+            ]),
+          ),
+      ],
+      line(bg: c.tableHeader, [
+        const SizedBox(width: 88),
+        Expanded(flex: 3, child: Text('Total (${rows.length})', style: const TextStyle(fontWeight: FontWeight.w700))),
+        const Spacer(flex: 1),
+        _cell('${_thousands(total)} F', flex: 4, end: true, bold: true),
+        const SizedBox(width: Space.s2),
+      ]),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s1),
+        child: Row(children: [
+          Expanded(child: Text(rows.isEmpty ? '0 résultat' : '${page * _pageSize + 1}–${page * _pageSize + slice.length} sur ${rows.length}', style: TextStyle(color: c.textMuted))),
+          Text('${page + 1} / $pages'),
+          IconButton(tooltip: 'Page précédente', icon: const Icon(Icons.chevron_left), onPressed: page == 0 ? null : () => setState(() => _page = page - 1)),
+          IconButton(tooltip: 'Page suivante', icon: const Icon(Icons.chevron_right), onPressed: page >= pages - 1 ? null : () => setState(() => _page = page + 1)),
+        ]),
+      ),
+    ]));
+  }
+
+  Widget _card(ExClient x) {
+    final c = context.kc;
+    Widget stat(String k, String v, {bool bold = false}) => Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(k, style: TextStyle(fontSize: 12, color: c.textMuted)), Text(v, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: bold ? FontWeight.w700 : FontWeight.w400))]));
+    return KitCard(
+      onTap: () => _open(x),
+      child: Column(children: [
+        Row(children: [
+          KitAvatar(name: x.name),
+          const SizedBox(width: Space.s3),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(x.name, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600)),
+            Text('${x.sector} · ${x.city}', overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: c.textMuted)),
+          ])),
+          StatusBadge(x.status.label, tone: x.status.tone),
+        ]),
+        const SizedBox(height: Space.s3),
+        Row(children: [stat('Contact', x.contact), stat('Factures', '${x.invoices}'), stat('Chiffre d’affaires', '${(x.revenue / 1e6).toStringAsFixed(1).replaceAll('.', ',')} M FCFA', bold: true)]),
+      ]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final q = _q.toLowerCase();
-    final rows = kExClients.where((c) => (_filter == null || c.status == _filter) && '${c.name} ${c.contact} ${c.city}'.toLowerCase().contains(q)).toList();
+    final rows = _rows;
+    final total = kExClients.fold(0, (s, x) => s + x.revenue);
     return ExPage(title: 'Clients', maxWidth: 1280, children: [
-      ExHeader('Clients', subtitle: '${kExClients.length} comptes', actions: [KitButton(label: 'Nouveau client', icon: Icons.add, onPressed: () => exDemo(context, 'Création'))]),
-      TextField(onChanged: (v) => setState(() => _q = v), decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Rechercher un client…')),
-      const SizedBox(height: Space.s3),
-      Wrap(spacing: Space.s2, runSpacing: Space.s2, children: [
-        ChoiceChip(label: Text('Tous · ${kExClients.length}'), selected: _filter == null, onSelected: (_) => setState(() => _filter = null)),
-        for (final s in ClientStatus.values) ChoiceChip(label: Text('${s.label} · ${kExClients.where((c) => c.status == s).length}'), selected: _filter == s, onSelected: (_) => setState(() => _filter = s)),
+      Text('CRM', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: context.kc.textMuted)),
+      ExHeader('Clients', subtitle: '${kExClients.length} comptes · ${(total / 1e6).round()} M FCFA de chiffre d’affaires cumulé', actions: [
+        KitButton(label: 'Importer', icon: Icons.upload, variant: KitButtonVariant.outline, onPressed: () => showFilePicker(context)),
+        KitButton(label: 'Nouveau client', icon: Icons.add, onPressed: () => exDemo(context, 'Création')),
       ]),
-      const SizedBox(height: Space.s4),
-      if (rows.isEmpty) const EmptyState(icon: Icons.search_off, title: 'Aucun client', subtitle: 'Ajustez vos critères de recherche.'),
+      SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: [
+        for (final s in <ClientStatus?>[null, ...ClientStatus.values])
+          Padding(padding: const EdgeInsets.only(right: Space.s2), child: ChoiceChip(
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            label: Text('${s?.label ?? 'Tous'} · ${s == null ? kExClients.length : kExClients.where((c) => c.status == s).length}'),
+            selected: _filter == s,
+            onSelected: (_) => setState(() { _filter = s; _page = 0; }),
+          )),
+      ])),
+      const SizedBox(height: Space.s2),
       LayoutBuilder(builder: (context, box) {
-        if (box.maxWidth >= Breakpoints.xl) {
-          return KitCard(padding: EdgeInsets.zero, child: Column(children: [
-            for (final c in rows)
-              ExTile(
-                onTap: () => _open(c),
-                leading: KitAvatar(name: c.name),
-                title: c.name,
-                subtitle: '${c.contact} · ${c.email}',
-                trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                  SizedBox(width: 120, child: Text(c.owner, overflow: TextOverflow.ellipsis)),
-                  SizedBox(width: 110, child: Text(c.city, overflow: TextOverflow.ellipsis)),
-                  SizedBox(width: 120, child: Text(c.sector, overflow: TextOverflow.ellipsis)),
-                  SizedBox(width: 60, child: Text('${c.invoices}', textAlign: TextAlign.right)),
-                  SizedBox(width: 150, child: Text(exMoney(c.revenue), textAlign: TextAlign.right)),
-                  const SizedBox(width: Space.s4),
-                  SizedBox(width: 96, child: Align(alignment: Alignment.centerLeft, child: StatusBadge(c.status.label, tone: c.status.tone))),
-                ]),
-              ),
-          ]));
-        }
-        return Column(children: [
-          for (final c in rows)
-            Padding(
-              padding: const EdgeInsets.only(bottom: Space.s2),
-              child: KitCard(
-                onTap: () => _open(c),
-                child: Row(children: [
-                  KitAvatar(name: c.name),
-                  const SizedBox(width: Space.s3),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(c.name, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600)),
-                    Text('${c.city} · ${exMoney(c.revenue)}', overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, color: context.kc.textMuted)),
-                  ])),
-                  StatusBadge(c.status.label, tone: c.status.tone),
-                ]),
-              ),
+        final wide = box.maxWidth >= Breakpoints.xl - 64;
+        final cards = _cards ?? !wide;
+        return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Wrap(spacing: Space.s2, runSpacing: Space.s2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+            _FilterMenu(label: 'Ville', value: _city, options: {for (final c in kExClients) c.city}.toList(), onSelected: (v) => setState(() { _city = v; _page = 0; })),
+            _FilterMenu(label: 'Responsable', value: _owner, options: {for (final c in kExClients) c.owner}.toList(), onSelected: (v) => setState(() { _owner = v; _page = 0; })),
+            SegmentedButton<bool>(
+              showSelectedIcon: false,
+              style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(44, 44))),
+              segments: [ButtonSegment(value: true, icon: const Icon(Icons.grid_view), label: wide ? const Text('Cartes') : null, tooltip: 'Cartes'), ButtonSegment(value: false, icon: const Icon(Icons.view_list), label: wide ? const Text('Liste') : null, tooltip: 'Liste')],
+              selected: {cards},
+              onSelectionChanged: (s) => setState(() => _cards = s.first),
             ),
+          ]),
+          const SizedBox(height: Space.s3),
+          if (rows.isEmpty)
+            const EmptyState(icon: Icons.search_off, title: 'Aucun client', subtitle: 'Ajustez vos critères de recherche.')
+          else if (!cards && wide)
+            _table(rows)
+          else if (!cards)
+            KitCard(padding: EdgeInsets.zero, child: Column(children: [
+              for (final x in rows) ExTile(onTap: () => _open(x), leading: KitAvatar(name: x.name), title: x.name, subtitle: '${x.city} · ${exMoney(x.revenue)}', trailing: StatusBadge(x.status.label, tone: x.status.tone)),
+            ]))
+          else
+            ResponsiveGrid(minItemWidth: 300, spacing: Space.s3, children: [for (final x in rows) _card(x)]),
         ]);
       }),
     ]);
@@ -367,6 +548,8 @@ class ClientDetailExample extends StatelessWidget {
 }
 
 // ─── Messagerie (inbox) ─────────────────────────────────────────────────────
+const _kInboxFolders = [('inbox', 'Boîte de réception', Icons.inbox), ('starred', 'Suivis', Icons.star_border), ('sent', 'Envoyés', Icons.send), ('drafts', 'Brouillons', Icons.drafts), ('archive', 'Archives', Icons.archive)];
+
 class InboxExample extends StatefulWidget {
   const InboxExample({super.key});
   @override
@@ -374,59 +557,204 @@ class InboxExample extends StatefulWidget {
 }
 
 class _InboxState extends State<InboxExample> {
-  int _sel = 0;
+  String _folder = 'inbox', _q = '';
+  bool _unreadOnly = false;
+  String? _current = kExMessages.first.id;
+  final _unread = {for (final m in kExMessages) if (m.unread) m.id};
+  final _starred = {for (final m in kExMessages) if (m.starred) m.id};
+  final _archived = <String>{}, _deleted = <String>{};
+  final _reply = TextEditingController();
 
-  Widget _read(int i) {
-    final m = kExMessages[i];
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(Space.s6),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Wrap(spacing: Space.s2, runSpacing: Space.s2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-          Text(m.subject, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
-          if (m.label != null) StatusBadge(m.label!.$1, tone: m.label!.$2, uppercase: false),
+  @override
+  void dispose() { _reply.dispose(); super.dispose(); }
+
+  int get _unreadCount => kExMessages.where((m) => _unread.contains(m.id) && !_archived.contains(m.id) && !_deleted.contains(m.id)).length;
+
+  List<ExMessage> get _messages {
+    final q = _q.trim().toLowerCase();
+    return kExMessages.where((m) => !_deleted.contains(m.id) &&
+        (_folder == 'archive' ? _archived.contains(m.id) : !_archived.contains(m.id)) &&
+        (_folder != 'starred' || _starred.contains(m.id)) &&
+        (_folder == 'inbox' || _folder == 'starred' || _folder == 'archive') &&
+        (!_unreadOnly || _unread.contains(m.id)) &&
+        (q.isEmpty || '${m.from}${m.subject}${m.preview}'.toLowerCase().contains(q))).toList();
+  }
+
+  void _open(ExMessage m) => setState(() { _current = m.id; _unread.remove(m.id); });
+
+  void _remove(String id, Set<String> into, String msg) {
+    final list = _messages;
+    final i = list.indexWhere((m) => m.id == id);
+    setState(() {
+      into.add(id);
+      final rest = _messages;
+      _current = rest.isEmpty ? null : rest[i.clamp(0, rest.length - 1)].id;
+    });
+    exDemo(context, msg);
+  }
+
+  Widget _folders({VoidCallback? after}) {
+    final c = context.kc;
+    final labels = {for (final m in kExMessages) if (m.label != null) m.label!.$1: m.label!.$2};
+    Widget item(Widget lead, String label, {bool on = false, int count = 0, VoidCallback? onTap}) => Padding(
+          padding: const EdgeInsets.only(bottom: 2),
+          child: Material(
+            color: on ? c.primaryLight : Colors.transparent,
+            borderRadius: BorderRadius.circular(Radii.md),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(Radii.md),
+              onTap: onTap,
+              child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 44), child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.s3),
+                child: Row(children: [lead, const SizedBox(width: Space.s3), Expanded(child: Text(label, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: on ? FontWeight.w700 : FontWeight.w500))), if (count > 0) Text('$count', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700))]),
+              )),
+            ),
+          ),
+        );
+    return ListView(padding: const EdgeInsets.all(Space.s3), children: [
+      FilledButton.icon(style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(44)), onPressed: () => exDemo(context, 'Nouveau message'), icon: const Icon(Icons.edit), label: const Text('Nouveau message')),
+      const SizedBox(height: Space.s3),
+      for (final f in _kInboxFolders)
+        item(Icon(f.$3, size: 20), f.$2, on: _folder == f.$1, count: f.$1 == 'inbox' ? _unreadCount : f.$1 == 'drafts' ? 1 : 0, onTap: () { setState(() => _folder = f.$1); after?.call(); }),
+      Padding(padding: const EdgeInsets.fromLTRB(Space.s3, Space.s4, Space.s3, Space.s2), child: Text('LIBELLÉS', style: TextStyle(fontSize: 11, letterSpacing: 1, fontWeight: FontWeight.w700, color: c.textMuted))),
+      for (final l in labels.entries)
+        item(Container(width: 10, height: 10, margin: const EdgeInsets.all(5), decoration: BoxDecoration(color: l.value.text(c), shape: BoxShape.circle)), l.key, onTap: () { setState(() => _q = l.key); after?.call(); }),
+    ]);
+  }
+
+  Widget _list(bool wide) {
+    final c = context.kc;
+    final msgs = _messages;
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, 0),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text(_kInboxFolders.firstWhere((f) => f.$1 == _folder).$2, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: Space.s2),
+          TextField(onChanged: (v) => setState(() => _q = v), decoration: const InputDecoration(isDense: true, prefixIcon: Icon(Icons.search), hintText: 'Rechercher')),
+          const SizedBox(height: Space.s2),
+          SegmentedButton<bool>(
+            showSelectedIcon: false,
+            style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(44, 44))),
+            segments: [const ButtonSegment(value: false, label: Text('Tous')), ButtonSegment(value: true, label: Text('Non lus · $_unreadCount'))],
+            selected: {_unreadOnly},
+            onSelectionChanged: (s) => setState(() => _unreadOnly = s.first),
+          ),
         ]),
-        const SizedBox(height: Space.s4),
-        Row(children: [
-          KitAvatar(name: m.from),
+      ),
+      const SizedBox(height: Space.s2),
+      Expanded(child: msgs.isEmpty
+          ? const EmptyState(icon: Icons.inbox, title: 'Aucun message', subtitle: 'Ce dossier est vide.')
+          : ListView(padding: const EdgeInsets.symmetric(horizontal: Space.s2), children: [
+              for (final m in msgs)
+                ExTile(
+                  selected: wide && _current == m.id,
+                  onTap: () { _open(m); if (!wide) exPush(context, m.from, StatefulBuilder(builder: (_, _) => _read(m.id, wide: false))); },
+                  leading: KitAvatar(name: m.from),
+                  title: m.from,
+                  subtitle: '${m.subject}\n${m.preview}',
+                  trailing: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.end, children: [
+                    Text(m.at, style: TextStyle(fontSize: 12, fontWeight: _unread.contains(m.id) ? FontWeight.w700 : FontWeight.w400)),
+                    const SizedBox(height: Space.s1),
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      if (m.label != null) StatusBadge(m.label!.$1, tone: m.label!.$2),
+                      if (m.attachments.isNotEmpty) Icon(Icons.attach_file, size: 14, color: c.textMuted),
+                      if (_starred.contains(m.id)) Icon(Icons.star, size: 16, color: c.warning),
+                      if (_unread.contains(m.id)) Container(width: 8, height: 8, margin: const EdgeInsets.only(left: 4), decoration: BoxDecoration(color: c.primary, shape: BoxShape.circle)),
+                    ]),
+                  ]),
+                ),
+            ])),
+    ]);
+  }
+
+  Widget _read(String? id, {required bool wide}) {
+    final c = context.kc;
+    final msgs = _messages;
+    final m = id == null ? null : kExMessages.where((x) => x.id == id).firstOrNull;
+    if (m == null) return const EmptyState(icon: Icons.drafts, title: 'Aucun message sélectionné', subtitle: 'Choisissez une conversation dans la liste.');
+    final idx = msgs.indexWhere((x) => x.id == m.id);
+    void step(int d) { final n = idx + d; if (n >= 0 && n < msgs.length) _open(msgs[n]); }
+    final star = _starred.contains(m.id);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s1),
+        child: Row(children: [
+          IconButton(tooltip: 'Archiver', icon: const Icon(Icons.archive_outlined), onPressed: () { _remove(m.id, _archived, 'Message archivé'); if (!wide) Navigator.of(context).maybePop(); }),
+          IconButton(tooltip: 'Supprimer', icon: const Icon(Icons.delete_outline), onPressed: () { _remove(m.id, _deleted, 'Message supprimé'); if (!wide) Navigator.of(context).maybePop(); }),
+          IconButton(tooltip: 'Marquer comme non lu', icon: const Icon(Icons.mark_email_unread_outlined), onPressed: () => setState(() => _unread.add(m.id))),
+          IconButton(tooltip: star ? 'Ne plus suivre' : 'Suivre', icon: Icon(star ? Icons.star : Icons.star_border, color: star ? c.warning : null), onPressed: () => setState(() => star ? _starred.remove(m.id) : _starred.add(m.id))),
+          const Spacer(),
+          if (wide && idx >= 0) ...[
+            Text('${idx + 1} sur ${msgs.length}', style: TextStyle(fontSize: 13, color: c.textMuted)),
+            IconButton(tooltip: 'Message précédent', icon: const Icon(Icons.chevron_left), onPressed: idx > 0 ? () => step(-1) : null),
+            IconButton(tooltip: 'Message suivant', icon: const Icon(Icons.chevron_right), onPressed: idx < msgs.length - 1 ? () => step(1) : null),
+          ],
+        ]),
+      ),
+      Divider(height: 1, color: c.border),
+      Expanded(child: SingleChildScrollView(
+        padding: const EdgeInsets.all(Space.s6),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Wrap(spacing: Space.s2, runSpacing: Space.s2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+            Text(m.subject, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+            if (m.label != null) StatusBadge(m.label!.$1, tone: m.label!.$2),
+          ]),
+          const SizedBox(height: Space.s4),
+          Row(children: [
+            KitAvatar(name: m.from),
+            const SizedBox(width: Space.s3),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(m.from, style: const TextStyle(fontWeight: FontWeight.w600)), Text('${m.email} · à moi', overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: c.textMuted))])),
+            Text(m.at, style: TextStyle(color: c.textMuted)),
+          ]),
+          const SizedBox(height: Space.s6),
+          for (final p in m.body) Padding(padding: const EdgeInsets.only(bottom: Space.s3), child: Text(p, style: const TextStyle(height: 1.5))),
+          for (final a in m.attachments)
+            Material(
+              color: c.hover,
+              borderRadius: BorderRadius.circular(Radii.md),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(Radii.md),
+                onTap: () => exDemo(context, a),
+                child: Padding(padding: const EdgeInsets.all(Space.s3), child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(Icons.picture_as_pdf, color: c.error),
+                  const SizedBox(width: Space.s2),
+                  Flexible(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [Text(a, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600)), Text('PDF · 248 Ko', style: TextStyle(fontSize: 12, color: c.textMuted))])),
+                  const SizedBox(width: Space.s4),
+                  Icon(Icons.download, size: 18, color: c.textMuted),
+                ])),
+              ),
+            ),
+        ]),
+      )),
+      Divider(height: 1, color: c.border),
+      SafeArea(top: false, child: Padding(
+        padding: const EdgeInsets.all(Space.s3),
+        child: Row(children: [
+          KitAvatar(name: kCurrentUser.fullname, size: 32),
           const SizedBox(width: Space.s3),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(m.from, style: const TextStyle(fontWeight: FontWeight.w600)), Text(m.email, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: context.kc.textMuted))])),
-          Text(m.at),
+          Expanded(child: TextField(controller: _reply, minLines: 1, maxLines: 4, decoration: InputDecoration(hintText: 'Répondre à ${m.from.split(' ').first}…'))),
+          const SizedBox(width: Space.s2),
+          IconButton.filled(tooltip: 'Envoyer', icon: const Icon(Icons.send), onPressed: () { if (_reply.text.trim().isEmpty) return; _reply.clear(); exDemo(context, 'Réponse envoyée'); }),
         ]),
-        const SizedBox(height: Space.s6),
-        for (final p in m.body) Padding(padding: const EdgeInsets.only(bottom: Space.s3), child: Text(p, style: const TextStyle(height: 1.5))),
-        for (final a in m.attachments)
-          Padding(padding: const EdgeInsets.only(bottom: Space.s3), child: InputChip(avatar: const Icon(Icons.picture_as_pdf, size: 18), label: Text(a), onPressed: () => exDemo(context, a))),
-        const SizedBox(height: Space.s3),
-        Wrap(spacing: Space.s2, runSpacing: Space.s2, children: [
-          KitButton(label: 'Répondre', icon: Icons.reply, onPressed: () => exDemo(context, 'Réponse')),
-          KitButton(label: 'Transférer', icon: Icons.forward, variant: KitButtonVariant.outline, onPressed: () => exDemo(context, 'Transfert')),
-        ]),
-      ]),
-    );
+      )),
+    ]);
   }
 
   @override
-  Widget build(BuildContext context) {
-    final list = ListView(padding: const EdgeInsets.all(Space.s2), children: [
-      for (final (i, m) in kExMessages.indexed)
-        ExTile(
-          selected: exWide(context) && _sel == i,
-          onTap: () => exWide(context) ? setState(() => _sel = i) : exPush(context, m.from, _read(i)),
-          leading: KitAvatar(name: m.from),
-          title: m.subject,
-          subtitle: '${m.from} · ${m.preview}',
-          trailing: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text(m.at, style: TextStyle(fontSize: 12, fontWeight: m.unread ? FontWeight.w700 : FontWeight.w400)),
-            if (m.starred) Icon(Icons.star, size: 16, color: context.kc.warning) else if (m.unread) const CountDot(1),
+  Widget build(BuildContext context) => LayoutBuilder(builder: (context, box) {
+        final c = context.kc;
+        final three = box.maxWidth >= Breakpoints.xl;
+        final two = box.maxWidth >= Breakpoints.tablet;
+        return Scaffold(
+          appBar: AppBar(title: const Text('Messagerie'), leading: three ? null : Builder(builder: (ctx) => IconButton(tooltip: 'Dossiers', icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(ctx).openDrawer()))),
+          drawer: three ? null : Drawer(child: SafeArea(child: Builder(builder: (ctx) => _folders(after: () => Navigator.of(ctx).pop())))),
+          body: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            if (three) ...[SizedBox(width: 230, child: _folders()), VerticalDivider(width: 1, color: c.border)],
+            if (two) ...[SizedBox(width: three ? 340 : 320, child: _list(true)), VerticalDivider(width: 1, color: c.border), Expanded(child: _read(_current, wide: true))] else Expanded(child: _list(false)),
           ]),
-        ),
-    ]);
-    return Scaffold(
-      appBar: AppBar(title: Text('Boîte de réception · ${kExMessages.where((m) => m.unread).length} non lus')),
-      floatingActionButton: FloatingActionButton.extended(onPressed: () => exDemo(context, 'Nouveau message'), icon: const Icon(Icons.edit), label: const Text('Écrire')),
-      body: ExMasterDetail(list: list, detail: _read(_sel), listWidth: 380),
-    );
-  }
+        );
+      });
 }
 
 // ─── Catalogue ──────────────────────────────────────────────────────────────
@@ -1136,6 +1464,43 @@ class _SettingsState extends State<SettingsExample> {
   final _notifs = [for (final n in kSettingsNotifs) [n.$3, n.$4, n.$5]];
   final _skills = {...kSettingsProfileSkills};
   ThemeMode _mode = ThemeMode.system;
+  bool _photo = true;
+  final _skillCtrl = TextEditingController();
+
+  @override
+  void dispose() { _skillCtrl.dispose(); super.dispose(); }
+
+  /// Ligne de formulaire : libellé + description à gauche, champ à droite dès 768 px.
+  Widget _field(String label, String? desc, Widget child) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: Space.s3),
+        child: LayoutBuilder(builder: (context, box) {
+          final head = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+            if (desc != null) Text(desc, style: TextStyle(fontSize: 13, color: context.kc.textMuted)),
+          ]);
+          if (MediaQuery.sizeOf(context).width < Breakpoints.tablet || box.maxWidth < 360) return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [head, const SizedBox(height: Space.s2), child]);
+          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [SizedBox(width: box.maxWidth * .36, child: head), const SizedBox(width: Space.s4), Expanded(child: child)]);
+        }),
+      );
+
+  /// Compétences en jetons supprimables dans un seul champ, avec suggestions.
+  Widget _skillsField() {
+    final c = context.kc;
+    void add(String v) { final t = v.trim(); if (t.isEmpty) return; setState(() { _skills.add(t); _skillCtrl.clear(); }); }
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s1),
+        decoration: BoxDecoration(color: c.fieldBg, border: Border.all(color: c.border), borderRadius: BorderRadius.circular(Radii.md)),
+        child: Wrap(spacing: Space.s2, runSpacing: Space.s1, crossAxisAlignment: WrapCrossAlignment.center, children: [
+          Icon(Icons.sell_outlined, size: 18, color: c.textMuted),
+          for (final s in _skills) InputChip(label: Text(s), onDeleted: () => setState(() => _skills.remove(s)), deleteButtonTooltipMessage: 'Retirer $s'),
+          ConstrainedBox(constraints: const BoxConstraints(minWidth: 120, maxWidth: 200), child: TextField(controller: _skillCtrl, onSubmitted: add, decoration: const InputDecoration(isDense: true, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none, filled: false, hintText: 'Ajouter…'))),
+        ]),
+      ),
+      const SizedBox(height: Space.s2),
+      Wrap(spacing: Space.s2, runSpacing: Space.s1, children: [for (final s in kSettingsSkillSuggestions.where((s) => !_skills.contains(s))) ActionChip(label: Text('+ $s'), onPressed: () => add(s))]),
+    ]);
+  }
 
   Widget _switch(String t, String s, bool v, ValueChanged<bool> on) => Padding(
         padding: const EdgeInsets.symmetric(vertical: Space.s2),
@@ -1146,12 +1511,16 @@ class _SettingsState extends State<SettingsExample> {
     final c = context.kc;
     final u = kCurrentUser;
     return switch (kSettingsSections[_sec].$1) {
-      'profile' => ExGap([
-          Row(children: [KitAvatar(name: u.fullname, size: 64), const SizedBox(width: Space.s4), Expanded(child: Text('${u.fullname}\n${u.role}', style: const TextStyle(fontWeight: FontWeight.w600, height: 1.4)))]),
-          ExRow([KitTextField(label: 'Prénoms', initialValue: u.prenoms), KitTextField(label: 'Nom', initialValue: u.nom)]),
-          ExRow([KitTextField(label: 'E-mail', initialValue: u.mail), KitTextField(label: 'Téléphone', initialValue: u.phone)]),
-          const KitTextField(label: 'Bio', initialValue: kSettingsProfileBio, maxLines: 3),
-          Wrap(spacing: Space.s2, runSpacing: Space.s2, children: [for (final s in kSettingsSkillSuggestions) FilterChip(label: Text(s), selected: _skills.contains(s), onSelected: (v) => setState(() => v ? _skills.add(s) : _skills.remove(s)))]),
+      'profile' => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          _field('Photo', 'JPG ou PNG, 2 Mo maximum.', Wrap(spacing: Space.s3, runSpacing: Space.s2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+            KitAvatar(name: _photo ? u.fullname : '?', size: 56),
+            OutlinedButton.icon(style: OutlinedButton.styleFrom(minimumSize: const Size(44, 44)), onPressed: () => showFilePicker(context), icon: const Icon(Icons.upload), label: const Text('Changer')),
+            TextButton(style: TextButton.styleFrom(minimumSize: const Size(44, 44)), onPressed: _photo ? () => setState(() => _photo = false) : null, child: const Text('Retirer')),
+          ])),
+          _field('Nom', null, ExRow([KitTextField(label: 'Prénoms', initialValue: u.prenoms), KitTextField(label: 'Nom', initialValue: u.nom)])),
+          _field('Coordonnées', 'L’e-mail sert à la connexion.', ExGap(gap: Space.s3, [KitTextField(label: 'E-mail', initialValue: u.mail, icon: Icons.mail_outline), KitTextField(label: 'Téléphone', initialValue: u.phone, icon: Icons.phone_outlined)])),
+          _field('Compétences', 'Aide vos collègues à vous mentionner.', _skillsField()),
+          _field('Bio', null, const KitTextField(label: 'Bio', initialValue: kSettingsProfileBio, maxLines: 3)),
         ]),
       'security' => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           for (final (i, s) in kSettingsSecurity.indexed) _switch(s.$1, s.$2, _security[i], (v) => setState(() => _security[i] = v)),
@@ -1198,9 +1567,26 @@ class _SettingsState extends State<SettingsExample> {
 
   @override
   Widget build(BuildContext context) => ExPage(title: 'Paramètres', maxWidth: 1100, children: [
+        Text('COMPTE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: context.kc.textMuted)),
+        const ExHeader('Paramètres', subtitle: 'Profil, sécurité et préférences de l’espace de travail.'),
         LayoutBuilder(builder: (context, box) {
           final s = kSettingsSections[_sec];
-          final card = KitCard(title: s.$2, icon: s.$3, child: _body());
+          final card = KitCard(padding: EdgeInsets.zero, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Padding(padding: const EdgeInsets.all(Space.s4), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              Text(s.$2, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+              if (_sec == 0) Text('Visible par les membres de votre organisation.', style: TextStyle(fontSize: 13, color: context.kc.textMuted)),
+              const SizedBox(height: Space.s2),
+              _body(),
+            ])),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
+              color: context.kc.hover,
+              child: Wrap(alignment: WrapAlignment.end, spacing: Space.s2, children: [
+                TextButton(style: TextButton.styleFrom(minimumSize: const Size(44, 44)), onPressed: () => exDemo(context, 'Modifications annulées'), child: const Text('Annuler')),
+                KitButton(label: 'Enregistrer', onPressed: () => exDemo(context, 'Paramètres enregistrés')),
+              ]),
+            ),
+          ]));
           if (box.maxWidth < Breakpoints.tablet) {
             return ExGap([
               SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: [for (final (i, x) in kSettingsSections.indexed) Padding(padding: const EdgeInsets.only(right: Space.s2), child: ChoiceChip(avatar: Icon(x.$3, size: 18), label: Text(x.$2), selected: _sec == i, onSelected: (_) => setState(() => _sec = i)))])),
@@ -1213,8 +1599,6 @@ class _SettingsState extends State<SettingsExample> {
             Expanded(child: card),
           ]);
         }),
-        const SizedBox(height: Space.s4),
-        Align(alignment: Alignment.centerRight, child: KitButton(label: 'Enregistrer', icon: Icons.save_outlined, onPressed: () => exDemo(context, 'Paramètres enregistrés'))),
       ]);
 }
 
@@ -1297,4 +1681,163 @@ class _ChatPanelState extends State<ChatPanel> {
           ]),
         ),
       ]);
+}
+
+// ─── Tableau de bord : onglets, donut, meilleurs clients ────────────────────
+class _DashTabs extends StatelessWidget {
+  const _DashTabs({required this.index, required this.onChanged});
+  final int index;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.kc;
+    return Container(
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          for (final (i, t) in kDashTabs.indexed)
+            InkWell(
+              onTap: () => onChanged(i),
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 44),
+                padding: const EdgeInsets.symmetric(horizontal: Space.s3),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 2, color: index == i ? c.primary : Colors.transparent))),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(t.$2, size: 18, color: index == i ? c.primary : c.textMuted),
+                  const SizedBox(width: Space.s2),
+                  Text(t.$1, style: TextStyle(fontWeight: index == i ? FontWeight.w700 : FontWeight.w500, color: index == i ? c.textPrimary : c.textSecondary)),
+                ]),
+              ),
+            ),
+        ]),
+      ),
+    );
+  }
+}
+
+/// Donut en CustomPaint, couleurs du thème (tons des statuts).
+class KitDonut extends StatelessWidget {
+  const KitDonut({super.key, required this.values, required this.colors, this.size = 160, this.center});
+  final List<num> values;
+  final List<Color> colors;
+  final double size;
+  final Widget? center;
+
+  @override
+  Widget build(BuildContext context) => SizedBox.square(
+        dimension: size,
+        child: CustomPaint(painter: _DonutPainter(values, colors, context.kc.hover), child: Center(child: center)),
+      );
+}
+
+class _DonutPainter extends CustomPainter {
+  _DonutPainter(this.values, this.colors, this.track);
+  final List<num> values;
+  final List<Color> colors;
+  final Color track;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final stroke = size.width * .16;
+    final rect = (Offset.zero & size).deflate(stroke / 2);
+    final paint = Paint()..style = PaintingStyle.stroke..strokeWidth = stroke;
+    canvas.drawArc(rect, 0, math.pi * 2, false, paint..color = track);
+    final total = values.fold<num>(0, (a, b) => a + b);
+    if (total == 0) return;
+    var start = -math.pi / 2;
+    for (final (i, v) in values.indexed) {
+      final sweep = math.pi * 2 * v / total;
+      canvas.drawArc(rect, start + .02, math.max(0, sweep - .04), false, paint..color = colors[i % colors.length]);
+      start += sweep;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DonutPainter old) => old.values != values || old.colors != colors || old.track != track;
+}
+
+Color _statusColor(KitColors c, ClientStatus s) => switch (s) { ClientStatus.actif => c.success, ClientStatus.prospect => c.info, ClientStatus.suspendu => c.warning, ClientStatus.inactif => c.textMuted };
+
+class _ClientDonut extends StatelessWidget {
+  const _ClientDonut({required this.counts});
+  final Map<ClientStatus, int> counts;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.kc;
+    final total = counts.values.fold(0, (a, b) => a + b);
+    return Column(children: [
+      KitDonut(
+        values: counts.values.toList(),
+        colors: [for (final s in counts.keys) _statusColor(c, s)],
+        center: Column(mainAxisSize: MainAxisSize.min, children: [Text('$total', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)), Text('comptes', style: TextStyle(fontSize: 12, color: c.textMuted))]),
+      ),
+      const SizedBox(height: Space.s4),
+      for (final e in counts.entries)
+        Padding(padding: const EdgeInsets.symmetric(vertical: Space.s1), child: Row(children: [
+          Container(width: 10, height: 10, decoration: BoxDecoration(color: _statusColor(c, e.key), shape: BoxShape.circle)),
+          const SizedBox(width: Space.s2),
+          Expanded(child: Text(e.key.label)),
+          Text('${e.value}', style: const TextStyle(fontWeight: FontWeight.w700)),
+          SizedBox(width: 56, child: Text('${(e.value * 100 / total).round()} %', textAlign: TextAlign.right, style: TextStyle(color: c.textMuted))),
+        ])),
+    ]);
+  }
+}
+
+class _TopClients extends StatelessWidget {
+  const _TopClients({required this.onOpen});
+  final ValueChanged<ExClient> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final top = [...kExClients]..sort((a, b) => b.revenue.compareTo(a.revenue));
+    return KitCard(title: 'Meilleurs clients', icon: Icons.emoji_events_outlined, child: Column(children: [
+      for (final (i, x) in top.take(5).indexed)
+        ExTile(
+          onTap: () => onOpen(x),
+          leading: SizedBox(width: 24, child: Text('${i + 1}', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w700, color: context.kc.textMuted))),
+          title: x.name,
+          subtitle: '${x.city} · ${x.sector}',
+          trailing: Text('${(x.revenue / 1e6).toStringAsFixed(1).replaceAll('.', ',')} M', style: const TextStyle(fontWeight: FontWeight.w600)),
+        ),
+    ]));
+  }
+}
+
+class _DashAnalytics extends StatelessWidget {
+  const _DashAnalytics({required this.tab, required this.period});
+  final int tab;
+  final DashPeriod period;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = period;
+    final counts = {for (final s in ClientStatus.values) s: kExClients.where((x) => x.status == s).length};
+    void open(ExClient x) => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => ClientDetailExample(client: x)));
+    final List<Widget> cards = switch (tab) {
+      1 => [
+          KitCard(title: 'Facturé par période', icon: Icons.bar_chart, child: KitChart(kind: ChartKind.bar, labels: p.labels, series: [ChartSeries('Facturé', p.a), ChartSeries('Encaissé', p.b)], height: 240, compactValues: true)),
+          _TopClients(onOpen: open),
+        ],
+      2 => [
+          KitCard(title: 'Portefeuille clients', icon: Icons.pie_chart_outline, child: _ClientDonut(counts: counts)),
+          KitCard(title: 'Par secteur', icon: Icons.category_outlined, child: Column(children: [
+            for (final sec in {for (final x in kExClients) x.sector}.take(8))
+              ExTile(title: sec, trailing: Text('${kExClients.where((x) => x.sector == sec).length}')),
+          ])),
+        ],
+      _ => [
+          KitCard(title: 'Objectifs du trimestre', icon: Icons.flag_outlined, child: ExGap(gap: Space.s3, [
+            for (final g in kDashGoals) Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Expanded(child: Text(g.$1)), Text('${g.$2} %')]), const SizedBox(height: Space.s1), KitProgressBar(value: g.$2 / 100), Text(g.$3, style: TextStyle(fontSize: 12, color: context.kc.textMuted))]),
+          ])),
+          KitCard(title: 'Activité récente', icon: Icons.history, child: Column(children: [for (final a in kExActivity) ExTile(leading: Icon(a.icon, color: a.tone.text(context.kc)), title: a.text, subtitle: '${a.at} · ${a.who}')])),
+        ],
+    };
+    return LayoutBuilder(builder: (context, box) => box.maxWidth < Breakpoints.xl
+        ? ExGap(cards)
+        : Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(flex: 3, child: cards[0]), const SizedBox(width: Space.s4), Expanded(flex: 2, child: cards[1])]));
+  }
 }
