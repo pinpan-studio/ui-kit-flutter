@@ -476,7 +476,8 @@ class _ClientsState extends State<ClientsExample> {
       ])),
       const SizedBox(height: Space.s2),
       LayoutBuilder(builder: (context, box) {
-        final wide = box.maxWidth >= Breakpoints.xl - 64;
+        // Liste (tableau) par défaut dès 1024 px de fenêtre, comme Angular ; cartes en dessous.
+        final wide = MediaQuery.sizeOf(context).width >= Breakpoints.xl;
         final cards = _cards ?? !wide;
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Wrap(spacing: Space.s2, runSpacing: Space.s2, crossAxisAlignment: WrapCrossAlignment.center, children: [
@@ -485,7 +486,7 @@ class _ClientsState extends State<ClientsExample> {
             SegmentedButton<bool>(
               showSelectedIcon: false,
               style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(44, 44))),
-              segments: [ButtonSegment(value: true, icon: const Icon(Icons.grid_view), label: wide ? const Text('Cartes') : null, tooltip: 'Cartes'), ButtonSegment(value: false, icon: const Icon(Icons.view_list), label: wide ? const Text('Liste') : null, tooltip: 'Liste')],
+              segments: [ButtonSegment(value: true, icon: box.maxWidth < 340 ? null : const Icon(Icons.grid_view), label: const Text('Cartes')), ButtonSegment(value: false, icon: box.maxWidth < 340 ? null : const Icon(Icons.view_list), label: const Text('Liste'))],
               selected: {cards},
               onSelectionChanged: (s) => setState(() => _cards = s.first),
             ),
@@ -494,7 +495,8 @@ class _ClientsState extends State<ClientsExample> {
           if (rows.isEmpty)
             const EmptyState(icon: Icons.search_off, title: 'Aucun client', subtitle: 'Ajustez vos critères de recherche.')
           else if (!cards && wide)
-            _table(rows)
+            // Largeur minimale du tableau : défilement horizontal plutôt que des montants tronqués.
+            box.maxWidth >= 920 ? _table(rows) : SingleChildScrollView(scrollDirection: Axis.horizontal, child: SizedBox(width: 920, child: _table(rows)))
           else if (!cards)
             KitCard(padding: EdgeInsets.zero, child: Column(children: [
               for (final x in rows) ExTile(onTap: () => _open(x), leading: KitAvatar(name: x.name), title: x.name, subtitle: '${x.city} · ${exMoney(x.revenue)}', trailing: StatusBadge(x.status.label, tone: x.status.tone)),
