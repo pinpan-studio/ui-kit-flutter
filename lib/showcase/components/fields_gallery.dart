@@ -12,6 +12,7 @@ import '../../widgets/fields/signature_address.dart';
 import '../../widgets/inputs.dart';
 import '../../widgets/selects.dart';
 import '../doc/doc.dart';
+import 'package:ui_kit_flutter/theme/tokens.dart';
 
 const _mdSample = '''## Compte-rendu d’intervention
 
@@ -190,7 +191,7 @@ class _FieldsGalleryState extends State<FieldsGallery> {
                 Container(
                   height: 90,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(color: _color, borderRadius: BorderRadius.circular(16)),
+                  decoration: BoxDecoration(color: _color, borderRadius: BorderRadius.circular(Radii.lg)),
                   child: Text('Catégorie « Poids lourds »', style: TextStyle(fontWeight: FontWeight.w700, color: contrastOn(_color))),
                 ),
               ]),
@@ -208,7 +209,7 @@ class _FieldsGalleryState extends State<FieldsGallery> {
               flush: true,
               padding: EdgeInsets.zero,
               child: Padding(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(Space.s3),
                 child: RichTextEditor(initialText: 'Bonjour Monsieur Kouassi. Notre technicien passera vendredi entre 8 h et 10 h pour remplacer la balise du véhicule CI-4521-AB.'),
               ),
             ),
@@ -373,8 +374,8 @@ class _MiniBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(color: c.fieldBg, borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s2),
+      decoration: BoxDecoration(color: c.fieldBg, borderRadius: BorderRadius.circular(Radii.md)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(label, style: TextStyle(fontSize: 11, color: c.textMuted)),
         Text(value, style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary)),

@@ -40,7 +40,7 @@ class PlanningToolbar extends StatelessWidget {
           child: Row(children: [
             for (final f in filters)
               Padding(
-                padding: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.only(right: Space.s2),
                 child: FilterDropdown<String>(
                   label: f.label,
                   value: state.values[f.key] ?? 'all',
@@ -90,7 +90,7 @@ class PlanningCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(border: Border(left: BorderSide(color: col, width: 4))),
-          padding: const EdgeInsets.fromLTRB(12, 10, 10, 10),
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, Space.s3),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Row(children: [
               Expanded(child: Text(item.ref ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted))),
@@ -136,7 +136,7 @@ void showPlanningItem(BuildContext context, PlanningItem it, {String? statusLabe
       final c = ctx.kc;
       return SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          padding: const EdgeInsets.fromLTRB(Space.s5, 0, Space.s5, Space.s5),
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Container(width: 12, height: 12, decoration: BoxDecoration(color: it.color(c), shape: BoxShape.circle)),
@@ -219,13 +219,13 @@ class _KanbanBoardState extends State<KanbanBoard> {
                 ),
                 child: Column(children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+                    padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, Space.s2),
                     child: Row(children: [
                       Container(width: 10, height: 10, decoration: BoxDecoration(color: col.tone.color(c), shape: BoxShape.circle)),
                       const SizedBox(width: 8),
                       Expanded(child: Text(col.label, style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary))),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+                        padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: 1),
                         decoration: BoxDecoration(color: c.card, borderRadius: Radii.pill),
                         child: Text('${items.length}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: c.textSecondary)),
                       ),
@@ -235,7 +235,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
                     child: items.isEmpty
                         ? Center(child: Text('Déposez ici', style: TextStyle(fontSize: 12, color: c.textMuted)))
                         : ListView.separated(
-                            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                            padding: const EdgeInsets.fromLTRB(Space.s2, 0, Space.s2, Space.s2),
                             itemCount: items.length,
                             separatorBuilder: (_, _) => const SizedBox(height: 8),
                             itemBuilder: (context, i) => LongPressDraggable<PlanningItem>(
@@ -314,11 +314,11 @@ class _GanttTimelineState extends State<GanttTimeline> {
           SizedBox(
             width: labelW,
             child: Column(children: [
-              Container(height: headH, color: c.tableHeader, alignment: Alignment.centerLeft, padding: const EdgeInsets.only(left: 10), child: Text(widget.groups != null ? 'RESSOURCE' : 'PHASE', style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: c.textSecondary))),
+              Container(height: headH, color: c.tableHeader, alignment: Alignment.centerLeft, padding: const EdgeInsets.only(left: Space.s3), child: Text(widget.groups != null ? 'RESSOURCE' : 'PHASE', style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: c.textSecondary))),
               for (final r in rows)
                 Container(
                   height: rowH,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: Space.s3),
                   decoration: BoxDecoration(border: Border(top: BorderSide(color: c.border), right: BorderSide(color: c.border))),
                   child: Row(children: [
                     if (r.$3 != null) ...[Icon(r.$3, size: 16, color: r.$4.color(c)), const SizedBox(width: 6)],
@@ -373,7 +373,7 @@ class _GanttTimelineState extends State<GanttTimeline> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: it.color(c).withValues(alpha: it.done ? 0.35 : 0.18),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(Radii.sm),
                                 border: Border.all(color: it.isLate ? c.error : it.color(c), width: it.isLate ? 1.5 : 1),
                               ),
                               clipBehavior: Clip.antiAlias,
@@ -381,7 +381,7 @@ class _GanttTimelineState extends State<GanttTimeline> {
                                 if (it.progress != null)
                                   FractionallySizedBox(widthFactor: it.progress! / 100, child: Container(color: it.color(c).withValues(alpha: 0.35))),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                                  padding: const EdgeInsets.symmetric(horizontal: Space.s2),
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(it.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: c.textPrimary)),
@@ -420,10 +420,10 @@ class NoteGrid extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             constraints: const BoxConstraints(minHeight: 130),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(Space.s3),
             decoration: BoxDecoration(
               color: Color.alphaBlend(it.color(c).withValues(alpha: context.isDark ? 0.16 : 0.12), c.card),
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(16), bottomLeft: Radius.circular(16), bottomRight: Radius.circular(4)),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(Radii.xs), topRight: Radius.circular(Radii.lg), bottomLeft: Radius.circular(Radii.lg), bottomRight: Radius.circular(Radii.xs)),
               border: Border.all(color: it.color(c).withValues(alpha: 0.3)),
             ),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -454,7 +454,7 @@ class GroupedBoard extends StatelessWidget {
     return Column(children: [
       for (final g in groups)
         Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.only(bottom: Space.s3),
           child: KitCard(
             padding: EdgeInsets.zero,
             child: Theme(
@@ -464,11 +464,11 @@ class GroupedBoard extends StatelessWidget {
                 leading: KitAvatar(name: g.label, tone: g.tone, size: 36),
                 title: Text(g.label, style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary)),
                 subtitle: Text('${g.subtitle ?? ''} · ${items.where((i) => i.group == g.key).length} élément(s)'),
-                childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                childrenPadding: const EdgeInsets.fromLTRB(Space.s3, 0, Space.s3, Space.s3),
                 children: [
                   for (final it in items.where((i) => i.group == g.key))
-                    Padding(padding: const EdgeInsets.only(bottom: 8), child: PlanningCard(item: it, compact: true, onTap: () => showPlanningItem(context, it))),
-                  if (!items.any((i) => i.group == g.key)) Padding(padding: const EdgeInsets.all(8), child: Text('Aucun élément', style: TextStyle(color: c.textMuted))),
+                    Padding(padding: const EdgeInsets.only(bottom: Space.s2), child: PlanningCard(item: it, compact: true, onTap: () => showPlanningItem(context, it))),
+                  if (!items.any((i) => i.group == g.key)) Padding(padding: const EdgeInsets.all(Space.s2), child: Text('Aucun élément', style: TextStyle(color: c.textMuted))),
                 ],
               ),
             ),
@@ -545,7 +545,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
       if (dayItems.isEmpty)
         Text('Aucun élément ce jour.', style: TextStyle(color: c.textMuted, fontSize: 13))
       else
-        for (final it in dayItems) Padding(padding: const EdgeInsets.only(bottom: 8), child: PlanningCard(item: it, compact: true, onTap: () => showPlanningItem(context, it))),
+        for (final it in dayItems) Padding(padding: const EdgeInsets.only(bottom: Space.s2), child: PlanningCard(item: it, compact: true, onTap: () => showPlanningItem(context, it))),
     ]);
   }
 }
@@ -589,8 +589,8 @@ class _AgendaViewState extends State<AgendaView> {
                 }),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
-                  margin: const EdgeInsets.symmetric(horizontal: 2),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: Space.s0_5),
+                  padding: const EdgeInsets.symmetric(vertical: Space.s2),
                   decoration: BoxDecoration(color: sel && !_week ? c.primary : c.card, borderRadius: Radii.rm, border: Border.all(color: sameDay(day, today) ? c.primary : c.border)),
                   child: Column(children: [
                     Text(kWeekdaysShort[d], style: TextStyle(fontSize: 11, color: sel && !_week ? c.onPrimary : c.textMuted)),
@@ -619,7 +619,7 @@ class _AgendaViewState extends State<AgendaView> {
       final day = addDays(weekStart, d);
       final its = widget.items.where((i) => i.start != null && sameDay(i.start!, day)).toList()..sort((a, b) => a.start!.compareTo(b.start!));
       if (its.isEmpty) continue;
-      children.add(Padding(padding: const EdgeInsets.only(top: 8, bottom: 6), child: Text(Fmt.weekday(day).toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: c.textMuted))));
+      children.add(Padding(padding: const EdgeInsets.only(top: Space.s2, bottom: Space.s2), child: Text(Fmt.weekday(day).toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: c.textMuted))));
       for (final it in its) {
         children.add(ListTile(
           contentPadding: EdgeInsets.zero,
@@ -658,9 +658,9 @@ class _AgendaViewState extends State<AgendaView> {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       for (final it in allDay)
         Padding(
-          padding: const EdgeInsets.only(bottom: 6),
+          padding: const EdgeInsets.only(bottom: Space.s2),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s2),
             decoration: BoxDecoration(color: it.color(c).withValues(alpha: 0.15), borderRadius: Radii.rs, border: Border(left: BorderSide(color: it.color(c), width: 3))),
             child: Text('Journée · ${it.title}', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: c.textPrimary)),
           ),
@@ -693,7 +693,7 @@ class _AgendaViewState extends State<AgendaView> {
                   child: GestureDetector(
                     onTap: () => showPlanningItem(context, it),
                     child: Container(
-                      padding: const EdgeInsets.fromLTRB(8, 4, 6, 4),
+                      padding: const EdgeInsets.fromLTRB(Space.s2, Space.s1, Space.s2, Space.s1),
                       decoration: BoxDecoration(color: Color.alphaBlend(it.color(c).withValues(alpha: 0.18), c.card), borderRadius: Radii.rs, border: Border(left: BorderSide(color: it.color(c), width: 3))),
                       // Créneau court : le contenu est rogné plutôt que de déborder.
                       child: ClipRect(

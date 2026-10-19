@@ -90,14 +90,14 @@ class _InteractionsGalleryState extends State<InteractionsGallery> {
                     onTap: _palette,
                     child: Container(
                       height: 46,
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      padding: const EdgeInsets.symmetric(horizontal: Space.s4),
                       decoration: BoxDecoration(color: c.fieldBg, borderRadius: Radii.pill),
                       child: Row(children: [
                         Icon(Icons.search, size: 20, color: c.textSecondary),
                         const SizedBox(width: 10),
                         Expanded(child: Text('Rechercher ou lancer une commande…', overflow: TextOverflow.ellipsis, style: TextStyle(color: c.textMuted))),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s0_5),
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: c.border)),
                           child: Text('⌘K', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted)),
                         ),
@@ -125,11 +125,11 @@ class _InteractionsGalleryState extends State<InteractionsGallery> {
                           Expanded(child: Text(l, style: TextStyle(color: c.textPrimary))),
                           for (final key in k.split(' '))
                             Container(
-                              margin: const EdgeInsets.only(left: 4),
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              margin: const EdgeInsets.only(left: Space.s1),
+                              padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s1),
                               decoration: BoxDecoration(
                                 color: c.card,
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(Radii.sm),
                                 border: Border.all(color: c.border),
                                 boxShadow: [BoxShadow(color: c.border, offset: const Offset(0, 2))],
                               ),
@@ -197,7 +197,7 @@ class _InteractionsGalleryState extends State<InteractionsGallery> {
                     alignment: Alignment.centerLeft,
                     child: Popover(
                       content: (ctx, close) => Padding(
-                        padding: const EdgeInsets.all(14),
+                        padding: const EdgeInsets.all(Space.s4),
                         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                           const Row(children: [
                             KitAvatar(name: 'Koffi N’Guessan', size: 44, online: true),
@@ -240,14 +240,14 @@ class _InteractionsGalleryState extends State<InteractionsGallery> {
                     child: Popover(
                       width: 240,
                       content: (ctx, close) => Padding(
-                        padding: const EdgeInsets.all(14),
+                        padding: const EdgeInsets.all(Space.s4),
                         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text('CA d’octobre', style: TextStyle(fontSize: 12, color: c.textSecondary)),
                           Text('55,8 M FCFA', style: TextStyle(fontFamily: Fonts.heading, fontSize: 22, fontWeight: FontWeight.w700, color: c.textPrimary)),
                           const TrendChip('+9,2 % vs septembre'),
                           const Divider(height: 18),
                           for (final (l, v) in const [('Abonnements', '38,1 M'), ('Installations', '11,4 M'), ('Matériel', '6,3 M')])
-                            Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: Row(children: [Expanded(child: Text(l, style: const TextStyle(fontSize: 12.5))), Text(v, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5))])),
+                            Padding(padding: const EdgeInsets.symmetric(vertical: Space.s0_5), child: Row(children: [Expanded(child: Text(l, style: const TextStyle(fontSize: 12.5))), Text(v, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5))])),
                         ]),
                       ),
                       child: const KpiCard(icon: Icons.payments, value: '55,8', unit: 'M', label: 'CA du mois', tone: KitTone.success),

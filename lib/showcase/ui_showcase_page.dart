@@ -86,7 +86,7 @@ class _Overview extends StatelessWidget {
     final shell = KitShell.of(context);
     Widget stat(IconData icon, String value, String label, VoidCallback onTap) => KitCard(
           onTap: onTap,
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(Space.s4),
           child: Row(children: [
             Icon(icon, color: c.primary),
             const SizedBox(width: 10),
@@ -174,7 +174,7 @@ class _Themes extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Container(
         padding: const EdgeInsets.all(Space.l),
-        decoration: BoxDecoration(color: s.surfaceContainer, borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(color: s.surfaceContainer, borderRadius: BorderRadius.circular(Radii.lg)),
         child: ThemeSettings(onOpenStudio: () => openThemeStudio(context)),
       ),
       const SizedBox(height: Space.m),
@@ -187,7 +187,7 @@ class _Themes extends StatelessWidget {
             child: InkWell(
               onTap: () => copyToClipboard(context, 'colorScheme.$token', label: '« colorScheme.$token » copié'),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, Space.s3),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: fg)),
                   const SizedBox(height: 14),
@@ -242,7 +242,7 @@ class _Colors extends StatelessWidget {
     ];
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       KitCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
         child: Row(children: [
           Expanded(
             child: Text.rich(TextSpan(text: 'Thème actuel : ', children: [
@@ -272,7 +272,7 @@ class _Colors extends StatelessWidget {
   }
 
   Widget _sub(BuildContext context, String t) => Padding(
-        padding: const EdgeInsets.only(top: 20, bottom: 10),
+        padding: const EdgeInsets.only(top: Space.s5, bottom: Space.s3),
         child: Text(t, style: context.t.h4),
       );
 }
@@ -290,7 +290,7 @@ class _Swatch extends StatelessWidget {
     final hex = _hex(color);
     return KitCard(
       onTap: () => copyToClipboard(context, hex, label: '« $hex » copié ($token)'),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(Space.s3),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
           height: 44,
@@ -332,7 +332,7 @@ class _TypeScale extends StatelessWidget {
       child: Column(children: [
         for (var i = 0; i < rows.length; i++)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
             decoration: BoxDecoration(border: i == 0 ? null : Border(top: BorderSide(color: c.divider))),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(rows[i].$1, style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted)),
@@ -360,7 +360,7 @@ class _Spacing extends StatelessWidget {
           InkWell(
             onTap: () => copyToClipboard(context, 'Space.$n'),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
+              padding: const EdgeInsets.symmetric(vertical: Space.s2),
               child: Row(children: [
                 SizedBox(width: 82, child: Text('Space.$n', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textSecondary))),
                 Container(width: v * 3, height: 14, decoration: BoxDecoration(color: c.primary.withValues(alpha: 0.75), borderRadius: Radii.rs)),
@@ -400,7 +400,7 @@ class _RadiiDemo extends StatelessWidget {
           for (final (n, r, px) in radii)
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(Space.s1),
                 child: InkWell(
                   onTap: () => copyToClipboard(context, n),
                   child: box(
@@ -416,8 +416,8 @@ class _RadiiDemo extends StatelessWidget {
         ]),
         const SizedBox(height: 12),
         Row(children: [
-          Expanded(child: Padding(padding: const EdgeInsets.all(6), child: box(Text('elevation-1', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textSecondary)), shadow: Elevations.e1(b)))),
-          Expanded(child: Padding(padding: const EdgeInsets.all(6), child: box(Text('elevation-3', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textSecondary)), shadow: Elevations.e3(b)))),
+          Expanded(child: Padding(padding: const EdgeInsets.all(Space.s2), child: box(Text('elevation-1', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textSecondary)), shadow: Elevations.e1(b)))),
+          Expanded(child: Padding(padding: const EdgeInsets.all(Space.s2), child: box(Text('elevation-3', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textSecondary)), shadow: Elevations.e3(b)))),
         ]),
       ]),
     );
@@ -472,7 +472,7 @@ class _IconGridState extends State<_IconGrid> {
                     borderRadius: Radii.rm,
                     onTap: () => copyToClipboard(context, 'Icon(Icons.${e.key})', label: '« ${e.key} » copié'),
                     child: Padding(
-                      padding: const EdgeInsets.all(6),
+                      padding: const EdgeInsets.all(Space.s2),
                       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                         Icon(e.value, color: c.textPrimary),
                         const SizedBox(height: 6),

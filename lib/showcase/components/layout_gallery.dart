@@ -30,10 +30,10 @@ class DeviceFrame extends StatelessWidget {
             child: Container(
               width: width + 16,
               height: height + 16,
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(Space.s2),
               decoration: BoxDecoration(color: c.textPrimary, borderRadius: BorderRadius.circular(28)),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(Radii.xl),
                 child: MediaQuery(
                   data: MediaQuery.of(context).copyWith(size: Size(width, height)),
                   child: ColoredBox(color: c.bg, child: SizedBox(width: width, height: height, child: child)),
@@ -94,7 +94,7 @@ class _LayoutGalleryState extends State<LayoutGallery> {
                 child: Scaffold(
                   appBar: AppBar(primary: false, leading: const Icon(Icons.menu), title: const Text('Clients'), actions: const [Icon(Icons.notifications_outlined), SizedBox(width: 16)]),
                   floatingActionButton: _device == _Device.phone ? FloatingActionButton(heroTag: null, onPressed: () {}, child: const Icon(Icons.add)) : null,
-                  body: ListView(padding: const EdgeInsets.all(16), children: [
+                  body: ListView(padding: const EdgeInsets.all(Space.s4), children: [
                     PageHeader(
                       breadcrumb: 'Registre',
                       title: 'Clients',
@@ -104,9 +104,9 @@ class _LayoutGalleryState extends State<LayoutGallery> {
                     const SizedBox(height: 12),
                     for (final x in kDemoClients.take(5))
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.only(bottom: Space.s2),
                         child: KitCard(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(Space.s3),
                           child: Row(children: [
                             KitAvatar(name: x.raisonSociale, size: 34),
                             const SizedBox(width: 10),
@@ -133,7 +133,7 @@ class _LayoutGalleryState extends State<LayoutGallery> {
               child: DeviceFrame(
                 width: _w,
                 height: 520,
-                child: ListView(padding: const EdgeInsets.all(14), children: [
+                child: ListView(padding: const EdgeInsets.all(Space.s4), children: [
                   Text('Tableau de bord', style: context.t.pageTitle),
                   const SizedBox(height: 12),
                   ResponsiveGrid(minItemWidth: 160, spacing: 10, children: const [
@@ -165,7 +165,7 @@ class _LayoutGalleryState extends State<LayoutGallery> {
                 width: _w,
                 height: 460,
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(Space.s4),
                   child: _TwoCols(
                     main: const KitCard(
                       title: 'Informations',
@@ -197,7 +197,7 @@ class _LayoutGalleryState extends State<LayoutGallery> {
                 width: _w,
                 height: 440,
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(Space.s4),
                   child: ResponsiveGrid(minItemWidth: 220, maxColumns: 3, spacing: 10, children: [
                     for (final (t, p, ic) in const [('Essentiel', '9 900 F', Icons.gps_fixed), ('Standard', '14 500 F', Icons.verified), ('Premium', '24 000 F', Icons.workspace_premium)])
                       KitCard(
@@ -269,7 +269,7 @@ class _LayoutGalleryState extends State<LayoutGallery> {
               child: Container(
                 height: 130,
                 decoration: BoxDecoration(gradient: LinearGradient(colors: [c.primary, c.info])),
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(Space.s5),
                 alignment: Alignment.bottomLeft,
                 child: const Text('Votre flotte, en temps réel', style: TextStyle(color: Colors.white, fontFamily: Fonts.heading, fontSize: 22, fontWeight: FontWeight.w700)),
               ),
@@ -300,7 +300,7 @@ class _LayoutGalleryState extends State<LayoutGallery> {
                   width: _resp,
                   height: 240,
                   child: Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(Space.s3),
                     child: LayoutBuilder(
                       builder: (_, cons) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text('${Breakpoints.columns(cons.maxWidth, max: 4)} colonne(s)', style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary)),
@@ -366,7 +366,7 @@ class _Line extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: Space.s2),
       child: Row(children: [
         Expanded(child: Text(k, style: TextStyle(fontSize: 12.5, color: c.textSecondary))),
         Flexible(child: Text(v, textAlign: TextAlign.right, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: c.textPrimary))),

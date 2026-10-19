@@ -124,7 +124,7 @@ class NumberStepper extends StatelessWidget {
         );
     final display = value is int || value == value.roundToDouble() ? Fmt.number(value) : Fmt.decimal1(value);
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(Space.s1),
       decoration: BoxDecoration(color: c.fieldBg, borderRadius: Radii.pill, border: Border.all(color: c.border)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         btn(Icons.remove, value > min, math.max(min, value - step)),
@@ -197,7 +197,7 @@ class _CurrencyInputState extends State<CurrencyInput> {
           hintText: '0',
           prefixIcon: Icon(Icons.payments_outlined, color: c.textSecondary),
           suffixIcon: widget.currencies.length < 2
-              ? Padding(padding: const EdgeInsets.all(14), child: Text(_cur, style: TextStyle(fontWeight: FontWeight.w700, color: c.textSecondary)))
+              ? Padding(padding: const EdgeInsets.all(Space.s4), child: Text(_cur, style: TextStyle(fontWeight: FontWeight.w700, color: c.textSecondary)))
               : PopupMenuButton<String>(
                   initialValue: _cur,
                   onSelected: (v) {
@@ -206,7 +206,7 @@ class _CurrencyInputState extends State<CurrencyInput> {
                   },
                   itemBuilder: (_) => [for (final x in widget.currencies) PopupMenuItem(value: x, child: Text(x))],
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: Space.s3),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       Text(_cur, style: TextStyle(fontWeight: FontWeight.w700, color: c.primary)),
                       Icon(Icons.arrow_drop_down, color: c.primary),
@@ -414,7 +414,7 @@ class _CopyFieldState extends State<CopyField> {
     final shown = widget.secret && !_revealed ? '•' * math.min(24, widget.value.length) : widget.value;
     final box = Container(
       constraints: const BoxConstraints(minHeight: 46),
-      padding: const EdgeInsets.only(left: 12),
+      padding: const EdgeInsets.only(left: Space.s3),
       decoration: BoxDecoration(color: c.fieldBg, borderRadius: Radii.rm, border: Border.all(color: c.border)),
       child: Row(children: [
         if (widget.icon != null) ...[Icon(widget.icon, size: 20, color: c.textSecondary), const SizedBox(width: 10)],
@@ -489,7 +489,7 @@ class _TagInputState extends State<TagInput> {
     final full = widget.max != null && widget.tags.length >= widget.max!;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
       Container(
-        padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+        padding: const EdgeInsets.fromLTRB(Space.s2, Space.s2, Space.s2, Space.s2),
         decoration: BoxDecoration(color: c.fieldBg, borderRadius: Radii.rm, border: Border.all(color: c.border)),
         child: Wrap(spacing: 6, runSpacing: 6, crossAxisAlignment: WrapCrossAlignment.center, children: [
           for (final t in widget.tags)

@@ -46,12 +46,12 @@ class _SidecarState extends State<Sidecar> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: ListView(padding: const EdgeInsets.symmetric(vertical: 4), children: [
+              child: ListView(padding: const EdgeInsets.symmetric(vertical: Space.s1), children: [
                 for (final m in widget.items)
                   Tooltip(
                     message: m.label,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s1),
                       child: Material(
                         color: activeIn(m) || _open == m.id ? c.primaryLight : Colors.transparent,
                         borderRadius: Radii.rm,
@@ -78,7 +78,7 @@ class _SidecarState extends State<Sidecar> {
                   ),
               ]),
             ),
-            const Padding(padding: EdgeInsets.only(bottom: 12), child: KitAvatar(name: 'Jean Kouassi', size: 34, online: true)),
+            const Padding(padding: EdgeInsets.only(bottom: Space.s3), child: KitAvatar(name: 'Jean Kouassi', size: 34, online: true)),
           ]),
         ),
         AnimatedContainer(
@@ -95,14 +95,14 @@ class _SidecarState extends State<Sidecar> {
                     maxWidth: 220,
                     child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 4, 8),
+                        padding: const EdgeInsets.fromLTRB(Space.s4, Space.s4, Space.s1, Space.s2),
                         child: Row(children: [
                           Expanded(child: Text(open.label, style: TextStyle(fontFamily: Fonts.heading, fontWeight: FontWeight.w700, fontSize: 16, color: c.textPrimary))),
                           IconButton(visualDensity: VisualDensity.compact, onPressed: () => setState(() => _open = null), icon: const Icon(Icons.chevron_left)),
                         ]),
                       ),
                       Expanded(
-                        child: ListView(padding: const EdgeInsets.symmetric(horizontal: 8), children: [
+                        child: ListView(padding: const EdgeInsets.symmetric(horizontal: Space.s2), children: [
                           for (final ch in open.children)
                             ListTile(
                               dense: true,
@@ -141,12 +141,12 @@ class Breadcrumb extends StatelessWidget {
       reverse: true,
       child: Row(children: [
         for (var i = 0; i < items.length; i++) ...[
-          if (i > 0) Padding(padding: const EdgeInsets.symmetric(horizontal: 2), child: Icon(separator, size: 16, color: c.textMuted)),
+          if (i > 0) Padding(padding: const EdgeInsets.symmetric(horizontal: Space.s0_5), child: Icon(separator, size: 16, color: c.textMuted)),
           InkWell(
             borderRadius: Radii.rs,
             onTap: i == items.length - 1 || onTap == null ? null : () => onTap!(i),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: Space.s1, vertical: Space.s1),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
                 if (i == 0 && icon != null) ...[Icon(icon, size: 16, color: c.textSecondary), const SizedBox(width: 4)],
                 Text(

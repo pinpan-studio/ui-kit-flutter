@@ -145,7 +145,7 @@ class _HarnaisScreenState extends State<HarnaisScreen> {
                     Expanded(
                       child: ListView.builder(
                         controller: _scroll,
-                        padding: const EdgeInsets.fromLTRB(14, 12, 14, 24),
+                        padding: const EdgeInsets.fromLTRB(Space.s4, Space.s3, Space.s4, Space.s6),
                         itemCount: conv.messages.length,
                         itemBuilder: (_, i) {
                           final m = conv.messages[i];
@@ -163,7 +163,7 @@ class _HarnaisScreenState extends State<HarnaisScreen> {
                     ),
                     _Composer(store: _store, placeholder: 'Répondre…'),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.only(bottom: Space.s2),
                       child: Text('Réponses simulées localement — démonstration statique du UI Kit.', style: TextStyle(fontSize: 10.5, color: c.textMuted)),
                     ),
                   ]),
@@ -255,7 +255,7 @@ class _ConversationListState extends State<_ConversationList> {
     return SafeArea(
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 12, 8),
+          padding: const EdgeInsets.fromLTRB(Space.s4, Space.s4, Space.s3, Space.s2),
           child: Row(children: [
             Icon(Icons.auto_awesome, color: c.tertiary),
             const SizedBox(width: 8),
@@ -264,14 +264,14 @@ class _ConversationListState extends State<_ConversationList> {
           ]),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: Space.s3),
           child: TextField(onChanged: (v) => setState(() => _q = v), decoration: const InputDecoration(hintText: 'Rechercher…', prefixIcon: Icon(Icons.search, size: 20))),
         ),
         Expanded(
-          child: ListView(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8), children: [
+          child: ListView(padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s2), children: [
             if (pinned.isNotEmpty) ...[_head(c, 'Épinglées'), for (final x in pinned) tile(x)],
             for (final g in groups.entries) ...[_head(c, g.key), for (final x in g.value) tile(x)],
-            if (list.isEmpty) Padding(padding: const EdgeInsets.all(24), child: Text('Aucune conversation', textAlign: TextAlign.center, style: TextStyle(color: c.textMuted))),
+            if (list.isEmpty) Padding(padding: const EdgeInsets.all(Space.s6), child: Text('Aucune conversation', textAlign: TextAlign.center, style: TextStyle(color: c.textMuted))),
           ]),
         ),
         const Divider(),
@@ -281,7 +281,7 @@ class _ConversationListState extends State<_ConversationList> {
   }
 
   Widget _head(KitColors c, String t) => Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+        padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, Space.s1),
         child: Text(t.toUpperCase(), style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.8, color: c.textMuted)),
       );
 }
@@ -334,7 +334,7 @@ class _ComposerState extends State<_Composer> {
     final s = widget.store;
     final model = kHzModels.firstWhere((m) => m.id == s.modelId);
     return Container(
-      margin: widget.elevated ? EdgeInsets.zero : const EdgeInsets.fromLTRB(10, 0, 10, 6),
+      margin: widget.elevated ? EdgeInsets.zero : const EdgeInsets.fromLTRB(Space.s3, 0, Space.s3, Space.s2),
       decoration: BoxDecoration(
         color: c.card,
         borderRadius: BorderRadius.circular(22),
@@ -344,7 +344,7 @@ class _ComposerState extends State<_Composer> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
         if (_att.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+            padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, 0),
             child: Wrap(spacing: 6, runSpacing: 6, children: [
               for (final a in _att) InputChip(avatar: Icon(a.icon, size: 16), label: Text(a.name), onDeleted: () => setState(() => _att.remove(a))),
             ]),
@@ -361,11 +361,11 @@ class _ComposerState extends State<_Composer> {
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
-            contentPadding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+            contentPadding: const EdgeInsets.fromLTRB(Space.s4, Space.s4, Space.s4, Space.s2),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(6, 0, 8, 8),
+          padding: const EdgeInsets.fromLTRB(Space.s2, 0, Space.s2, Space.s2),
           child: Row(children: [
             IconButton(tooltip: 'Joindre', onPressed: _attach, icon: const Icon(Icons.add_circle_outline)),
             PopupMenuButton<String>(
@@ -385,7 +385,7 @@ class _ComposerState extends State<_Composer> {
                   ),
               ],
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s2),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   Text(model.label, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: c.textSecondary)),
                   Icon(Icons.expand_more, size: 18, color: c.textSecondary),
@@ -426,16 +426,16 @@ class _MessageView extends StatelessWidget {
     if (m.role == HzRole.user) {
       final text = m.blocks.whereType<HzText>().map((t) => t.text).join('\n');
       return Padding(
-        padding: const EdgeInsets.only(bottom: 16, left: 40),
+        padding: const EdgeInsets.only(bottom: Space.s4, left: Space.s10),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           if (m.attachments.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.only(bottom: Space.s2),
               child: Wrap(spacing: 6, runSpacing: 6, alignment: WrapAlignment.end, children: [for (final a in m.attachments) HzAttachmentPreview(a)]),
             ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(color: c.hover, borderRadius: const BorderRadius.only(topLeft: Radius.circular(18), topRight: Radius.circular(18), bottomLeft: Radius.circular(18), bottomRight: Radius.circular(6))),
+            padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
+            decoration: BoxDecoration(color: c.hover, borderRadius: const BorderRadius.only(topLeft: Radius.circular(18), topRight: Radius.circular(18), bottomLeft: Radius.circular(18), bottomRight: Radius.circular(Radii.sm))),
             child: Text(text, style: TextStyle(fontSize: 14, height: 1.45, color: c.textPrimary)),
           ),
           const SizedBox(height: 2),
@@ -456,7 +456,7 @@ class _MessageView extends StatelessWidget {
           if (m.streaming) ...[const SizedBox(width: 8), SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.8, color: c.tertiary))],
         ]),
         const SizedBox(height: 8),
-        for (final b in m.blocks) Padding(padding: const EdgeInsets.only(bottom: 10), child: _block(context, c, b)),
+        for (final b in m.blocks) Padding(padding: const EdgeInsets.only(bottom: Space.s3), child: _block(context, c, b)),
         if (m.stopped)
           Row(children: [Icon(Icons.stop_circle_outlined, size: 16, color: c.textMuted), const SizedBox(width: 6), Text('Génération interrompue', style: TextStyle(fontSize: 12, color: c.textMuted, fontStyle: FontStyle.italic))]),
         if (!m.streaming)
@@ -483,9 +483,9 @@ class _MessageView extends StatelessWidget {
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           for (final it in b.items)
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: Space.s1),
               child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(padding: const EdgeInsets.only(top: 8, right: 8, left: 4), child: Container(width: 5, height: 5, decoration: BoxDecoration(color: c.textSecondary, shape: BoxShape.circle))),
+                Padding(padding: const EdgeInsets.only(top: Space.s2, right: Space.s2, left: Space.s1), child: Container(width: 5, height: 5, decoration: BoxDecoration(color: c.textSecondary, shape: BoxShape.circle))),
                 Expanded(child: Text.rich(TextSpan(children: markdownInline(it, KitText.body, c)), style: TextStyle(fontSize: 14, height: 1.5, color: c.textPrimary))),
               ]),
             ),
@@ -499,7 +499,7 @@ class _MessageView extends StatelessWidget {
         if (a == null) return const SizedBox.shrink();
         return KitCard(
           radius: Radii.m,
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(Space.s3),
           onTap: () => onArtifact(a.id),
           child: Row(children: [
             Container(width: 38, height: 38, decoration: BoxDecoration(color: c.tertiaryLight, borderRadius: Radii.rm), child: Icon(a.kind == 'code' ? Icons.code : Icons.article_outlined, color: c.tertiary)),
@@ -539,7 +539,7 @@ class _ThinkingViewState extends State<_ThinkingView> {
         borderRadius: Radii.rs,
         onTap: () => setState(() => _open = !_open),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2),
+          padding: const EdgeInsets.symmetric(vertical: Space.s0_5),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Icon(Icons.psychology_outlined, size: 17, color: c.textMuted),
             const SizedBox(width: 6),
@@ -553,8 +553,8 @@ class _ThinkingViewState extends State<_ThinkingView> {
         child: !_open
             ? const SizedBox(width: double.infinity)
             : Container(
-                margin: const EdgeInsets.only(top: 6),
-                padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                margin: const EdgeInsets.only(top: Space.s2),
+                padding: const EdgeInsets.fromLTRB(Space.s3, Space.s1, Space.s1, Space.s1),
                 decoration: BoxDecoration(border: Border(left: BorderSide(color: c.border, width: 2))),
                 child: Text(b.text, style: TextStyle(fontSize: 12.5, height: 1.5, color: c.textSecondary)),
               ),
@@ -572,7 +572,7 @@ class _ToolView extends StatelessWidget {
     final c = context.kc;
     final icon = switch (t.tool) { HzToolKind.read => Icons.description_outlined, HzToolKind.search => Icons.search, HzToolKind.bash => Icons.terminal, HzToolKind.edit => Icons.edit_outlined, HzToolKind.web => Icons.language };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s2),
       decoration: BoxDecoration(color: c.hover.withValues(alpha: 0.5), borderRadius: Radii.rm, border: Border.all(color: c.border)),
       child: Row(children: [
         Icon(icon, size: 16, color: c.textSecondary),
@@ -614,7 +614,7 @@ class _SidePanel extends StatelessWidget {
         const TabBar(tabs: [Tab(text: 'Artefacts'), Tab(text: 'Contexte'), Tab(text: 'Tâches')]),
         Expanded(
           child: TabBarView(children: [
-            ListView(padding: const EdgeInsets.all(14), children: [
+            ListView(padding: const EdgeInsets.all(Space.s4), children: [
               for (final a in artifacts) ...[
                 Row(children: [
                   Icon(a.kind == 'code' ? Icons.code : Icons.article_outlined, color: c.tertiary),
@@ -627,7 +627,7 @@ class _SidePanel extends StatelessWidget {
                 const SizedBox(height: 18),
               ],
             ]),
-            ListView(padding: const EdgeInsets.all(14), children: [
+            ListView(padding: const EdgeInsets.all(Space.s4), children: [
               Text('Fenêtre de contexte', style: context.t.h4),
               const SizedBox(height: 6),
               KitProgressBar(value: used / kHzContextLimit, height: 8),
@@ -643,13 +643,13 @@ class _SidePanel extends StatelessWidget {
                   trailing: Text('${Fmt.number(f.tokens)} j.', style: TextStyle(fontSize: 12, color: c.textMuted)),
                 ),
             ]),
-            ListView(padding: const EdgeInsets.all(14), children: [
+            ListView(padding: const EdgeInsets.all(Space.s4), children: [
               for (final t in kHzTasks)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: switch (t.status) {
                     'done' => Icon(Icons.check_circle, color: c.success),
-                    'running' => SizedBox(width: 22, height: 22, child: Padding(padding: const EdgeInsets.all(2), child: CircularProgressIndicator(strokeWidth: 2, color: c.primary))),
+                    'running' => SizedBox(width: 22, height: 22, child: Padding(padding: const EdgeInsets.all(Space.s0_5), child: CircularProgressIndicator(strokeWidth: 2, color: c.primary))),
                     _ => Icon(Icons.radio_button_unchecked, color: c.textMuted),
                   },
                   title: Text(t.label, style: TextStyle(decoration: t.status == 'done' ? TextDecoration.lineThrough : null, color: t.status == 'done' ? c.textMuted : c.textPrimary)),

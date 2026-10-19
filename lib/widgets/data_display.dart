@@ -45,7 +45,7 @@ class KitTimeline extends StatelessWidget {
                   decoration: BoxDecoration(shape: BoxShape.circle, color: items[i].tone.light(c)),
                   child: Icon(items[i].icon, size: dot * 0.5, color: items[i].tone.color(c)),
                 ),
-                if (i < items.length - 1) Expanded(child: Container(width: 2, margin: const EdgeInsets.symmetric(vertical: 4), color: c.border)),
+                if (i < items.length - 1) Expanded(child: Container(width: 2, margin: const EdgeInsets.symmetric(vertical: Space.s1), color: c.border)),
               ]),
             ),
             const SizedBox(width: 12),
@@ -121,7 +121,7 @@ class DescriptionList extends StatelessWidget {
         ? Column(children: [
             for (var i = 0; i < items.length; i++)
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: Space.s3),
                 decoration: BoxDecoration(border: i == 0 ? null : Border(top: BorderSide(color: c.border))),
                 child: Row(children: [label(items[i]), const SizedBox(width: 12), Expanded(child: Align(alignment: Alignment.centerRight, child: value(items[i])))]),
               ),
@@ -133,7 +133,7 @@ class DescriptionList extends StatelessWidget {
               for (final it in items)
                 Container(
                   width: it.full ? cons.maxWidth : w,
-                  padding: bordered ? const EdgeInsets.all(12) : EdgeInsets.zero,
+                  padding: bordered ? const EdgeInsets.all(Space.s3) : EdgeInsets.zero,
                   decoration: bordered ? BoxDecoration(borderRadius: Radii.rm, border: Border.all(color: c.border)) : null,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     label(it),
@@ -252,7 +252,7 @@ class _TextDiffState extends State<TextDiff> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Container(
           color: c.tableHeader,
-          padding: const EdgeInsets.fromLTRB(12, 6, 4, 6),
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s2, Space.s1, Space.s2),
           child: Row(children: [
             Icon(Icons.difference_outlined, size: 18, color: c.textSecondary),
             const SizedBox(width: 8),
@@ -272,7 +272,7 @@ class _TextDiffState extends State<TextDiff> {
           if (!_collapse || l.op != DiffOp.same)
             Container(
               color: switch (l.op) { DiffOp.add => c.successLight, DiffOp.del => c.errorLight, DiffOp.same => null },
-              padding: const EdgeInsets.symmetric(vertical: 2),
+              padding: const EdgeInsets.symmetric(vertical: Space.s0_5),
               child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 SizedBox(
                   width: 30,
@@ -284,7 +284,7 @@ class _TextDiffState extends State<TextDiff> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.only(right: Space.s2),
                     child: Text(l.text.isEmpty ? ' ' : l.text, style: style.copyWith(color: l.op == DiffOp.same ? c.textSecondary : c.textPrimary, decoration: l.op == DiffOp.del ? TextDecoration.lineThrough : null, decorationColor: c.errorText.withValues(alpha: 0.5))),
                   ),
                 ),
@@ -351,10 +351,10 @@ class _AuditLogState extends State<AuditLog> {
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(children: [
-          Padding(padding: const EdgeInsets.only(right: 6), child: ChoiceChip(label: const Text('Tout'), selected: _filter == null, onSelected: (_) => setState(() => _filter = null))),
+          Padding(padding: const EdgeInsets.only(right: Space.s2), child: ChoiceChip(label: const Text('Tout'), selected: _filter == null, onSelected: (_) => setState(() => _filter = null))),
           for (final a in [AuditAction.update, AuditAction.status, AuditAction.create, AuditAction.comment, AuditAction.delete])
             Padding(
-              padding: const EdgeInsets.only(right: 6),
+              padding: const EdgeInsets.only(right: Space.s2),
               child: ChoiceChip(
                 avatar: Icon(_meta(a).$1, size: 16),
                 label: Text(switch (a) { AuditAction.update => 'Modifs', AuditAction.status => 'Statuts', AuditAction.create => 'Créations', AuditAction.comment => 'Commentaires', _ => 'Suppressions' }),
@@ -368,7 +368,7 @@ class _AuditLogState extends State<AuditLog> {
       if (list.isEmpty) const EmptyState(compact: true, icon: Icons.history, title: 'Aucune activité', subtitle: 'Aucune entrée pour ce filtre.'),
       for (final g in groups.entries) ...[
         Padding(
-          padding: const EdgeInsets.only(bottom: 8, top: 4),
+          padding: const EdgeInsets.only(bottom: Space.s2, top: Space.s1),
           child: Text(g.key.toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.8, color: c.textMuted)),
         ),
         for (final e in g.value) _entry(c, e, now),
@@ -387,7 +387,7 @@ class _AuditLogState extends State<AuditLog> {
     final (icon, verb, tone) = _meta(e.action);
     final at = now.subtract(Duration(minutes: (e.hoursAgo * 60).round()));
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: Space.s4),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Stack(clipBehavior: Clip.none, children: [
           KitAvatar(name: e.user, size: 34),
@@ -395,7 +395,7 @@ class _AuditLogState extends State<AuditLog> {
             right: -4,
             bottom: -4,
             child: Container(
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.all(Space.s0_5),
               decoration: BoxDecoration(color: c.card, shape: BoxShape.circle),
               child: Icon(icon, size: 13, color: tone.color(c)),
             ),
@@ -415,25 +415,25 @@ class _AuditLogState extends State<AuditLog> {
             Text('${Fmt.ago(at, now)} · ${Fmt.time(at)}${e.meta == null ? '' : ' · ${e.meta}'}', style: TextStyle(fontSize: 11.5, color: c.textMuted)),
             if (e.comment != null)
               Container(
-                margin: const EdgeInsets.only(top: 6),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: c.hover, borderRadius: const BorderRadius.only(topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))),
+                margin: const EdgeInsets.only(top: Space.s2),
+                padding: const EdgeInsets.all(Space.s3),
+                decoration: BoxDecoration(color: c.hover, borderRadius: const BorderRadius.only(topRight: Radius.circular(Radii.md), bottomLeft: Radius.circular(Radii.md), bottomRight: Radius.circular(Radii.md))),
                 child: Text(e.comment!, style: TextStyle(fontSize: 12.5, height: 1.45, color: c.textPrimary)),
               ),
             for (final ch in e.changes)
               Padding(
-                padding: const EdgeInsets.only(top: 6),
+                padding: const EdgeInsets.only(top: Space.s2),
                 child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 6, runSpacing: 4, children: [
                   Text('${ch.label} :', style: TextStyle(fontSize: 12, color: c.textSecondary)),
                   if (ch.before != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                      padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: 1),
                       decoration: BoxDecoration(color: c.errorLight, borderRadius: Radii.rs),
                       child: Text(ch.before!, style: TextStyle(fontSize: 12, color: c.errorText, decoration: TextDecoration.lineThrough)),
                     ),
                   if (ch.before != null) Icon(Icons.arrow_forward, size: 14, color: c.textMuted),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                    padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: 1),
                     decoration: BoxDecoration(color: c.successLight, borderRadius: Radii.rs),
                     child: Text(ch.after ?? '—', style: TextStyle(fontSize: 12, color: c.successText, fontWeight: FontWeight.w600)),
                   ),
@@ -459,7 +459,7 @@ class QrBlock extends StatelessWidget {
     final c = context.kc;
     return Column(mainAxisSize: MainAxisSize.min, children: [
       Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(Space.s3),
         decoration: BoxDecoration(color: Colors.white, borderRadius: Radii.rm, border: Border.all(color: c.border)),
         child: QrImageView(
           data: data,
@@ -489,7 +489,7 @@ class BarcodeBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(Space.s3),
       decoration: BoxDecoration(color: Colors.white, borderRadius: Radii.rm, border: Border.all(color: c.border)),
       child: BarcodeWidget(
         barcode: Barcode.code128(),

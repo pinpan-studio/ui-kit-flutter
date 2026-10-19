@@ -148,8 +148,8 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
         child: _sel.isEmpty
             ? const SizedBox(width: double.infinity)
             : Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                margin: const EdgeInsets.only(bottom: Space.s3),
+                padding: const EdgeInsets.fromLTRB(Space.s3, Space.s1, Space.s1, Space.s1),
                 decoration: BoxDecoration(color: c.primaryLight, borderRadius: Radii.rm, border: Border.all(color: c.primary.withValues(alpha: 0.3))),
                 child: Row(children: [
                   Text('${_sel.length} sélectionné(s)', style: TextStyle(fontWeight: FontWeight.w700, color: c.primary)),
@@ -176,7 +176,7 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
         Column(children: [
           for (final r in rows)
             Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: Space.s3),
               child: GestureDetector(
                 onLongPress: widget.selectable ? () => setState(() => _sel.contains(r) ? _sel.remove(r) : _sel.add(r)) : null,
                 onTap: _sel.isNotEmpty ? () => setState(() => _sel.contains(r) ? _sel.remove(r) : _sel.add(r)) : (widget.onRowTap == null ? null : () => widget.onRowTap!(r)),
@@ -184,7 +184,7 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
               ),
             ),
           if (widget.selectable)
-            Padding(padding: const EdgeInsets.only(bottom: 6), child: Text('Appui long sur une carte pour la sélectionner.', style: TextStyle(fontSize: 11.5, color: c.textMuted))),
+            Padding(padding: const EdgeInsets.only(bottom: Space.s2), child: Text('Appui long sur une carte pour la sélectionner.', style: TextStyle(fontSize: 11.5, color: c.textMuted))),
         ])
       else
         _table(context, c, rows, all, cols),
@@ -227,7 +227,7 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
         child: Container(
           width: col.width,
           height: 44,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: Space.s3),
           alignment: col.numeric ? Alignment.centerRight : Alignment.centerLeft,
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Flexible(child: Text(col.label.toUpperCase(), overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: _sortCol == i ? c.primary : c.textSecondary))),
@@ -242,7 +242,7 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
       final content = Container(
         width: col.width,
         height: rowH,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: Space.s3),
         alignment: col.numeric ? Alignment.centerRight : Alignment.centerLeft,
         child: DefaultTextStyle.merge(style: TextStyle(fontSize: 13, color: c.textPrimary, fontFeatures: col.numeric ? KitText.tabular : null), child: col.cell(context, r)),
       );
@@ -291,7 +291,7 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
         Container(
           height: 44,
           width: selW + widget.columns[first].width,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: Space.s3),
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(color: c.tableHeader, border: Border(top: BorderSide(color: c.divider, width: 1.5))),
           child: Text('Total (${all.length})', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5)),
@@ -311,7 +311,7 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
                 Container(
                   width: widget.columns[i].width,
                   height: 44,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: Space.s3),
                   alignment: widget.columns[i].numeric ? Alignment.centerRight : Alignment.centerLeft,
                   child: Text(widget.columns[i].total?.call(all) ?? '', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5, fontFeatures: KitText.tabular)),
                 ),

@@ -39,7 +39,7 @@ class FieldTrigger extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 46),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s2),
               child: Row(children: [
                 if (icon != null) ...[Icon(icon, size: 20, color: c.textSecondary), const SizedBox(width: 10)],
                 Expanded(
@@ -116,7 +116,7 @@ class _SelectSheetState<T> extends State<_SelectSheet<T>> {
         padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 12, 8),
+            padding: const EdgeInsets.fromLTRB(Space.s5, 0, Space.s3, Space.s2),
             child: Row(children: [
               Expanded(child: Text(widget.title, style: TextStyle(fontFamily: Fonts.heading, fontSize: 18, fontWeight: FontWeight.w600, color: c.textPrimary))),
               if (widget.multi) ...[
@@ -127,7 +127,7 @@ class _SelectSheetState<T> extends State<_SelectSheet<T>> {
           ),
           if (widget.searchable && widget.options.length > 6)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s2),
               child: TextField(
                 autofocus: false,
                 onChanged: (v) => setState(() => _q = v),
@@ -137,7 +137,7 @@ class _SelectSheetState<T> extends State<_SelectSheet<T>> {
           Flexible(
             child: list.isEmpty
                 ? const EmptyState(compact: true, icon: Icons.search_off, title: 'Aucun résultat', subtitle: 'Essayez un autre terme.')
-                : ListView(shrinkWrap: true, padding: const EdgeInsets.fromLTRB(8, 0, 8, 16), children: [
+                : ListView(shrinkWrap: true, padding: const EdgeInsets.fromLTRB(Space.s2, 0, Space.s2, Space.s4), children: [
                     if (widget.allowNull && !widget.multi)
                       ListTile(
                         leading: const Icon(Icons.block, size: 20),
@@ -241,11 +241,11 @@ class MultiSelectField<T> extends StatelessWidget {
           if (v != null) onChanged(v);
         },
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s2, Space.s2, Space.s2),
           child: Row(children: [
             Expanded(
               child: selected.isEmpty
-                  ? Padding(padding: const EdgeInsets.all(4), child: Text(placeholder, style: TextStyle(color: c.textMuted)))
+                  ? Padding(padding: const EdgeInsets.all(Space.s1), child: Text(placeholder, style: TextStyle(color: c.textMuted)))
                   : Wrap(spacing: 6, runSpacing: 6, children: [
                       for (final o in selected)
                         InputChip(
@@ -289,7 +289,7 @@ class FilterDropdown<T> extends StatelessWidget {
           if (v != null) onChanged(v);
         },
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 7, 8, 7),
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s2, Space.s2, Space.s2),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Icon(cur?.icon ?? icon, size: 16, color: active ? c.primary : c.textSecondary),
             const SizedBox(width: 6),
@@ -357,7 +357,7 @@ class EntityAutocomplete<T extends Object> extends StatelessWidget {
             borderRadius: Radii.rm,
             child: ConstrainedBox(
               constraints: BoxConstraints(maxHeight: 280, maxWidth: cons.maxWidth),
-              child: ListView(padding: const EdgeInsets.symmetric(vertical: 6), shrinkWrap: true, children: [
+              child: ListView(padding: const EdgeInsets.symmetric(vertical: Space.s2), shrinkWrap: true, children: [
                 for (final o in options)
                   ListTile(
                     dense: true,

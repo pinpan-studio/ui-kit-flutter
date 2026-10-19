@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:ui_kit_flutter/theme/tokens.dart';
 
 /// Scène illustrée générée localement (remplace les images / vidéos de démonstration
 /// produites en canvas côté web). Déterministe selon `seed` ; `t` (0–1) anime la scène.
@@ -84,7 +85,7 @@ class _ScenePainter extends CustomPainter {
       canvas.drawLine(Offset(x, roadY + s.height * 0.07), Offset(x + 18, roadY + s.height * 0.07), dash);
     }
     final carX = (s.width + 60) * ((t + r.nextDouble()) % 1) - 40;
-    final body = RRect.fromRectAndRadius(Rect.fromLTWH(carX, roadY - s.height * 0.07, s.width * 0.14, s.height * 0.07), const Radius.circular(4));
+    final body = RRect.fromRectAndRadius(Rect.fromLTWH(carX, roadY - s.height * 0.07, s.width * 0.14, s.height * 0.07), const Radius.circular(Radii.xs));
     canvas.drawRRect(body, Paint()..color = p[2]);
     canvas.drawCircle(Offset(carX + s.width * 0.03, roadY), s.height * 0.018, Paint()..color = Colors.black87);
     canvas.drawCircle(Offset(carX + s.width * 0.11, roadY), s.height * 0.018, Paint()..color = Colors.black87);

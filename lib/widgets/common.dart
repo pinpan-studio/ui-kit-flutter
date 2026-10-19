@@ -25,7 +25,7 @@ class StatusBadge extends StatelessWidget {
     final c = context.kc;
     final fg = tone.text(c);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s1),
       decoration: BoxDecoration(color: tone.light(c), borderRadius: Radii.rm),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -102,7 +102,7 @@ class KitCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(Space.m, 14, Space.s, 0),
+            padding: const EdgeInsets.fromLTRB(Space.m, Space.s4, Space.s, 0),
             child: Row(children: [
               if (icon != null) ...[Icon(icon, size: 20, color: c.primary), const SizedBox(width: 10)],
               Expanded(child: Text(title!, style: context.t.cardTitle)),
@@ -240,7 +240,7 @@ class EmptyState extends StatelessWidget {
     final c = context.kc;
     final d = compact ? 56.0 : 80.0;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Space.xl, vertical: compact ? Space.l : 48),
+      padding: EdgeInsets.symmetric(horizontal: Space.xl, vertical: compact ? Space.l : Space.s12),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -279,7 +279,7 @@ class ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Space.xl, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: Space.xl, vertical: Space.s10),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Container(
           width: 72,
@@ -320,7 +320,7 @@ class KpiCard extends StatelessWidget {
     final c = context.kc;
     return KitCard(
       onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s4),
       child: Row(children: [
         Container(
           width: 46,
@@ -441,7 +441,7 @@ class SegmentedToggle<T> extends StatelessWidget {
         _seg(context, c, v == value, label, icon, () => onChanged(v)),
     ];
     return Container(
-      padding: const EdgeInsets.all(3),
+      padding: const EdgeInsets.all(Space.s1),
       decoration: BoxDecoration(color: c.fieldBg, borderRadius: Radii.pill),
       child: Row(mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min, children: [
         for (final w in children) expand ? Expanded(child: w) : w,
@@ -461,7 +461,7 @@ class SegmentedToggle<T> extends StatelessWidget {
         borderRadius: Radii.pill,
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: expand ? 6 : 12, vertical: 7),
+          padding: EdgeInsets.symmetric(horizontal: expand ? Space.s2 : Space.s3, vertical: Space.s2),
           child: Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
             if (icon != null) ...[Icon(icon, size: 16, color: active ? c.primary : c.textSecondary), if (label.isNotEmpty) const SizedBox(width: 6)],
             if (label.isNotEmpty)
@@ -549,7 +549,7 @@ class SkeletonListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.symmetric(vertical: Space.s3),
         child: Row(children: [
           Skeleton(height: 40, circle: true),
           SizedBox(width: 12),
@@ -602,11 +602,11 @@ class KitPaginator extends StatelessWidget {
       if (!compact)
         for (final p in _visible())
           p == null
-              ? Padding(padding: const EdgeInsets.symmetric(horizontal: 2), child: Text('…', style: TextStyle(color: c.textMuted)))
+              ? Padding(padding: const EdgeInsets.symmetric(horizontal: Space.s0_5), child: Text('…', style: TextStyle(color: c.textMuted)))
               : _PageNum(p, active: p == page, onTap: () => onPage(p))
       else
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
+          padding: const EdgeInsets.symmetric(horizontal: Space.s2),
           child: Text('$page / $pages', style: TextStyle(fontWeight: FontWeight.w600, color: c.textSecondary)),
         ),
       IconButton(visualDensity: VisualDensity.compact, onPressed: page < pages ? () => onPage(page + 1) : null, icon: const Icon(Icons.chevron_right), tooltip: 'Suivant'),
@@ -626,8 +626,8 @@ class KitPaginator extends StatelessWidget {
               onSelected: onPageSize,
               itemBuilder: (_) => [for (final s in pageSizes) PopupMenuItem(value: s, child: Text('$s'))],
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(color: c.fieldBg, borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s1),
+                decoration: BoxDecoration(color: c.fieldBg, borderRadius: BorderRadius.circular(Radii.sm)),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   Text('$pageSize', style: const TextStyle(fontWeight: FontWeight.w600)),
                   Icon(Icons.arrow_drop_down, size: 18, color: c.textSecondary),
@@ -826,7 +826,7 @@ class LabeledDivider extends StatelessWidget {
     final c = context.kc;
     return Row(children: [
       const Expanded(child: Divider()),
-      Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text(label, style: TextStyle(fontSize: 12, color: c.textMuted))),
+      Padding(padding: const EdgeInsets.symmetric(horizontal: Space.s3), child: Text(label, style: TextStyle(fontSize: 12, color: c.textMuted))),
       const Expanded(child: Divider()),
     ]);
   }

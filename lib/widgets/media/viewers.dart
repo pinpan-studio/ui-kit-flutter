@@ -72,7 +72,7 @@ class _InvoicePage extends StatelessWidget {
                   const SizedBox(height: 10),
                   Container(
                     color: const Color(0xFFF1F5F9),
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(Space.s1),
                     child: const Row(
                       children: [
                         Expanded(
@@ -84,7 +84,7 @@ class _InvoicePage extends StatelessWidget {
                   ),
                   for (final (l, q, p) in lines)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2.5),
+                      padding: const EdgeInsets.symmetric(horizontal: Space.s1, vertical: 2.5),
                       child: Row(
                         children: [
                           Expanded(child: Text(l)),
@@ -100,7 +100,7 @@ class _InvoicePage extends StatelessWidget {
                 ] else ...[
                   for (var i = 0; i < 14; i++)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
+                      padding: const EdgeInsets.only(bottom: Space.s1),
                       child: Container(height: 4, width: 60.0 + (i * 37 % 140), color: const Color(0xFFE5E7EB)),
                     ),
                 ],
@@ -160,7 +160,7 @@ class _PdfViewerState extends State<PdfViewer> {
         children: [
           Container(
             color: c.card,
-            padding: const EdgeInsets.symmetric(horizontal: 6),
+            padding: const EdgeInsets.symmetric(horizontal: Space.s2),
             child: Row(
               children: [
                 const SizedBox(width: 6),
@@ -194,7 +194,7 @@ class _PdfViewerState extends State<PdfViewer> {
                 maxScale: 4,
                 child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(Space.s4),
                     child: DecoratedBox(
                       decoration: const BoxDecoration(boxShadow: [BoxShadow(color: Colors.black45, blurRadius: 10)]),
                       child: _InvoicePage(i + 1, widget.pages),
@@ -222,13 +222,13 @@ class _PdfViewerState extends State<PdfViewer> {
                           GestureDetector(
                             onTap: () => _pc.animateToPage(i, duration: const Duration(milliseconds: 300), curve: Curves.easeOut),
                             child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
+                              margin: const EdgeInsets.symmetric(horizontal: Space.s1),
                               width: 22,
                               height: 30,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(color: i == _page ? c.primary : c.border, width: i == _page ? 2 : 1),
-                                borderRadius: BorderRadius.circular(3),
+                                borderRadius: BorderRadius.circular(Radii.xs),
                               ),
                               alignment: Alignment.center,
                               child: Text('${i + 1}', style: const TextStyle(fontSize: 10, color: Colors.black87)),
@@ -344,7 +344,7 @@ class _FileViewerPageState extends State<_FileViewerPage> {
         itemCount: widget.files.length,
         onPageChanged: (i) => setState(() => _i = i),
         itemBuilder: (_, i) => Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(Space.s4),
           child: Center(child: FilePreview(file: widget.files[i])),
         ),
       ),
@@ -406,7 +406,7 @@ class FilePreview extends StatelessWidget {
       case 'text':
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(Space.s4),
           decoration: BoxDecoration(color: c.hover, borderRadius: Radii.rm),
           child: SelectableText(
             file.kind == 'code'
@@ -491,7 +491,7 @@ class _KitCarouselState extends State<KitCarousel> {
                 final s = widget.slides[i];
                 return AnimatedPadding(
                   duration: const Duration(milliseconds: 250),
-                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: i == _i ? 0 : 10),
+                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: i == _i ? 0 : Space.s3),
                   child: ClipRRect(
                     borderRadius: Radii.rl,
                     child: Stack(
@@ -533,7 +533,7 @@ class _KitCarouselState extends State<KitCarousel> {
             for (var i = 0; i < widget.slides.length; i++)
               AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
-                margin: const EdgeInsets.symmetric(horizontal: 3),
+                margin: const EdgeInsets.symmetric(horizontal: Space.s1),
                 width: i == _i ? 22 : 8,
                 height: 8,
                 decoration: BoxDecoration(color: i == _i ? c.primary : c.border, borderRadius: Radii.pill),
@@ -687,7 +687,7 @@ class MasonryGrid extends StatelessWidget {
       heights[col] += h;
       cols[col].add(
         Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.only(bottom: Space.s2),
           child: ClipRRect(
             borderRadius: Radii.rm,
             child: SizedBox(
@@ -700,7 +700,7 @@ class MasonryGrid extends StatelessWidget {
                     left: 8,
                     bottom: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s1),
                       decoration: BoxDecoration(color: c.card.withValues(alpha: 0.9), borderRadius: Radii.pill),
                       child: Text(
                         'Site ${i + 1}',
@@ -779,7 +779,7 @@ class _ImageCropperState extends State<ImageCropper> {
             child: Stack(
               children: [
                 ClipRect(
-                  child: InteractiveViewer(transformationController: _tc, minScale: 1, maxScale: 4, constrained: false, boundaryMargin: const EdgeInsets.all(40), child: img),
+                  child: InteractiveViewer(transformationController: _tc, minScale: 1, maxScale: 4, constrained: false, boundaryMargin: const EdgeInsets.all(Space.s10), child: img),
                 ),
                 IgnorePointer(
                   child: CustomPaint(
@@ -837,9 +837,9 @@ class _ImageCropperState extends State<ImageCropper> {
             const SizedBox(width: 10),
             for (final s in const [64.0, 40.0, 28.0])
               Padding(
-                padding: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.only(right: Space.s2),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(_round ? s : 8),
+                  borderRadius: BorderRadius.circular(_round ? s : Radii.sm),
                   child: SizedBox(
                     width: s,
                     height: s,
@@ -881,7 +881,7 @@ class _MaskPainter extends CustomPainter {
   void paint(Canvas canvas, Size s) {
     final inner = Rect.fromCircle(center: s.center(Offset.zero), radius: s.shortestSide / 2 - 14);
     final hole = Path()..addRect(Offset.zero & s);
-    final shape = round ? (Path()..addOval(inner)) : (Path()..addRRect(RRect.fromRectAndRadius(inner, const Radius.circular(12))));
+    final shape = round ? (Path()..addOval(inner)) : (Path()..addRRect(RRect.fromRectAndRadius(inner, const Radius.circular(Radii.md))));
     canvas.drawPath(Path.combine(PathOperation.difference, hole, shape), Paint()..color = color);
     canvas.drawPath(
       shape,

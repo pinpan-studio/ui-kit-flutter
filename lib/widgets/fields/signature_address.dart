@@ -83,7 +83,7 @@ class SignaturePadState extends State<SignaturePad> {
           GestureDetector(
             onTap: () => setState(() => _color = col),
             child: Container(
-              margin: const EdgeInsets.only(right: 6),
+              margin: const EdgeInsets.only(right: Space.s2),
               width: 24,
               height: 24,
               decoration: BoxDecoration(

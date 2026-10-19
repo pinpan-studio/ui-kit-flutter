@@ -121,7 +121,7 @@ class KitMapState extends State<KitMap> {
       _map.move(widget.center, widget.zoom);
       return;
     }
-    _map.fitCamera(CameraFit.bounds(bounds: LatLngBounds.fromPoints(pts), padding: const EdgeInsets.all(48)));
+    _map.fitCamera(CameraFit.bounds(bounds: LatLngBounds.fromPoints(pts), padding: const EdgeInsets.all(Space.s12)));
   }
 
   void flyTo(LatLng p, [double zoom = 15]) => _map.move(p, zoom);
@@ -365,7 +365,7 @@ class KitMapState extends State<KitMap> {
                 elevation: 3,
                 borderRadius: Radii.rm,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+                  padding: const EdgeInsets.fromLTRB(Space.s3, Space.s2, Space.s2, Space.s2),
                   child: Row(children: [
                     Icon(Icons.touch_app, size: 18, color: c.primary),
                     const SizedBox(width: 8),
@@ -377,7 +377,7 @@ class KitMapState extends State<KitMap> {
                     ),
                     if (_tool != DrawTool.marker) ...[
                       IconButton(visualDensity: VisualDensity.compact, tooltip: 'Annuler le dernier', onPressed: _draft.isEmpty ? null : () => setState(_draft.removeLast), icon: const Icon(Icons.undo, size: 18)),
-                      FilledButton(style: FilledButton.styleFrom(minimumSize: const Size(0, 32), padding: const EdgeInsets.symmetric(horizontal: 12)), onPressed: _finishDraft, child: const Text('Terminer')),
+                      FilledButton(style: FilledButton.styleFrom(minimumSize: const Size(0, 32), padding: const EdgeInsets.symmetric(horizontal: Space.s3)), onPressed: _finishDraft, child: const Text('Terminer')),
                     ] else
                       TextButton(onPressed: () => setState(() => _tool = DrawTool.none), child: const Text('OK')),
                   ]),
@@ -389,12 +389,12 @@ class KitMapState extends State<KitMap> {
               left: 10,
               bottom: 24,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s2),
                 decoration: BoxDecoration(color: c.card.withValues(alpha: 0.94), borderRadius: Radii.rm, border: Border.all(color: c.border)),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                   for (final (l, t) in widget.legend)
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      padding: const EdgeInsets.symmetric(vertical: Space.s0_5),
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         Container(width: 10, height: 10, decoration: BoxDecoration(color: t.color(c), shape: BoxShape.circle)),
                         const SizedBox(width: 6),
@@ -541,7 +541,7 @@ class _MarkerPopup extends StatelessWidget {
       elevation: 4,
       borderRadius: Radii.rm,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+        padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s1, Space.s3),
         child: Row(children: [
           Container(
             width: 36,

@@ -254,7 +254,7 @@ class _FeedbackGalleryState extends State<FeedbackGallery> {
                   builder: (ctx) => Dialog.fullscreen(
                     child: Scaffold(
                       appBar: AppBar(leading: IconButton(onPressed: () => Navigator.pop(ctx), icon: const Icon(Icons.close)), title: const Text('Conditions générales'), actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Accepter'))]),
-                      body: ListView(padding: const EdgeInsets.all(20), children: [
+                      body: ListView(padding: const EdgeInsets.all(Space.s5), children: [
                         for (var i = 1; i <= 8; i++) ...[
                           Text('Article $i', style: const TextStyle(fontFamily: Fonts.heading, fontWeight: FontWeight.w700, fontSize: 16)),
                           const SizedBox(height: 6),
@@ -280,7 +280,7 @@ class _FeedbackGalleryState extends State<FeedbackGallery> {
                 child: SizedBox(
                   width: 300,
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(Space.s5),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Container(width: 52, height: 52, decoration: BoxDecoration(shape: BoxShape.circle, color: c.primaryLight), child: Icon(Icons.mark_email_read, color: c.primary)),
                       const SizedBox(height: 12),
@@ -385,7 +385,7 @@ class _FeedbackGalleryState extends State<FeedbackGallery> {
                     initialChildSize: 0.45,
                     maxChildSize: 0.92,
                     minChildSize: 0.3,
-                    builder: (ctx, ctrl) => ListView(controller: ctrl, padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), children: [
+                    builder: (ctx, ctrl) => ListView(controller: ctrl, padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4), children: [
                       Text('Tâches du jour', style: TextStyle(fontFamily: Fonts.heading, fontSize: 18, fontWeight: FontWeight.w600, color: c.textPrimary)),
                       const SizedBox(height: 4),
                       Text('Glissez vers le haut pour agrandir.', style: TextStyle(fontSize: 12, color: c.textMuted)),
@@ -463,7 +463,7 @@ class _FeedbackGalleryState extends State<FeedbackGallery> {
                   if (mounted) showKitSnack(context, 'Liste actualisée', kind: SnackKind.success);
                 },
                 child: ListView(physics: const AlwaysScrollableScrollPhysics(), children: [
-                  Padding(padding: const EdgeInsets.all(12), child: Text('↓ Tirez la liste vers le bas', textAlign: TextAlign.center, style: TextStyle(color: c.textMuted, fontSize: 12))),
+                  Padding(padding: const EdgeInsets.all(Space.s3), child: Text('↓ Tirez la liste vers le bas', textAlign: TextAlign.center, style: TextStyle(color: c.textMuted, fontSize: 12))),
                   for (final x in kDemoClients.take(5)) ListTile(dense: true, title: Text(x.raisonSociale), subtitle: Text(x.ville)),
                 ]),
               ),
@@ -561,7 +561,7 @@ class _FeedbackGalleryState extends State<FeedbackGallery> {
                   ? Container(
                       width: double.infinity,
                       color: c.textPrimary,
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                      padding: const EdgeInsets.symmetric(vertical: Space.s2, horizontal: Space.s4),
                       child: Row(children: [
                         Icon(Icons.cloud_off, size: 18, color: c.bg),
                         const SizedBox(width: 8),

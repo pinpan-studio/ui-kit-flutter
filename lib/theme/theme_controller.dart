@@ -8,6 +8,7 @@ import 'custom_theme.dart';
 import 'kit_palette.dart';
 import 'theme_palettes.dart';
 import 'theme_studio.dart';
+import 'package:ui_kit_flutter/theme/tokens.dart';
 
 /// Thème purement visuel — équivalent de `ThemeService` : mode (clair / sombre / système)
 /// et thème de couleur M3 : palette prédéfinie ([kitPalettes]) ou thème personnalisé du studio.
@@ -122,7 +123,7 @@ Future<void> showThemeSheet(BuildContext context) {
     isScrollControlled: true,
     builder: (context) => SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+        padding: const EdgeInsets.fromLTRB(Space.s6, 0, Space.s6, Space.s6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

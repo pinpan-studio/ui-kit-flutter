@@ -76,12 +76,12 @@ class _AppShellDemoState extends State<AppShellDemo> {
               context,
               title: 'Notifications',
               icon: Icons.notifications,
-              child: SingleChildScrollView(padding: const EdgeInsets.all(16), child: NotificationCenter(onUnreadChanged: (n) => setState(() => _unread = n))),
+              child: SingleChildScrollView(padding: const EdgeInsets.all(Space.s4), child: NotificationCenter(onUnreadChanged: (n) => setState(() => _unread = n))),
             ),
             icon: Badge(isLabelVisible: _unread > 0, label: Text('$_unread'), child: const Icon(Icons.notifications_outlined)),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 10, left: 4),
+            padding: const EdgeInsets.only(right: Space.s3, left: Space.s1),
             child: GestureDetector(onTap: _openProfile, child: const KitAvatar(name: 'Jean Kouassi', size: 32, online: true)),
           ),
         ],
@@ -112,7 +112,7 @@ class _DashboardBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () => Future<void>.delayed(const Duration(milliseconds: 800)),
-      child: ListView(padding: const EdgeInsets.all(16), children: [
+      child: ListView(padding: const EdgeInsets.all(Space.s4), children: [
         Text('Bonjour Jean 👋', style: context.t.h3),
         Text(Fmt.weekday(DateTime.now()), style: context.t.bodySm),
         const SizedBox(height: 14),
@@ -142,13 +142,13 @@ class _ClientsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return ListView.separated(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(Space.s3),
       itemCount: kDemoClients.length,
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, i) {
         final x = kDemoClients[i];
         return KitCard(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(Space.s3),
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => DetailPageDemo(client: x))),
           child: Row(children: [
             KitAvatar(name: x.raisonSociale, size: 40),
@@ -173,7 +173,7 @@ class _InterventionsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.kc;
-    return ListView(padding: const EdgeInsets.all(12), children: [
+    return ListView(padding: const EdgeInsets.all(Space.s3), children: [
       for (final (i, (t, s, tone)) in const [
         ('Pose balise — Transports Yao', 'Planifiée · 08:30', KitTone.info),
         ('Balise hors ligne — SOTRA bus 112', 'En retard · hier', KitTone.error),
@@ -181,9 +181,9 @@ class _InterventionsBody extends StatelessWidget {
         ('Installation flotte Lôh Logistique', 'Sur site · 11:00', KitTone.warning),
       ].indexed)
         Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.only(bottom: Space.s2),
           child: KitCard(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(Space.s3),
             child: Row(children: [
               Container(width: 4, height: 40, decoration: BoxDecoration(color: tone.color(c), borderRadius: Radii.pill)),
               const SizedBox(width: 12),
@@ -216,7 +216,7 @@ class _AccountPanel extends StatelessWidget {
           trailing: Icon(Icons.chevron_right, color: c.textMuted),
           onTap: onTap,
         );
-    return ListView(padding: const EdgeInsets.all(16), children: [
+    return ListView(padding: const EdgeInsets.all(Space.s4), children: [
       Center(
         child: Column(children: [
           const KitAvatar(name: 'Jean Kouassi', size: 72, online: true),
@@ -307,7 +307,7 @@ class DetailPageDemo extends StatelessWidget {
                 collapseMode: CollapseMode.pin,
                 background: SafeArea(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 64, 16, 52),
+                    padding: const EdgeInsets.fromLTRB(Space.s4, Space.s16, Space.s4, 52),
                     child: Row(children: [
                       KitAvatar(name: x.raisonSociale, size: 60),
                       const SizedBox(width: 14),
@@ -329,7 +329,7 @@ class DetailPageDemo extends StatelessWidget {
             ),
           ],
           body: TabBarView(children: [
-            ListView(padding: const EdgeInsets.all(16), children: [
+            ListView(padding: const EdgeInsets.all(Space.s4), children: [
               ResponsiveGrid(minItemWidth: 160, spacing: 10, children: [
                 KpiCard(icon: Icons.local_shipping, value: '${x.vehicules}', label: 'Véhicules', tone: KitTone.primary),
                 KpiCard(icon: Icons.payments, value: Fmt.compact(x.caMensuel), unit: 'FCFA', label: 'CA mensuel', tone: KitTone.success),
@@ -354,7 +354,7 @@ class DetailPageDemo extends StatelessWidget {
                 Expanded(child: KitButton(label: 'Intervention', icon: Icons.build, expand: true, onPressed: () => demoAction(context, 'Nouvelle intervention'))),
               ]),
             ]),
-            ListView(padding: const EdgeInsets.all(12), children: [
+            ListView(padding: const EdgeInsets.all(Space.s3), children: [
               for (var i = 0; i < x.vehicules.clamp(1, 12); i++)
                 ListTile(
                   leading: Icon(i.isEven ? Icons.local_shipping : Icons.directions_car, color: c.primary),
@@ -363,7 +363,7 @@ class DetailPageDemo extends StatelessWidget {
                   trailing: StatusBadge(i % 5 == 3 ? 'Hors ligne' : 'En ligne', tone: i % 5 == 3 ? KitTone.error : KitTone.success),
                 ),
             ]),
-            ListView(padding: const EdgeInsets.all(12), children: [
+            ListView(padding: const EdgeInsets.all(Space.s3), children: [
               for (var i = 0; i < 6; i++)
                 ListTile(
                   leading: const Icon(Icons.receipt_long),
@@ -417,7 +417,7 @@ class _AuthDemoState extends State<AuthDemo> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(Space.s6),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 420),
                 child: AnimatedSwitcher(
@@ -437,7 +437,7 @@ class _AuthDemoState extends State<AuthDemo> {
           Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(20), boxShadow: Elevations.e3(Theme.of(context).brightness)),
+            decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(Radii.xl), boxShadow: Elevations.e3(Theme.of(context).brightness)),
             child: Icon(Icons.gps_fixed, color: c.onPrimary, size: 34),
           ),
           const SizedBox(height: 12),
@@ -508,7 +508,7 @@ class PublicPageDemo extends StatelessWidget {
         title: Row(children: [Icon(Icons.gps_fixed, color: c.primary), const SizedBox(width: 8), Text('Lookas', style: KitText.brand.copyWith(color: c.textPrimary))]),
         actions: [IconButton(onPressed: () => demoAction(context, 'Téléchargement PDF'), icon: const Icon(Icons.download_outlined))],
       ),
-      body: ListView(padding: const EdgeInsets.all(16), children: [
+      body: ListView(padding: const EdgeInsets.all(Space.s4), children: [
         const KitCard(child: Row(children: [Icon(Icons.verified_user_outlined), SizedBox(width: 10), Expanded(child: Text('Lien sécurisé · valable jusqu’au 30/10/2026'))])),
         const SizedBox(height: 12),
         Text('PROFORMA', style: context.t.overline),

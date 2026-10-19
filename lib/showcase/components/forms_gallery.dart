@@ -9,6 +9,7 @@ import '../../widgets/dialogs.dart';
 import '../../widgets/inputs.dart';
 import '../../widgets/selects.dart';
 import '../doc/doc.dart';
+import 'package:ui_kit_flutter/theme/tokens.dart';
 
 final _villes = [for (final v in kVilles) SelectOption(v, v, icon: Icons.location_on_outlined)];
 final _secteurs = [for (final s in kSecteurs) SelectOption(s, s)];
@@ -131,7 +132,7 @@ class _FormsGalleryState extends State<FormsGallery> {
                 initialValue: 'transports.yao',
                 decoration: InputDecoration(
                   suffixIcon: Icon(Icons.check_circle, color: c.success),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: c.success)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(Radii.md), borderSide: BorderSide(color: c.success)),
                 ),
               ),
             ),
@@ -152,7 +153,7 @@ class _FormsGalleryState extends State<FormsGallery> {
             child: KitTextField(
               label: 'Vérification du compte',
               initialValue: 'CI-4521-AB',
-              suffix: Padding(padding: const EdgeInsets.all(14), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: c.primary))),
+              suffix: Padding(padding: const EdgeInsets.all(Space.s4), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: c.primary))),
             ),
           ),
           Demo(
@@ -274,7 +275,7 @@ class _FormsGalleryState extends State<FormsGallery> {
               label: 'Statut',
               child: DropdownButtonFormField<ClientStatut>(
                 initialValue: ClientStatut.actif,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(Radii.md),
                 items: [for (final s in ClientStatut.values) DropdownMenuItem(value: s, child: Text(s.label))],
                 onChanged: (_) {},
               ),
@@ -837,7 +838,7 @@ class _ChoiceCard extends StatelessWidget {
       onTap: onTap,
       color: selected ? c.primaryLight : null,
       borderColor: selected ? c.primary : null,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
       child: Row(children: [
         Icon(icon, color: selected ? c.primary : c.textSecondary),
         const SizedBox(width: 12),
