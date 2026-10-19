@@ -89,7 +89,10 @@ String exMoney(int v) => '${v.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+
 
 // ─── Tableau de bord ────────────────────────────────────────────────────────
 class DashboardExample extends StatefulWidget {
-  const DashboardExample({super.key});
+  const DashboardExample({super.key, this.openChat = false});
+
+  /// Ouvre la messagerie en panneau latéral au démarrage (`?chat=c-aya`).
+  final bool openChat;
   @override
   State<DashboardExample> createState() => _DashboardState();
 }
@@ -97,10 +100,20 @@ class DashboardExample extends StatefulWidget {
 class _DashboardState extends State<DashboardExample> {
   String _range = '24 h';
   int _tab = 0;
+  final _key = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.openChat) WidgetsBinding.instance.addPostFrameCallback((_) => _key.currentState?.openEndDrawer());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ExPage(title: 'Tableau de bord', maxWidth: 1280, children: [
+    return ExPage(scaffoldKey: _key, title: 'Tableau de bord', maxWidth: 1280, endDrawer: const Drawer(width: 380, child: SafeArea(child: ChatPanel())), actions: [
+      Builder(builder: (ctx) => IconButton(tooltip: 'Messagerie', icon: const Badge(label: Text('2'), child: Icon(Icons.chat_bubble_outline)), onPressed: () => Scaffold.of(ctx).openEndDrawer())),
+      const SizedBox(width: Space.s2),
+    ], children: [
       ExHeader('Bonjour, Jean', subtitle: 'Voici l’activité de SC Storage sur la période.', actions: [
         SegmentedButton<String>(segments: [for (final r in ['1 h', '24 h', '7 j']) ButtonSegment(value: r, label: Text(r))], selected: {_range}, onSelectionChanged: (s) => setState(() => _range = s.first), showSelectedIcon: false),
         KitButton(label: 'Exporter', icon: Icons.download, variant: KitButtonVariant.outline, onPressed: () => exDemo(context, 'Export')),
@@ -564,7 +577,10 @@ const _files = [
 ];
 
 class FilesExample extends StatefulWidget {
-  const FilesExample({super.key});
+  const FilesExample({super.key, this.openPicker = false});
+
+  /// Ouvre le sélecteur de fichiers en modale au démarrage (`?picker=1`).
+  final bool openPicker;
   @override
   State<FilesExample> createState() => _FilesState();
 }
@@ -573,9 +589,16 @@ class _FilesState extends State<FilesExample> {
   bool _grid = true;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.openPicker) WidgetsBinding.instance.addPostFrameCallback((_) { if (mounted) showFilePicker(context); });
+  }
+
+  @override
   Widget build(BuildContext context) => ExPage(title: 'Fichiers', maxWidth: 1280, children: [
         ExHeader('Mes fichiers', subtitle: '4,6 Go utilisés sur 10 Go', actions: [
           SegmentedButton<bool>(showSelectedIcon: false, segments: const [ButtonSegment(value: true, icon: Icon(Icons.grid_view), label: Text('Grille')), ButtonSegment(value: false, icon: Icon(Icons.list), label: Text('Liste'))], selected: {_grid}, onSelectionChanged: (s) => setState(() => _grid = s.first)),
+          KitButton(label: 'Choisir des fichiers', icon: Icons.file_open_outlined, variant: KitButtonVariant.outline, onPressed: () => showFilePicker(context)),
           KitButton(label: 'Importer', icon: Icons.upload, onPressed: () => exDemo(context, 'Import')),
         ]),
         const KitProgressBar(value: .46),
@@ -856,5 +879,85 @@ class _SettingsState extends State<SettingsExample> {
         }),
         const SizedBox(height: Space.s4),
         Align(alignment: Alignment.centerRight, child: KitButton(label: 'Enregistrer', icon: Icons.save_outlined, onPressed: () => exDemo(context, 'Paramètres enregistrés'))),
+      ]);
+}
+
+/// Sélecteur de fichiers en modale, sélection multiple (`app-file-picker`).
+Future<void> showFilePicker(BuildContext context) => showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        final sel = <int>{};
+        return StatefulBuilder(builder: (ctx, set) => AlertDialog(
+              title: const Text('Sélectionner des fichiers'),
+              content: SizedBox(
+                width: 440,
+                child: ListView(shrinkWrap: true, children: [
+                  for (final (i, f) in _files.indexed)
+                    if (f.$2 != null)
+                      ExTile(
+                        selected: sel.contains(i),
+                        leading: Icon(f.$3, color: ctx.kc.primary),
+                        title: f.$1,
+                        subtitle: f.$4,
+                        trailing: Checkbox(value: sel.contains(i), onChanged: (_) => set(() => sel.contains(i) ? sel.remove(i) : sel.add(i))),
+                        onTap: () => set(() => sel.contains(i) ? sel.remove(i) : sel.add(i)),
+                      ),
+                ]),
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Annuler')),
+                FilledButton(onPressed: sel.isEmpty ? null : () { Navigator.of(ctx).pop(); exDemo(context, '${sel.length} fichier(s) sélectionné(s)'); }, child: Text('Joindre (${sel.length})')),
+              ],
+            ));
+      },
+    );
+
+/// Messagerie compacte pour panneau latéral (`app-chat-panel`).
+class ChatPanel extends StatefulWidget {
+  const ChatPanel({super.key});
+  @override
+  State<ChatPanel> createState() => _ChatPanelState();
+}
+
+class _ChatPanelState extends State<ChatPanel> {
+  final _ctrl = TextEditingController();
+  final _msgs = <(bool, String)>[(false, 'Bonjour Jean, as-tu reçu le devis Agro-CI ?'), (true, 'Oui, je le valide cet après-midi.'), (false, 'Parfait, merci !')];
+
+  @override
+  void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) => Column(children: [
+        Padding(
+          padding: const EdgeInsets.all(Space.s3),
+          child: Row(children: [
+            const KitAvatar(name: 'Aya Koné', online: true),
+            const SizedBox(width: Space.s3),
+            const Expanded(child: Text('Aya Koné', style: TextStyle(fontWeight: FontWeight.w600))),
+            IconButton(tooltip: 'Fermer', icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).maybePop()),
+          ]),
+        ),
+        const Divider(height: 1),
+        Expanded(child: ListView(padding: const EdgeInsets.all(Space.s3), children: [
+          for (final m in _msgs)
+            Align(
+              alignment: m.$1 ? Alignment.centerRight : Alignment.centerLeft,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: Space.s2),
+                padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s2),
+                constraints: const BoxConstraints(maxWidth: 280),
+                decoration: BoxDecoration(color: m.$1 ? context.kc.primary : context.kc.hover, borderRadius: BorderRadius.circular(Radii.lg)),
+                child: Text(m.$2, style: TextStyle(color: m.$1 ? context.kc.onPrimary : context.kc.textPrimary)),
+              ),
+            ),
+        ])),
+        Padding(
+          padding: const EdgeInsets.all(Space.s2),
+          child: Row(children: [
+            Expanded(child: TextField(controller: _ctrl, decoration: const InputDecoration(hintText: 'Répondre…'))),
+            const SizedBox(width: Space.s2),
+            IconButton.filled(tooltip: 'Envoyer', icon: const Icon(Icons.send), onPressed: () { if (_ctrl.text.trim().isEmpty) return; setState(() { _msgs.add((true, _ctrl.text.trim())); _ctrl.clear(); }); }),
+          ]),
+        ),
       ]);
 }

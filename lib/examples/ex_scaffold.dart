@@ -7,17 +7,21 @@ import '../widgets/kit_buttons.dart';
 
 /// Page d'exemple autonome : barre d'app, contenu centré à largeur max, défilement.
 class ExPage extends StatelessWidget {
-  const ExPage({super.key, required this.title, required this.children, this.maxWidth = 720, this.bottom, this.actions = const []});
+  const ExPage({super.key, required this.title, required this.children, this.maxWidth = 720, this.bottom, this.actions = const [], this.endDrawer, this.scaffoldKey});
 
   final String title;
   final List<Widget> children;
   final double maxWidth;
   final Widget? bottom;
   final List<Widget> actions;
+  final Widget? endDrawer;
+  final Key? scaffoldKey;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
+      endDrawer: endDrawer,
       appBar: AppBar(title: Text(title), actions: actions),
       bottomNavigationBar: bottom,
       body: LayoutBuilder(builder: (context, box) {

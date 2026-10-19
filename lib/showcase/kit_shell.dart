@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../examples/examples_index.dart';
+import '../examples/galleries.dart';
 import '../harnais/harnais_screen.dart';
 import '../theme/kit_colors.dart';
 import '../theme/tokens.dart';
@@ -155,6 +156,14 @@ class _KitDrawerState extends State<KitDrawer> {
                 _tile(context, Icons.web_outlined, 'Pages d’exemple', () {
                   final nav = Navigator.of(context)..pop();
                   nav.push(MaterialPageRoute<void>(builder: (_) => const ExamplesIndex()));
+                }),
+                _tile(context, Icons.collections_bookmark_outlined, 'Galerie des pages', () {
+                  final nav = Navigator.of(context)..pop();
+                  nav.push(MaterialPageRoute<void>(builder: (_) => const PagesGallery()));
+                }),
+                _tile(context, Icons.devices_outlined, 'Showcases', () {
+                  final nav = Navigator.of(context)..pop();
+                  nav.push(MaterialPageRoute<void>(builder: (_) => const ShowcasesGallery()));
                 }),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(Space.s3, Space.s4, Space.s3, Space.s2),
