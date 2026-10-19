@@ -5,6 +5,23 @@ import '../theme/kit_colors.dart';
 import '../theme/tokens.dart';
 import '../widgets/kit_buttons.dart';
 
+/// Indique qu'une page est rendue dans le shell applicatif ([ExAppShell]) : la page masque alors
+/// sa propre barre d'app (le shell fournit barre supérieure, fil d'Ariane et navigation).
+class ExShellScope extends InheritedWidget {
+  const ExShellScope({super.key, required super.child});
+  static bool of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<ExShellScope>() != null;
+  @override
+  bool updateShouldNotify(ExShellScope oldWidget) => false;
+}
+
+/// Barre d'app d'une page à Scaffold propre : supprimée dans le shell, sauf si elle porte des
+/// actions utiles (elle devient alors une barre secondaire compacte, sans retour automatique).
+PreferredSizeWidget? exAppBar(BuildContext context, String title, {List<Widget> actions = const [], Widget? leading}) {
+  if (!ExShellScope.of(context)) return AppBar(title: Text(title), actions: actions, leading: leading);
+  if (actions.isEmpty && leading == null) return null;
+  return AppBar(primary: false, automaticallyImplyLeading: false, toolbarHeight: 48, leading: leading, title: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)), actions: actions);
+}
+
 /// Page d'exemple autonome : barre d'app, contenu centré à largeur max, défilement.
 class ExPage extends StatelessWidget {
   const ExPage({super.key, required this.title, required this.children, this.maxWidth = 720, this.bottom, this.actions = const [], this.endDrawer, this.scaffoldKey});
@@ -22,16 +39,20 @@ class ExPage extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       endDrawer: endDrawer,
-      appBar: AppBar(title: Text(title), actions: actions),
+      appBar: ExShellScope.of(context) ? null : AppBar(title: Text(title), actions: actions),
       bottomNavigationBar: bottom,
       body: LayoutBuilder(builder: (context, box) {
         final pad = box.maxWidth < Breakpoints.tablet ? Space.s4 : Space.s6;
+        final shell = ExShellScope.of(context);
         return SingleChildScrollView(
-          padding: EdgeInsets.all(pad),
+          padding: shell ? EdgeInsets.fromLTRB(pad, Space.s3, pad, pad) : EdgeInsets.all(pad),
           child: Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                if (shell && actions.isNotEmpty) Align(alignment: Alignment.centerRight, child: Row(mainAxisSize: MainAxisSize.min, children: actions)),
+                ...children,
+              ]),
             ),
           ),
         );

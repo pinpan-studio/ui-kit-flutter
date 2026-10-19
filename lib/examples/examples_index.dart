@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/kit_colors.dart';
 import '../theme/tokens.dart';
 import '../widgets/common.dart';
-import 'app_examples.dart';
+import 'app_shell.dart';
 import 'auth_examples.dart';
 import 'forms_examples.dart';
 
@@ -12,22 +12,22 @@ typedef ExEntry = (String, String, String, IconData, WidgetBuilder);
 
 final List<(String, List<ExEntry>)> kExampleGroups = [
   ('Applications', [
-    ('app/dashboard', 'Tableau de bord', 'KPI, graphique et activité', Icons.space_dashboard_outlined, (_) => const DashboardExample()),
-    ('app/clients', 'Clients', 'Liste filtrable de clients', Icons.people_outline, (_) => const ClientsExample()),
-    ('app/clients/:id', 'Fiche client', 'Détail avec onglets', Icons.person_outline, (_) => ClientDetailExample()),
-    ('app/inbox', 'Messagerie', 'Liste et lecture côte à côte', Icons.inbox_outlined, (_) => const InboxExample()),
-    ('app/catalog', 'Catalogue', 'Produits, catégories, panier', Icons.storefront_outlined, (_) => const CatalogExample()),
-    ('app/board', 'Tableau kanban', 'Colonnes de tâches', Icons.view_kanban_outlined, (_) => const BoardExample()),
-    ('app/modules', 'Modules', 'Activation des modules', Icons.extension_outlined, (_) => const ModulesExample()),
-    ('app/blog', 'Blog', 'Liste d’articles', Icons.newspaper_outlined, (_) => const BlogExample()),
-    ('app/blog/:slug', 'Article', 'Page de lecture', Icons.article_outlined, (_) => const ArticleExample()),
-    ('app/docs', 'Documentation', 'Sommaire et contenu', Icons.menu_book_outlined, (_) => const DocsExample()),
-    ('app/files', 'Fichiers', 'Grille ou liste', Icons.folder_outlined, (_) => const FilesExample()),
-    ('app/files/columns', 'Fichiers · Colonnes', 'Navigation en colonnes', Icons.view_column_outlined, (_) => const FilesColumnsExample()),
-    ('app/monitoring', 'Supervision', 'État des services', Icons.monitor_heart_outlined, (_) => const MonitoringExample()),
-    ('app/chat', 'Messages', 'Conversations et fil', Icons.chat_outlined, (_) => const ChatExample()),
-    ('app/feed', 'Fil d’actualité', 'Publications et réactions', Icons.dynamic_feed_outlined, (_) => const FeedExample()),
-    ('app/settings', 'Paramètres', 'Profil, notifications, sécurité', Icons.settings_outlined, (_) => const SettingsExample()),
+    ('app/dashboard', 'Tableau de bord', 'KPI, graphique et activité', Icons.space_dashboard_outlined, (_) => const ExAppShell(initial: 'dashboard')),
+    ('app/clients', 'Clients', 'Liste filtrable de clients', Icons.people_outline, (_) => const ExAppShell(initial: 'clients')),
+    ('app/clients/:id', 'Fiche client', 'Détail avec onglets', Icons.person_outline, (_) => const ExAppShell(initial: 'clients/:id')),
+    ('app/inbox', 'Messagerie', 'Liste et lecture côte à côte', Icons.inbox_outlined, (_) => const ExAppShell(initial: 'inbox')),
+    ('app/catalog', 'Catalogue', 'Produits, catégories, panier', Icons.storefront_outlined, (_) => const ExAppShell(initial: 'catalog')),
+    ('app/board', 'Tableau kanban', 'Colonnes de tâches', Icons.view_kanban_outlined, (_) => const ExAppShell(initial: 'board')),
+    ('app/modules', 'Modules', 'Activation des modules', Icons.extension_outlined, (_) => const ExAppShell(initial: 'modules')),
+    ('app/blog', 'Blog', 'Liste d’articles', Icons.newspaper_outlined, (_) => const ExAppShell(initial: 'blog')),
+    ('app/blog/:slug', 'Article', 'Page de lecture', Icons.article_outlined, (_) => const ExAppShell(initial: 'blog/:slug')),
+    ('app/docs', 'Documentation', 'Sommaire et contenu', Icons.menu_book_outlined, (_) => const ExAppShell(initial: 'docs')),
+    ('app/files', 'Fichiers', 'Grille ou liste', Icons.folder_outlined, (_) => const ExAppShell(initial: 'files')),
+    ('app/files/columns', 'Fichiers · Colonnes', 'Navigation en colonnes', Icons.view_column_outlined, (_) => const ExAppShell(initial: 'files/columns')),
+    ('app/monitoring', 'Supervision', 'État des services', Icons.monitor_heart_outlined, (_) => const ExAppShell(initial: 'monitoring')),
+    ('app/chat', 'Messages', 'Conversations et fil', Icons.chat_outlined, (_) => const ExAppShell(initial: 'chat')),
+    ('app/feed', 'Fil d’actualité', 'Publications et réactions', Icons.dynamic_feed_outlined, (_) => const ExAppShell(initial: 'feed')),
+    ('app/settings', 'Paramètres', 'Profil, notifications, sécurité', Icons.settings_outlined, (_) => const ExAppShell(initial: 'settings')),
   ]),
   ('Authentification', [
     for (final id in kAuthVariants.keys)

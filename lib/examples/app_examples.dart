@@ -141,6 +141,7 @@ class DashboardExample extends StatefulWidget {
 
 class _DashboardState extends State<DashboardExample> {
   int _period = 2, _tab = 0;
+  bool _banner = true;
   final _key = GlobalKey<ScaffoldState>();
 
   @override
@@ -158,8 +159,9 @@ class _DashboardState extends State<DashboardExample> {
     final watch = kExClients.where((x) => x.status == ClientStatus.suspendu || x.status == ClientStatus.inactif).take(5).toList();
     final counts = {for (final s in ClientStatus.values) s: kExClients.where((x) => x.status == s).length};
     return ExPage(scaffoldKey: _key, title: 'Tableau de bord', maxWidth: 1280, endDrawer: const Drawer(width: 380, child: SafeArea(child: ChatPanel())), actions: [
-      Builder(builder: (ctx) => IconButton(tooltip: 'Messagerie', icon: Badge(label: Text('${kChatConversations.first.unread}'), child: const Icon(Icons.chat_bubble_outline)), onPressed: () => Scaffold.of(ctx).openEndDrawer())),
-      const SizedBox(width: Space.s2),
+      // Dans le shell, la messagerie s'ouvre depuis la barre supérieure.
+      if (!ExShellScope.of(context)) Builder(builder: (ctx) => IconButton(tooltip: 'Messagerie', icon: Badge(label: Text('${kChatConversations.first.unread}'), child: const Icon(Icons.chat_bubble_outline)), onPressed: () => Scaffold.of(ctx).openEndDrawer())),
+      if (!ExShellScope.of(context)) const SizedBox(width: Space.s2),
     ], children: [
       Text('Vendredi 17 octobre 2026', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textMuted)),
       ExHeader('Tableau de bord', subtitle: 'Activité commerciale et encaissements de SC Storage.', actions: [
@@ -170,30 +172,43 @@ class _DashboardState extends State<DashboardExample> {
       _DashTabs(index: _tab, onChanged: (i) => setState(() => _tab = i)),
       const SizedBox(height: Space.s4),
       if (_tab != 0) _DashAnalytics(tab: _tab, period: p) else ...[
-      Container(
-        padding: const EdgeInsets.all(Space.s3),
-        decoration: BoxDecoration(color: c.warningLight, borderRadius: BorderRadius.circular(Radii.md)),
-        child: Wrap(spacing: Space.s3, runSpacing: Space.s2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-          Icon(Icons.warning_amber, color: c.warningText),
-          Text('3 factures en retard', style: TextStyle(fontWeight: FontWeight.w700, color: c.warningText)),
-          Text('7,3 M FCFA d’encours dépassent l’échéance de plus de 30 jours.', style: TextStyle(color: c.warningText)),
-          TextButton(onPressed: () {}, child: const Text('Voir les relances')),
-        ]),
-      ),
-      const SizedBox(height: Space.s4),
-      ResponsiveGrid(minItemWidth: 300, children: [
-        for (final (i, k) in kDashKpis.indexed)
-          KpiCard(
-            icon: k.$2,
-            value: i == 2 ? p.kpi[i].round().toString() : exCompact(p.kpi[i]),
-            unit: k.$3.isEmpty ? null : k.$3,
-            label: k.$1,
-            delta: '${_trend(p.trend[i])} ${p.compare}',
-            up: p.trend[i] >= 0,
-            goodWhenUp: k.$4,
-            tone: i == 3 ? KitTone.warning : i == 2 ? KitTone.info : KitTone.primary,
-          ),
-      ]),
+      if (_banner) ...[
+        Container(
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s1, Space.s1, Space.s1),
+          decoration: BoxDecoration(color: c.warningLight, borderRadius: BorderRadius.circular(Radii.md)),
+          child: Row(children: [
+            Icon(Icons.warning_amber, color: c.warningText),
+            const SizedBox(width: Space.s3),
+            Expanded(child: Wrap(spacing: Space.s3, runSpacing: Space.s1, crossAxisAlignment: WrapCrossAlignment.center, children: [
+              Text('3 factures en retard', style: TextStyle(fontWeight: FontWeight.w700, color: c.warningText)),
+              Text('7,3 M FCFA d’encours dépassent l’échéance de plus de 30 jours.', style: TextStyle(color: c.warningText)),
+              TextButton(style: TextButton.styleFrom(minimumSize: const Size(44, 44)), onPressed: () => exDemo(context, 'Relances'), child: const Text('Voir les relances')),
+            ])),
+            IconButton(tooltip: 'Fermer', icon: Icon(Icons.close, color: c.warningText), onPressed: () => setState(() => _banner = false)),
+          ]),
+        ),
+        const SizedBox(height: Space.s4),
+      ],
+      // Grille KPI : 4 colonnes, 2 sous 1024 px (≤ 1024 côté Angular), écart réduit sous 480 px.
+      LayoutBuilder(builder: (context, box) {
+        final vw = MediaQuery.sizeOf(context).width;
+        final cols = vw <= Breakpoints.xl ? 2 : 4;
+        final gap = vw <= Breakpoints.sm ? Space.s3 : Space.s4;
+        final w = (box.maxWidth - gap * (cols - 1)) / cols;
+        return Wrap(spacing: gap, runSpacing: gap, children: [
+          for (final (i, k) in kDashKpis.indexed)
+            SizedBox(width: w, child: _DashKpi(
+              icon: k.$2,
+              label: k.$1,
+              value: i == 2 ? p.kpi[i].round().toString() : exCompact(p.kpi[i]),
+              unit: k.$3,
+              trend: _trend(p.trend[i]),
+              compare: p.compare,
+              up: p.trend[i] >= 0,
+              goodWhenUp: k.$4,
+            )),
+        ]);
+      }),
       const SizedBox(height: Space.s4),
       LayoutBuilder(builder: (context, box) {
         final chart = KitCard(title: 'Facturé et encaissé', icon: Icons.show_chart, child: KitChart(kind: ChartKind.area, labels: p.labels, series: [ChartSeries('Facturé', p.a), ChartSeries('Encaissé', p.b)], height: 220, compactValues: true));
@@ -747,7 +762,7 @@ class _InboxState extends State<InboxExample> {
         final three = box.maxWidth >= Breakpoints.xl;
         final two = box.maxWidth >= Breakpoints.tablet;
         return Scaffold(
-          appBar: AppBar(title: const Text('Messagerie'), leading: three ? null : Builder(builder: (ctx) => IconButton(tooltip: 'Dossiers', icon: const Icon(Icons.menu), onPressed: () => Scaffold.of(ctx).openDrawer()))),
+          appBar: three ? exAppBar(context, 'Messagerie') : exAppBar(context, 'Messagerie', leading: Builder(builder: (ctx) => IconButton(tooltip: 'Dossiers', icon: const Icon(Icons.folder_open), onPressed: () => Scaffold.of(ctx).openDrawer()))),
           drawer: three ? null : Drawer(child: SafeArea(child: Builder(builder: (ctx) => _folders(after: () => Navigator.of(ctx).pop())))),
           body: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             if (three) ...[SizedBox(width: 230, child: _folders()), VerticalDivider(width: 1, color: c.border)],
@@ -823,7 +838,7 @@ class BoardExample extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return Scaffold(
-      appBar: AppBar(title: const Text('Projet Sotra')),
+      appBar: exAppBar(context, 'Projet Sotra'),
       body: LayoutBuilder(builder: (context, box) {
         final w = box.maxWidth < Breakpoints.tablet ? box.maxWidth * .85 : 300.0;
         return SingleChildScrollView(
@@ -1107,7 +1122,7 @@ class _DocsState extends State<DocsExample> {
       ]))),
     );
     return Scaffold(
-      appBar: AppBar(title: const Text('Documentation'), actions: [
+      appBar: exAppBar(context, 'Documentation', actions: [
         if (!exWide(context)) Builder(builder: (ctx) => IconButton(tooltip: 'Sommaire', icon: const Icon(Icons.menu_book), onPressed: () => Scaffold.of(ctx).openEndDrawer())),
       ]),
       endDrawer: exWide(context) ? null : Drawer(child: SafeArea(child: Builder(builder: (ctx) => _nav(after: () => Navigator.of(ctx).pop())))),
@@ -1228,7 +1243,7 @@ class _FilesColumnsState extends State<FilesColumnsExample> {
   Widget build(BuildContext context) {
     final f = _file;
     return Scaffold(
-      appBar: AppBar(title: const Text('Fichiers · colonnes')),
+      appBar: exAppBar(context, 'Fichiers · colonnes'),
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: SizedBox(
@@ -1380,7 +1395,7 @@ class _ChatState extends State<ChatExample> {
           onTap: () => exWide(context) ? setState(() => _conv = i) : exPush(context, conv.title, _thread(conv)),
         ),
     ]);
-    return Scaffold(appBar: AppBar(title: Text(exWide(context) ? 'Messages · ${convs[_conv].title}' : 'Messages')), body: ExMasterDetail(list: list, detail: _thread(convs[_conv])));
+    return Scaffold(appBar: exAppBar(context, exWide(context) ? 'Messages · ${convs[_conv].title}' : 'Messages'), body: ExMasterDetail(list: list, detail: _thread(convs[_conv])));
   }
 }
 
@@ -1839,5 +1854,43 @@ class _DashAnalytics extends StatelessWidget {
     return LayoutBuilder(builder: (context, box) => box.maxWidth < Breakpoints.xl
         ? ExGap(cards)
         : Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(flex: 3, child: cards[0]), const SizedBox(width: Space.s4), Expanded(flex: 2, child: cards[1])]));
+  }
+}
+
+/// Carte KPI du tableau de bord (`.kpi` de `_ex-page.scss`) : icône + libellé, valeur, variation.
+class _DashKpi extends StatelessWidget {
+  const _DashKpi({required this.icon, required this.label, required this.value, required this.unit, required this.trend, required this.compare, required this.up, required this.goodWhenUp});
+  final IconData icon;
+  final String label, value, unit, trend, compare;
+  final bool up, goodWhenUp;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.kc;
+    final narrow = MediaQuery.sizeOf(context).width <= Breakpoints.sm;
+    return KitCard(
+      padding: EdgeInsets.symmetric(horizontal: narrow ? Space.s3 : Space.s5, vertical: Space.s4),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(icon, size: 18, color: c.textMuted),
+          const SizedBox(width: Space.s2),
+          Expanded(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: c.textSecondary))),
+        ]),
+        const SizedBox(height: Space.s2),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text.rich(TextSpan(children: [
+            TextSpan(text: value, style: TextStyle(fontFamily: Fonts.heading, fontSize: narrow ? 24 : 28, fontWeight: FontWeight.w600, height: 1.1, letterSpacing: -.5, color: c.textPrimary)),
+            if (unit.isNotEmpty) TextSpan(text: ' $unit', style: TextStyle(fontSize: 12, color: c.textMuted)),
+          ])),
+        ),
+        const SizedBox(height: Space.s2),
+        Wrap(spacing: Space.s2, runSpacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+          TrendChip(trend, up: up, goodWhenUp: goodWhenUp),
+          Text(compare, style: TextStyle(fontSize: 12, color: c.textMuted)),
+        ]),
+      ]),
+    );
   }
 }
