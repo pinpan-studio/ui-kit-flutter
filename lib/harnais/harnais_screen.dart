@@ -18,8 +18,11 @@ import 'hz_widgets.dart';
 /// L'historique passe dans un tiroir, le panneau artefacts / contexte / tâches dans
 /// une feuille basse. Toutes les réponses sont simulées localement.
 class HarnaisScreen extends StatefulWidget {
-  const HarnaisScreen({super.key, this.onExit});
+  const HarnaisScreen({super.key, this.onExit, this.initialConversation});
   final VoidCallback? onExit;
+
+  /// Conversation ouverte au démarrage (`/harnais/:id`), par ex. `c-sidecar`.
+  final String? initialConversation;
 
   @override
   State<HarnaisScreen> createState() => _HarnaisScreenState();
@@ -34,6 +37,7 @@ class _HarnaisScreenState extends State<HarnaisScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialConversation != null) _store.open(widget.initialConversation);
     _store.addListener(_onStore);
   }
 
