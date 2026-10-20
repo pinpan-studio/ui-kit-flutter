@@ -359,13 +359,13 @@ class _ClientsState extends State<ClientsExample> {
             child: Row(children: cells),
           )),
         );
-    return KitCard(padding: EdgeInsets.zero, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Padding(
+    // Barre d'outils fixe au-dessus du tableau ; seul le tableau défile horizontalement (largeur min. 920).
+    final toolbar = Padding(
         padding: const EdgeInsets.all(Space.s3),
-        child: Row(children: [
+        child: Wrap(spacing: Space.s2, runSpacing: Space.s2, alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, children: [
           SizedBox(width: 280, child: TextField(onChanged: (v) => setState(() { _q = v; _page = 0; }), decoration: const InputDecoration(isDense: true, prefixIcon: Icon(Icons.search), hintText: 'Rechercher…'))),
-          const Spacer(),
-          if (_selected.isNotEmpty) Padding(padding: const EdgeInsets.only(right: Space.s2), child: Text('${_selected.length} sélectionné(s)', style: TextStyle(color: c.textMuted))),
+          Wrap(spacing: Space.s2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+          if (_selected.isNotEmpty) Text('${_selected.length} sélectionné(s)', style: TextStyle(color: c.textMuted)),
           MenuAnchor(
             builder: (ctx, ctrl, _) => OutlinedButton.icon(style: OutlinedButton.styleFrom(minimumSize: const Size(44, 44)), onPressed: () => ctrl.isOpen ? ctrl.close() : ctrl.open(), icon: const Icon(Icons.view_column_outlined), label: Text('Colonnes · ${_cols.length}')),
             menuChildren: [
@@ -373,10 +373,11 @@ class _ClientsState extends State<ClientsExample> {
                 CheckboxMenuButton(value: _cols.contains(col), closeOnActivate: false, onChanged: (v) => setState(() => v! ? _cols.add(col) : _cols.remove(col)), child: Text(label)),
             ],
           ),
-          const SizedBox(width: Space.s2),
           IconButton(tooltip: 'Exporter (CSV)', icon: const Icon(Icons.download), onPressed: () => exDemo(context, 'Export CSV')),
+          ]),
         ]),
-      ),
+      );
+    final table = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       line(bg: c.tableHeader, [
         SizedBox(width: 44, child: Checkbox(value: allSel, onChanged: (v) => setState(() { for (final x in slice) { v! ? _selected.add(x.id) : _selected.remove(x.id); } }))),
         const SizedBox(width: 44),
@@ -431,6 +432,10 @@ class _ClientsState extends State<ClientsExample> {
           IconButton(tooltip: 'Page suivante', icon: const Icon(Icons.chevron_right), onPressed: page >= pages - 1 ? null : () => setState(() => _page = page + 1)),
         ]),
       ),
+    ]);
+    return KitCard(padding: EdgeInsets.zero, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      toolbar,
+      LayoutBuilder(builder: (context, box) => box.maxWidth >= 920 ? table : SingleChildScrollView(scrollDirection: Axis.horizontal, child: SizedBox(width: 920, child: table))),
     ]));
   }
 
@@ -496,7 +501,7 @@ class _ClientsState extends State<ClientsExample> {
             const EmptyState(icon: Icons.search_off, title: 'Aucun client', subtitle: 'Ajustez vos critères de recherche.')
           else if (!cards && wide)
             // Largeur minimale du tableau : défilement horizontal plutôt que des montants tronqués.
-            box.maxWidth >= 920 ? _table(rows) : SingleChildScrollView(scrollDirection: Axis.horizontal, child: SizedBox(width: 920, child: _table(rows)))
+            _table(rows)
           else if (!cards)
             KitCard(padding: EdgeInsets.zero, child: Column(children: [
               for (final x in rows) ExTile(onTap: () => _open(x), leading: KitAvatar(name: x.name), title: x.name, subtitle: '${x.city} · ${exMoney(x.revenue)}', trailing: StatusBadge(x.status.label, tone: x.status.tone)),
