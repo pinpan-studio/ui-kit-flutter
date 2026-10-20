@@ -308,7 +308,7 @@ class _DataGalleryState extends State<DataGallery> {
   cardBuilder: (ctx, c, selected) => ClientCard(c),
 )''',
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(Space.s3),
           child: KitDataTable<DemoClient>(
             rows: _clients,
             initialMode: ViewMode.card,
@@ -381,7 +381,7 @@ class _DataGalleryState extends State<DataGallery> {
           label: 'Clients',
           flush: true,
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(Space.s3),
             child: KitDataTable<DemoClient>(
               rows: _clients,
               selectable: true,
@@ -510,7 +510,7 @@ class _DataGalleryState extends State<DataGallery> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(Space.s4),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -906,7 +906,7 @@ class _DataGalleryState extends State<DataGallery> {
                 children: [
                   for (final k in ChartKind.values)
                     Padding(
-                      padding: const EdgeInsets.only(right: 6),
+                      padding: const EdgeInsets.only(right: Space.s2),
                       child: ChoiceChip(
                         label: Text(switch (k) {
                           ChartKind.line => 'Ligne',
@@ -955,7 +955,7 @@ class _SparkTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return KitCard(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(Space.s4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1009,13 +1009,13 @@ class _SwipeListState extends State<_SwipeList> {
             background: Container(
               color: c.successLight,
               alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(left: 20),
+              padding: const EdgeInsets.only(left: Space.s5),
               child: Icon(Icons.archive_outlined, color: c.successText),
             ),
             secondaryBackground: Container(
               color: c.errorLight,
               alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: 20),
+              padding: const EdgeInsets.only(right: Space.s5),
               child: Icon(Icons.delete_outline, color: c.errorText),
             ),
             onDismissed: (d) {

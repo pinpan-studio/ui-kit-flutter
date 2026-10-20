@@ -60,7 +60,7 @@ class KitChart extends StatelessWidget {
         Wrap(spacing: 14, runSpacing: 6, alignment: WrapAlignment.center, children: [
           for (final (l, color, v) in legend)
             Row(mainAxisSize: MainAxisSize.min, children: [
-              Container(width: 10, height: 10, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
+              Container(width: 10, height: 10, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(Radii.xs))),
               const SizedBox(width: 6),
               Text(v == null ? l : '$l · ${_fmt(v)}$unit', style: TextStyle(fontSize: 12, color: c.textSecondary)),
             ]),
@@ -171,7 +171,7 @@ class KitChart extends StatelessWidget {
                             items.add(BarChartRodStackItem(acc, acc + v, col(i)));
                             acc += v;
                           }
-                          return BarChartRodData(toY: acc, width: w * 1.4, rodStackItems: items, borderRadius: BorderRadius.circular(4), color: Colors.transparent);
+                          return BarChartRodData(toY: acc, width: w * 1.4, rodStackItems: items, borderRadius: BorderRadius.circular(Radii.xs), color: Colors.transparent);
                         }(),
                       ]
                     : [

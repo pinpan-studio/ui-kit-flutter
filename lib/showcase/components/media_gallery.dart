@@ -142,7 +142,7 @@ class MediaGallery extends StatelessWidget {
                       onTap: () => showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        builder: (ctx) => SafeArea(child: Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), child: KitVideoPlayer(title: t, seed: s, autoplay: true))),
+                        builder: (ctx) => SafeArea(child: Padding(padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4), child: KitVideoPlayer(title: t, seed: s, autoplay: true))),
                       ),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         AspectRatio(
@@ -157,7 +157,7 @@ class MediaGallery extends StatelessWidget {
                                 bottom: 6,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                                  decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(4)),
+                                  decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(Radii.xs)),
                                   child: Text(d, style: const TextStyle(color: Colors.white, fontSize: 10.5)),
                                 ),
                               ),

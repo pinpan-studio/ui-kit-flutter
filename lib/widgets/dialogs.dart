@@ -127,7 +127,7 @@ Future<bool> showBottomConfirm(BuildContext context, {required String title, req
       final c = ctx.kc;
       return SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+          padding: const EdgeInsets.fromLTRB(Space.s6, 0, Space.s6, Space.s4),
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Center(child: _dialogIcon(ctx, icon, danger ? KitTone.error : KitTone.primary)),
             const SizedBox(height: 12),
@@ -165,7 +165,7 @@ Future<void> showPushMessage(BuildContext context, {required String title, requi
             child: Icon(icon, size: 56, color: Colors.white),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+            padding: const EdgeInsets.fromLTRB(Space.s6, Space.s5, Space.s6, Space.s2),
             child: Column(children: [
               const StatusBadge('Nouveau', tone: KitTone.primary),
               const SizedBox(height: 10),
@@ -175,7 +175,7 @@ Future<void> showPushMessage(BuildContext context, {required String title, requi
             ]),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: const EdgeInsets.fromLTRB(Space.s4, Space.s2, Space.s4, Space.s4),
             child: Row(children: [
               Expanded(child: TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Plus tard'))),
               Expanded(child: FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(cta))),
@@ -201,7 +201,7 @@ Future<void> showPriorityMessage(BuildContext context, {required String title, r
           title: Text(title, textAlign: TextAlign.center),
           content: Column(mainAxisSize: MainAxisSize.min, children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(Space.s3),
               decoration: BoxDecoration(color: c.errorLight, borderRadius: Radii.rm),
               child: Text(message, style: TextStyle(color: c.errorText, height: 1.5)),
             ),
@@ -250,7 +250,7 @@ Future<T?> showFormSheet<T>(
             constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.92),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 8, 12),
+                padding: const EdgeInsets.fromLTRB(Space.s5, Space.s4, Space.s2, Space.s3),
                 child: Row(children: [
                   Container(
                     width: 40,
@@ -270,13 +270,13 @@ Future<T?> showFormSheet<T>(
               ),
               const Divider(),
               Flexible(
-                child: SingleChildScrollView(padding: const EdgeInsets.all(20), child: builder(ctx, setState)),
+                child: SingleChildScrollView(padding: const EdgeInsets.all(Space.s5), child: builder(ctx, setState)),
               ),
               const Divider(),
               SafeArea(
                 top: false,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+                  padding: const EdgeInsets.fromLTRB(Space.s4, Space.s3, Space.s4, Space.s3),
                   child: Row(children: [
                     Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(ctx), child: Text(readOnly ? 'Fermer' : 'Annuler'))),
                     if (!readOnly) ...[
@@ -309,7 +309,7 @@ Future<void> showSidePanel(BuildContext context, {required String title, require
     final c = ctx.kc;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 8, 8),
+        padding: const EdgeInsets.fromLTRB(Space.s5, Space.s3, Space.s2, Space.s2),
         child: Row(children: [
           Icon(icon, color: c.primary),
           const SizedBox(width: 10),

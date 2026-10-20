@@ -32,7 +32,7 @@ class HzActions {
 
 /// Cadre commun d'un widget de réponse (carte avec en-tête icône / titre / sous-titre).
 class HzFrame extends StatelessWidget {
-  const HzFrame({super.key, required this.w, required this.child, this.padding = const EdgeInsets.fromLTRB(14, 0, 14, 14), this.trailing});
+  const HzFrame({super.key, required this.w, required this.child, this.padding = const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4), this.trailing});
   final HzW w;
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -48,10 +48,10 @@ class HzFrame extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
         if (hasHead)
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 8, 10),
+            padding: const EdgeInsets.fromLTRB(Space.s4, Space.s3, Space.s2, Space.s3),
             child: Row(children: [
               if (w.icon != null) ...[
-                Container(width: 30, height: 30, decoration: BoxDecoration(color: c.primaryLight, borderRadius: BorderRadius.circular(9)), child: Icon(w.icon, size: 17, color: c.primary)),
+                Container(width: 30, height: 30, decoration: BoxDecoration(color: c.primaryLight, borderRadius: BorderRadius.circular(Radii.md)), child: Icon(w.icon, size: 17, color: c.primary)),
                 const SizedBox(width: 10),
               ],
               Expanded(
@@ -63,7 +63,7 @@ class HzFrame extends StatelessWidget {
               ?trailing,
             ]),
           ),
-        Padding(padding: hasHead ? padding : const EdgeInsets.all(14), child: child),
+        Padding(padding: hasHead ? padding : const EdgeInsets.all(Space.s4), child: child),
       ]),
     );
   }
@@ -108,18 +108,18 @@ class HzWidgetView extends StatelessWidget {
       case 'records':
         return HzFrame(
           w: w,
-          padding: const EdgeInsets.fromLTRB(6, 0, 6, 6),
+          padding: const EdgeInsets.fromLTRB(Space.s2, 0, Space.s2, Space.s2),
           child: Column(children: [
             for (final r in (p['items'] as List).cast<HzRecord>())
               ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                contentPadding: const EdgeInsets.symmetric(horizontal: Space.s2),
                 leading: KitAvatar(name: r.title, tone: r.tone, size: 38),
                 title: Text(r.title, style: const TextStyle(fontWeight: FontWeight.w600)),
                 subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text([r.subtitle, r.meta].whereType<String>().join(' · ')),
                   if (r.tags.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(top: 4),
+                      padding: const EdgeInsets.only(top: Space.s1),
                       child: Wrap(spacing: 4, runSpacing: 4, children: [for (final t in r.tags) StatusBadge(t, uppercase: false)]),
                     ),
                 ]),
@@ -135,7 +135,7 @@ class HzWidgetView extends StatelessWidget {
       case 'callout':
         final tone = p['tone'] as KitTone;
         return Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(Space.s3),
           decoration: BoxDecoration(color: tone.light(c), borderRadius: Radii.rm, border: Border(left: BorderSide(color: tone.color(c), width: 4))),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Icon(p['icon'] as IconData, color: tone.color(c), size: 20),
@@ -160,7 +160,7 @@ class HzWidgetView extends StatelessWidget {
       case 'tree':
         return HzFrame(w: w, child: _HzTree(w: w, actions: actions));
       case 'carousel':
-        return HzFrame(w: w, padding: const EdgeInsets.only(bottom: 14), child: _HzCarousel(slides: (p['slides'] as List).cast<HzSlide>()));
+        return HzFrame(w: w, padding: const EdgeInsets.only(bottom: Space.s4), child: _HzCarousel(slides: (p['slides'] as List).cast<HzSlide>()));
       case 'modal':
         return HzFrame(
           w: w,
@@ -191,8 +191,8 @@ class HzWidgetView extends StatelessWidget {
                   initiallyExpanded: open,
                   leading: Icon(icon, size: 20),
                   title: Text(title, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600)),
-                  childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                  children: [for (final b in blocks) Padding(padding: const EdgeInsets.only(bottom: 8), child: HzWidgetView(w: b, actions: actions))],
+                  childrenPadding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4),
+                  children: [for (final b in blocks) Padding(padding: const EdgeInsets.only(bottom: Space.s2), child: HzWidgetView(w: b, actions: actions))],
                 ),
               ),
           ]),
@@ -212,7 +212,7 @@ class HzWidgetView extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 3, bottom: 12),
+                      padding: const EdgeInsets.only(top: Space.s1, bottom: Space.s3),
                       child: Row(children: [
                         Expanded(
                           child: Text(steps[i].label, style: TextStyle(fontWeight: steps[i].status == 'current' ? FontWeight.w700 : FontWeight.w500, color: steps[i].status == 'todo' ? c.textMuted : c.textPrimary)),
@@ -238,7 +238,7 @@ class HzWidgetView extends StatelessWidget {
                   Flexible(
                     child: Text(kv.value, textAlign: TextAlign.right, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, fontFamily: kv.mono ? Fonts.mono : null, color: kv.tone?.text(c) ?? c.textPrimary)),
                   ),
-                  if (kv.copy) InkWell(onTap: () => copyToClipboard(context, kv.value), child: Padding(padding: const EdgeInsets.only(left: 6), child: Icon(Icons.content_copy, size: 15, color: c.textMuted))),
+                  if (kv.copy) InkWell(onTap: () => copyToClipboard(context, kv.value), child: Padding(padding: const EdgeInsets.only(left: Space.s2), child: Icon(Icons.content_copy, size: 15, color: c.textMuted))),
                 ]),
               ),
           ]),
@@ -251,7 +251,7 @@ class HzWidgetView extends StatelessWidget {
           child: Column(children: [
             for (final m in (p['items'] as List).cast<HzMeter>())
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
+                padding: const EdgeInsets.symmetric(vertical: Space.s2),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                   Row(children: [
                     Expanded(child: Text(m.label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500))),
@@ -270,7 +270,7 @@ class HzWidgetView extends StatelessWidget {
           w: w,
           trailing: IconButton(tooltip: 'Copier', iconSize: 18, onPressed: () => copyToClipboard(context, const JsonEncoder.withIndent('  ').convert(p['data']), label: 'JSON copié'), icon: const Icon(Icons.content_copy)),
           child: Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(Space.s2),
             decoration: BoxDecoration(color: c.hover.withValues(alpha: 0.6), borderRadius: Radii.rm),
             child: _JsonNode(name: null, value: p['data'], depth: 0),
           ),
@@ -283,7 +283,7 @@ class HzWidgetView extends StatelessWidget {
               InkWell(
                 onTap: () => demoAction(context, 'Ouverture de ${s.site}'),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 7),
+                  padding: const EdgeInsets.symmetric(vertical: Space.s2),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     CircleAvatar(radius: 11, backgroundColor: c.primaryLight, child: Text('${i + 1}', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: c.primary))),
                     const SizedBox(width: 10),
@@ -305,7 +305,7 @@ class HzWidgetView extends StatelessWidget {
           child: Wrap(spacing: 6, runSpacing: 6, children: [
             for (final (label, count, tone) in (p['items'] as List).cast<(String, int?, KitTone?)>())
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: 5),
                 decoration: BoxDecoration(color: (tone ?? KitTone.neutral).light(c), borderRadius: Radii.pill),
                 child: Text(count == null ? label : '$label · $count', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: (tone ?? KitTone.neutral).text(c))),
               ),
@@ -316,7 +316,7 @@ class HzWidgetView extends StatelessWidget {
       case 'files':
         return HzFrame(
           w: w,
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 6),
+          padding: const EdgeInsets.fromLTRB(Space.s1, 0, Space.s1, Space.s2),
           child: Column(children: [
             for (final f in (p['items'] as List).cast<HzFile>())
               ListTile(
@@ -341,11 +341,11 @@ class HzWidgetView extends StatelessWidget {
                 final card = (p['items'] as List).cast<HzCard>()[i];
                 return Container(
                   width: 170,
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(Space.s3),
                   decoration: BoxDecoration(borderRadius: Radii.rm, border: Border.all(color: c.border), color: c.bg),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
-                      Container(width: 32, height: 32, decoration: BoxDecoration(color: card.tone.light(c), borderRadius: BorderRadius.circular(9)), child: Icon(card.icon, size: 18, color: card.tone.color(c))),
+                      Container(width: 32, height: 32, decoration: BoxDecoration(color: card.tone.light(c), borderRadius: BorderRadius.circular(Radii.md)), child: Icon(card.icon, size: 18, color: card.tone.color(c))),
                       const Spacer(),
                       if (card.meta != null) Text(card.meta!, style: TextStyle(fontSize: 10.5, color: c.textMuted)),
                     ]),
@@ -364,7 +364,7 @@ class HzWidgetView extends StatelessWidget {
           ),
         );
       case 'compare':
-        return HzFrame(w: w, padding: const EdgeInsets.fromLTRB(0, 0, 0, 10), child: _Compare(w: w));
+        return HzFrame(w: w, padding: const EdgeInsets.fromLTRB(0, 0, 0, Space.s3), child: _Compare(w: w));
       case 'approval':
         return _Approval(w: w, actions: actions);
       case 'upload':
@@ -386,11 +386,11 @@ class HzWidgetView extends StatelessWidget {
         expand: false,
         initialChildSize: 0.85,
         maxChildSize: 0.95,
-        builder: (ctx, sc) => ListView(controller: sc, padding: const EdgeInsets.fromLTRB(16, 0, 16, 24), children: [
+        builder: (ctx, sc) => ListView(controller: sc, padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s6), children: [
           Text(p['dialogTitle'] as String, style: ctx.t.h3),
           if (p['dialogSubtitle'] != null) Text(p['dialogSubtitle'] as String, style: ctx.t.bodySm),
           const SizedBox(height: 14),
-          for (final b in (p['blocks'] as List).cast<HzW>()) Padding(padding: const EdgeInsets.only(bottom: 12), child: HzWidgetView(w: b, actions: actions)),
+          for (final b in (p['blocks'] as List).cast<HzW>()) Padding(padding: const EdgeInsets.only(bottom: Space.s3), child: HzWidgetView(w: b, actions: actions)),
         ]),
       ),
     );
@@ -423,8 +423,8 @@ class _Stats extends StatelessWidget {
     return ResponsiveGrid(minItemWidth: 150, spacing: 8, children: [
       for (final s in items)
         Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: c.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: c.border)),
+          padding: const EdgeInsets.all(Space.s3),
+          decoration: BoxDecoration(color: c.card, borderRadius: BorderRadius.circular(Radii.lg), border: Border.all(color: c.border)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               if (s.icon != null) Icon(s.icon, size: 16, color: s.tone.color(c)),
@@ -489,7 +489,7 @@ class _HzTableState extends State<_HzTable> {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       if (widget.w.p['searchable'] == true)
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+          padding: const EdgeInsets.fromLTRB(Space.s3, 0, Space.s3, Space.s2),
           child: TextField(onChanged: (v) => setState(() => _q = v), decoration: const InputDecoration(hintText: 'Filtrer…', prefixIcon: Icon(Icons.search, size: 18))),
         ),
       SingleChildScrollView(
@@ -510,7 +510,7 @@ class _HzTableState extends State<_HzTable> {
                   }),
                   child: Container(
                     width: width(col),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s3),
                     child: Row(children: [
                       Flexible(child: Text(col.label.toUpperCase(), style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.4, color: _sort == col.key ? c.primary : c.textSecondary))),
                       if (_sort == col.key) Icon(_asc ? Icons.arrow_upward : Icons.arrow_downward, size: 13, color: c.primary),
@@ -524,15 +524,15 @@ class _HzTableState extends State<_HzTable> {
               decoration: BoxDecoration(border: Border(top: BorderSide(color: c.border))),
               child: Row(children: [
                 for (final col in cols)
-                  Container(width: width(col), padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9), child: DefaultTextStyle.merge(style: const TextStyle(fontSize: 12.5), child: cell(col, r[col.key]))),
+                  Container(width: width(col), padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: 9), child: DefaultTextStyle.merge(style: const TextStyle(fontSize: 12.5), child: cell(col, r[col.key]))),
               ]),
             ),
         ]),
       ),
-      if (rows.isEmpty) Padding(padding: const EdgeInsets.all(16), child: Text('Aucune ligne', textAlign: TextAlign.center, style: TextStyle(color: c.textMuted))),
+      if (rows.isEmpty) Padding(padding: const EdgeInsets.all(Space.s4), child: Text('Aucune ligne', textAlign: TextAlign.center, style: TextStyle(color: c.textMuted))),
       if (pages > 1)
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s1, Space.s1, Space.s1),
           child: Row(children: [
             Expanded(child: Text('${rows.length} lignes', style: TextStyle(fontSize: 12, color: c.textMuted))),
             IconButton(visualDensity: VisualDensity.compact, onPressed: _page > 1 ? () => setState(() => _page--) : null, icon: const Icon(Icons.chevron_left)),
@@ -620,7 +620,7 @@ class _HzFormState extends State<_HzForm> {
         opacity: _readOnly ? 0.75 : 1,
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           if (desc != null) ...[Text(desc, style: TextStyle(fontSize: 13, color: c.textSecondary)), const SizedBox(height: 12)],
-          for (final f in _fields) Padding(padding: const EdgeInsets.only(bottom: 12), child: _field(c, f)),
+          for (final f in _fields) Padding(padding: const EdgeInsets.only(bottom: Space.s3), child: _field(c, f)),
           if (_readOnly)
             Row(children: [Icon(Icons.check_circle, color: c.success, size: 18), const SizedBox(width: 6), Text('Envoyé', style: TextStyle(color: c.successText, fontWeight: FontWeight.w700))])
           else
@@ -703,7 +703,7 @@ class _Choices extends StatelessWidget {
     final opts = (w.p['options'] as List).cast<HzOption>();
     final done = w.selected != null;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (w.p['question'] != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(w.p['question'] as String, style: TextStyle(fontWeight: FontWeight.w600, color: c.textPrimary))),
+      if (w.p['question'] != null) Padding(padding: const EdgeInsets.only(bottom: Space.s2), child: Text(w.p['question'] as String, style: TextStyle(fontWeight: FontWeight.w600, color: c.textPrimary))),
       Wrap(spacing: 8, runSpacing: 8, children: [
         for (final o in opts)
           ChoiceChip(
@@ -776,7 +776,7 @@ class _HzTreeState extends State<_HzTree> {
             const SizedBox(width: 6),
             Expanded(child: Text(n.label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: leaf ? FontWeight.w400 : FontWeight.w600))),
             if (n.badge != null) Flexible(child: StatusBadge(n.badge!, tone: n.badgeTone, uppercase: false)),
-            if (n.meta != null) Flexible(child: Padding(padding: const EdgeInsets.only(left: 6), child: Text(n.meta!, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: c.textMuted)))),
+            if (n.meta != null) Flexible(child: Padding(padding: const EdgeInsets.only(left: Space.s2), child: Text(n.meta!, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: c.textMuted)))),
           ]),
         ),
       ),
@@ -831,7 +831,7 @@ class _HzCarouselState extends State<_HzCarousel> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(Space.s3),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(s.title, style: const TextStyle(fontWeight: FontWeight.w700)),
                         if (s.text != null) Expanded(child: Text(s.text!, maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: c.textSecondary))),
@@ -850,7 +850,7 @@ class _HzCarouselState extends State<_HzCarousel> {
       const SizedBox(height: 8),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         for (var i = 0; i < widget.slides.length; i++)
-          AnimatedContainer(duration: const Duration(milliseconds: 200), margin: const EdgeInsets.symmetric(horizontal: 3), width: i == _i ? 18 : 6, height: 6, decoration: BoxDecoration(color: i == _i ? c.primary : c.border, borderRadius: Radii.pill)),
+          AnimatedContainer(duration: const Duration(milliseconds: 200), margin: const EdgeInsets.symmetric(horizontal: Space.s1), width: i == _i ? 18 : 6, height: 6, decoration: BoxDecoration(color: i == _i ? c.primary : c.border, borderRadius: Radii.pill)),
       ]),
     ]);
   }
@@ -880,9 +880,9 @@ class _HzTabs extends StatelessWidget {
           AnimatedBuilder(
             animation: ctrl,
             builder: (_, _) => Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(Space.s3),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                for (final b in tabs[ctrl.index].$4) Padding(padding: const EdgeInsets.only(bottom: 10), child: HzWidgetView(w: b, actions: actions)),
+                for (final b in tabs[ctrl.index].$4) Padding(padding: const EdgeInsets.only(bottom: Space.s3), child: HzWidgetView(w: b, actions: actions)),
               ]),
             ),
           ),
@@ -993,8 +993,8 @@ class _Compare extends StatelessWidget {
           for (final (name, price, note, rec) in plans)
             Container(
               width: pw,
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              decoration: BoxDecoration(color: rec ? c.primaryLight : null, borderRadius: const BorderRadius.vertical(top: Radius.circular(12))),
+              padding: const EdgeInsets.symmetric(vertical: Space.s2, horizontal: Space.s1),
+              decoration: BoxDecoration(color: rec ? c.primaryLight : null, borderRadius: const BorderRadius.vertical(top: Radius.circular(Radii.md))),
               child: Column(children: [
                 if (rec) const StatusBadge('Recommandé', tone: KitTone.primary, uppercase: false),
                 Text(name, style: TextStyle(fontWeight: FontWeight.w700, color: rec ? c.primary : c.textPrimary)),
@@ -1007,8 +1007,8 @@ class _Compare extends StatelessWidget {
           Container(
             decoration: BoxDecoration(border: Border(top: BorderSide(color: c.border))),
             child: Row(children: [
-              SizedBox(width: fw, child: Padding(padding: const EdgeInsets.fromLTRB(14, 8, 6, 8), child: Text(label, style: TextStyle(fontSize: 12.5, color: c.textSecondary)))),
-              for (var i = 0; i < values.length; i++) Container(width: pw, color: plans[i].$4 ? c.primaryLight : null, padding: const EdgeInsets.symmetric(vertical: 8), alignment: Alignment.center, child: val(values[i])),
+              SizedBox(width: fw, child: Padding(padding: const EdgeInsets.fromLTRB(Space.s4, Space.s2, Space.s2, Space.s2), child: Text(label, style: TextStyle(fontSize: 12.5, color: c.textSecondary)))),
+              for (var i = 0; i < values.length; i++) Container(width: pw, color: plans[i].$4 ? c.primaryLight : null, padding: const EdgeInsets.symmetric(vertical: Space.s2), alignment: Alignment.center, child: val(values[i])),
             ]),
           ),
       ]),
@@ -1027,7 +1027,7 @@ class _Approval extends StatelessWidget {
     final risk = w.p['risk'] as KitTone? ?? KitTone.warning;
     final sel = w.selected;
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(Space.s4),
       decoration: BoxDecoration(color: risk.light(c), borderRadius: BorderRadius.circular(18), border: Border.all(color: risk.color(c).withValues(alpha: 0.4))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
@@ -1131,18 +1131,18 @@ class _JsonNodeState extends State<_JsonNode> {
         ),
         if (_open) ...[
           Padding(
-            padding: const EdgeInsets.only(left: 16),
+            padding: const EdgeInsets.only(left: Space.s4),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               for (final (k, x) in entries) _JsonNode(name: v is Map ? k : null, value: x, depth: widget.depth + 1),
             ]),
           ),
-          Padding(padding: const EdgeInsets.only(left: 16), child: Text(close, style: st.copyWith(color: c.textMuted))),
+          Padding(padding: const EdgeInsets.only(left: Space.s4), child: Text(close, style: st.copyWith(color: c.textMuted))),
         ],
       ]);
     }
     final Color col = switch (v) { String() => c.successText, num() => c.info, bool() => c.tertiary, _ => c.textMuted };
     return Padding(
-      padding: const EdgeInsets.only(left: 16),
+      padding: const EdgeInsets.only(left: Space.s4),
       child: Text.rich(TextSpan(style: st, children: [?key, TextSpan(text: v is String ? '"$v"' : '$v', style: TextStyle(color: col))])),
     );
   }
@@ -1157,13 +1157,13 @@ class HzAttachmentPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return Container(
-      padding: const EdgeInsets.fromLTRB(6, 6, 10, 6),
+      padding: const EdgeInsets.fromLTRB(Space.s2, Space.s2, Space.s3, Space.s2),
       decoration: BoxDecoration(color: c.card, borderRadius: Radii.rm, border: Border.all(color: c.border)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         if (a.kind == 'image')
-          ClipRRect(borderRadius: BorderRadius.circular(6), child: const SizedBox(width: 30, height: 30, child: DemoArt(seed: 2)))
+          ClipRRect(borderRadius: BorderRadius.circular(Radii.sm), child: const SizedBox(width: 30, height: 30, child: DemoArt(seed: 2)))
         else
-          Container(width: 30, height: 30, decoration: BoxDecoration(color: c.primaryLight, borderRadius: BorderRadius.circular(6)), child: Icon(a.icon, size: 16, color: c.primary)),
+          Container(width: 30, height: 30, decoration: BoxDecoration(color: c.primaryLight, borderRadius: BorderRadius.circular(Radii.sm)), child: Icon(a.icon, size: 16, color: c.primary)),
         const SizedBox(width: 8),
         Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
           ConstrainedBox(constraints: const BoxConstraints(maxWidth: 150), child: Text(a.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600))),

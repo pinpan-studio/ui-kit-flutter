@@ -35,7 +35,7 @@ class KitAlert extends StatelessWidget {
     final col = tone.color(c);
     final fg = filled ? Colors.white : tone.text(c);
     return Container(
-      padding: EdgeInsets.fromLTRB(compact ? 10 : 14, compact ? 8 : 12, onClose == null ? 14 : 4, compact ? 8 : 12),
+      padding: EdgeInsets.fromLTRB(compact ? Space.s3 : Space.s4, compact ? Space.s2 : Space.s3, onClose == null ? Space.s4 : Space.s1, compact ? Space.s2 : Space.s3),
       decoration: BoxDecoration(
         color: filled ? col : tone.light(c),
         borderRadius: Radii.rm,
@@ -84,7 +84,7 @@ class GlobalBanner extends StatelessWidget {
       color: Color.alphaBlend(tone.light(c), c.card),
       child: Container(
         decoration: BoxDecoration(border: Border(bottom: BorderSide(color: col.withValues(alpha: 0.35)))),
-        padding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
+        padding: const EdgeInsets.fromLTRB(Space.s4, Space.s3, Space.s1, Space.s3),
         child: Row(children: [
           Icon(icon ?? toneIcon(tone), color: col, size: 20),
           const SizedBox(width: 10),
@@ -97,7 +97,7 @@ class GlobalBanner extends StatelessWidget {
               style: TextStyle(fontSize: 12.5, height: 1.4, color: c.textPrimary),
             ),
           ),
-          if (action != null) TextButton(onPressed: onAction, style: TextButton.styleFrom(foregroundColor: tone.text(c), padding: const EdgeInsets.symmetric(horizontal: 10), minimumSize: const Size(0, 32)), child: Text(action!)),
+          if (action != null) TextButton(onPressed: onAction, style: TextButton.styleFrom(foregroundColor: tone.text(c), padding: const EdgeInsets.symmetric(horizontal: Space.s3), minimumSize: const Size(0, 32)), child: Text(action!)),
           if (onClose != null) IconButton(visualDensity: VisualDensity.compact, iconSize: 18, onPressed: onClose, icon: const Icon(Icons.close)),
         ]),
       ),
@@ -119,7 +119,7 @@ class ResultView extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.kc;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: Space.s6, horizontal: Space.s3),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         TweenAnimationBuilder<double>(
           tween: Tween(begin: 0.6, end: 1),
@@ -249,9 +249,9 @@ class _UploadQueueState extends State<UploadQueue> {
         const SizedBox(height: 10),
         for (final i in _items)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: Space.s2),
             child: Container(
-              padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+              padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s1, Space.s3),
               decoration: BoxDecoration(color: c.card, borderRadius: Radii.rm, border: Border.all(color: i.status == UploadStatus.error ? c.error.withValues(alpha: 0.5) : c.border)),
               child: Row(children: [
                 Icon(i.file.icon, color: i.status == UploadStatus.error ? c.error : c.primary),
@@ -276,7 +276,7 @@ class _UploadQueueState extends State<UploadQueue> {
                   ]),
                 ),
                 switch (i.status) {
-                  UploadStatus.done => Padding(padding: const EdgeInsets.all(10), child: Icon(Icons.check_circle, color: c.success)),
+                  UploadStatus.done => Padding(padding: const EdgeInsets.all(Space.s3), child: Icon(Icons.check_circle, color: c.success)),
                   UploadStatus.error => IconButton(
                       tooltip: 'Réessayer',
                       onPressed: () {

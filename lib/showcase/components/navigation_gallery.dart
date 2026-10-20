@@ -58,7 +58,7 @@ class _NavigationGalleryState extends State<NavigationGallery> {
                   actions: [
                     IconButton(onPressed: () {}, icon: const Badge(label: Text('7'), child: Icon(Icons.checklist))),
                     IconButton(onPressed: () {}, icon: const Badge(label: Text('3'), child: Icon(Icons.notifications_outlined))),
-                    const Padding(padding: EdgeInsets.only(right: 12), child: KitAvatar(name: 'Jean Kouassi', size: 32)),
+                    const Padding(padding: EdgeInsets.only(right: Space.s3), child: KitAvatar(name: 'Jean Kouassi', size: 32)),
                   ],
                 ),
               ),
@@ -133,7 +133,7 @@ class _NavigationGalleryState extends State<NavigationGallery> {
                     child: Container(
                       color: c.bg,
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(Space.s3),
                       child: Text('Page : ${_label(_menu)}', textAlign: TextAlign.center, style: TextStyle(color: c.textSecondary)),
                     ),
                   ),
@@ -163,7 +163,7 @@ class _NavigationGalleryState extends State<NavigationGallery> {
                             Navigator.pop(ctx);
                           },
                           children: [
-                            const Padding(padding: EdgeInsets.fromLTRB(28, 20, 16, 10), child: Text('Lookas', style: TextStyle(fontFamily: Fonts.brand, fontSize: 22, fontWeight: FontWeight.w700))),
+                            const Padding(padding: EdgeInsets.fromLTRB(28, Space.s5, Space.s4, Space.s3), child: Text('Lookas', style: TextStyle(fontFamily: Fonts.brand, fontSize: 22, fontWeight: FontWeight.w700))),
                             for (final m in kDemoMenu.take(6)) NavigationDrawerDestination(icon: Icon(m.icon), label: Text(m.label)),
                             const Divider(indent: 28, endIndent: 28),
                             const NavigationDrawerDestination(icon: Icon(Icons.settings_outlined), label: Text('Paramètres')),
@@ -301,7 +301,7 @@ class _NavigationGalleryState extends State<NavigationGallery> {
               child: Column(children: [
                 for (final x in kDemoClients.take(_loaded)) ListTile(dense: true, leading: KitAvatar(name: x.raisonSociale, size: 30), title: Text(x.raisonSociale), subtitle: Text(x.ville)),
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(Space.s3),
                   child: _loaded >= kDemoClients.length
                       ? Text('Tous les clients sont affichés', style: TextStyle(color: c.textMuted, fontSize: 12))
                       : KitButton(
@@ -452,7 +452,7 @@ class _NavigationGalleryState extends State<NavigationGallery> {
   }
 
   Widget _controls(BuildContext context, ControlsDetails d) => Padding(
-        padding: const EdgeInsets.only(top: 12),
+        padding: const EdgeInsets.only(top: Space.s3),
         child: Wrap(spacing: 8, runSpacing: 8, children: [
           FilledButton(onPressed: d.onStepContinue, child: const Text('Continuer')),
           if (d.stepIndex > 0) TextButton(onPressed: d.onStepCancel, child: const Text('Retour')),

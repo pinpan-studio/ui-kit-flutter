@@ -7,6 +7,7 @@ import '../../theme/kit_colors.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kit_buttons.dart';
 import '../doc/doc.dart';
+import 'package:ui_kit_flutter/theme/tokens.dart';
 
 /// `/components/buttons` — variantes, états, icônes, actions de page, segmentés, menus, FAB, tailles.
 class ButtonsGallery extends StatefulWidget {
@@ -234,7 +235,7 @@ KitButton(label: 'Danger', variant: KitButtonVariant.danger, onPressed: …)''',
               child: Wrap(children: [
                 for (final (k, l) in const [('mois', 'Mois'), ('trim', 'Trimestre'), ('annee', 'Année')])
                   Padding(
-                    padding: const EdgeInsets.only(right: 6),
+                    padding: const EdgeInsets.only(right: Space.s2),
                     child: ChoiceChip(label: Text(l), selected: _tab == k, onSelected: (_) => setState(() => _tab = k), showCheckmark: false),
                   ),
               ]),
@@ -257,7 +258,7 @@ KitButton(label: 'Danger', variant: KitButtonVariant.danger, onPressed: …)''',
                     ('plan', 'Planifiés', 6, KitTone.warning), ('out', 'Désinstallés', 4, KitTone.error),
                   ])
                     Padding(
-                      padding: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.only(right: Space.s2),
                       child: FilterChipButton(label: l, count: n, tone: t, active: _chip == k, onTap: () => setState(() => _chip = k)),
                     ),
                 ]),

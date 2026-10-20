@@ -135,12 +135,12 @@ class _DocPageState extends State<DocPage> {
                   child: ListView(
                     controller: _tocScroll,
                     scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.symmetric(horizontal: pad, vertical: 8),
+                    padding: EdgeInsets.symmetric(horizontal: pad, vertical: Space.s2),
                     children: [
                       for (final s in widget.sections)
                         Padding(
                           key: _chipKeys.putIfAbsent(s.id, GlobalKey.new),
-                          padding: const EdgeInsets.only(right: 6),
+                          padding: const EdgeInsets.only(right: Space.s2),
                           child: _TocChip(label: s.tocLabel ?? s.title, active: s.id == _active, onTap: () => _goTo(s.id)),
                         ),
                     ],
@@ -215,7 +215,7 @@ class _TocChip extends StatelessWidget {
         customBorder: const StadiumBorder(),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s2),
           child: Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: active ? c.primary : c.textSecondary)),
         ),
       ),
@@ -238,8 +238,8 @@ class _SectionView extends StatelessWidget {
           Text(s.title, style: KitText.h3.copyWith(color: c.textPrimary)),
           if (s.source != null)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(color: c.hover, borderRadius: BorderRadius.circular(6)),
+              padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s0_5),
+              decoration: BoxDecoration(color: c.hover, borderRadius: BorderRadius.circular(Radii.sm)),
               child: Text(s.source!, style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted)),
             ),
         ]),
@@ -297,7 +297,7 @@ class _DemoState extends State<Demo> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
         Container(
           constraints: const BoxConstraints(minHeight: 40),
-          padding: const EdgeInsets.fromLTRB(16, 4, 4, 4),
+          padding: const EdgeInsets.fromLTRB(Space.s4, Space.s1, Space.s1, Space.s1),
           color: c.hover.withValues(alpha: 0.5),
           child: Row(children: [
             if (widget.hint != null) ...[
@@ -370,7 +370,7 @@ class CodeBlock extends StatelessWidget {
         ]),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+          padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4),
           child: SelectableText(code, style: const TextStyle(fontFamily: Fonts.mono, fontSize: 11.5, height: 1.55, color: fg)),
         ),
       ]),

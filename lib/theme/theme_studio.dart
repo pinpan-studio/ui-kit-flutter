@@ -14,6 +14,7 @@ import 'app_theme.dart';
 import 'custom_theme.dart';
 import 'theme_controller.dart';
 import 'theme_palettes.dart';
+import 'package:ui_kit_flutter/theme/tokens.dart';
 
 /// Ouvre le studio de thème (équivalent de la page Angular `/theme-studio`).
 Future<void> openThemeStudio(BuildContext context) =>
@@ -77,7 +78,7 @@ class _ThemeStudioPageState extends State<ThemeStudioPage> {
             icon: const Icon(Icons.restart_alt),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 12, left: 4),
+            padding: const EdgeInsets.only(right: Space.s3, left: Space.s1),
             child: FilledButton.icon(onPressed: _apply, icon: const Icon(Icons.check), label: const Text('Appliquer')),
           ),
         ],
@@ -116,11 +117,11 @@ class _ThemeStudioPageState extends State<ThemeStudioPage> {
         ];
         if (wide) {
           return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            SizedBox(width: 400, child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 8, 32), children: [controls])),
-            Expanded(child: ListView(padding: const EdgeInsets.fromLTRB(8, 8, 16, 32), children: [previews, ...details])),
+            SizedBox(width: 400, child: ListView(padding: const EdgeInsets.fromLTRB(Space.s4, Space.s2, Space.s2, Space.s8), children: [controls])),
+            Expanded(child: ListView(padding: const EdgeInsets.fromLTRB(Space.s2, Space.s2, Space.s4, Space.s8), children: [previews, ...details])),
           ]);
         }
-        return ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 32), children: [controls, previews, ...details]);
+        return ListView(padding: const EdgeInsets.fromLTRB(Space.s4, Space.s2, Space.s4, Space.s8), children: [controls, previews, ...details]);
       }),
     );
   }
@@ -342,9 +343,9 @@ class _Panel extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: scheme.surfaceContainer, borderRadius: BorderRadius.circular(16)),
+      margin: const EdgeInsets.only(bottom: Space.s3),
+      padding: const EdgeInsets.all(Space.s4),
+      decoration: BoxDecoration(color: scheme.surfaceContainer, borderRadius: BorderRadius.circular(Radii.lg)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
           Text(title, style: text.titleSmall),
@@ -436,7 +437,7 @@ class _PhonePreview extends StatelessWidget {
     final outer = Theme.of(context).colorScheme;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Padding(
-        padding: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.only(bottom: Space.s2),
         child: Text(label, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: outer.onSurfaceVariant)),
       ),
       Center(
@@ -497,7 +498,7 @@ class _MockAppState extends State<_MockApp> {
         ),
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+            padding: const EdgeInsets.fromLTRB(Space.s4, Space.s1, Space.s4, Space.s6),
             children: [
               const KpiCard(icon: Icons.people_outline, value: '434', label: 'Clients actifs'),
               const SizedBox(height: 8),
@@ -598,8 +599,8 @@ class _MockAppState extends State<_MockApp> {
               ),
               gap,
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(color: s.inverseSurface, borderRadius: BorderRadius.circular(4)),
+                padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
+                decoration: BoxDecoration(color: s.inverseSurface, borderRadius: BorderRadius.circular(Radii.xs)),
                 child: Row(children: [
                   Expanded(child: Text('Thème mis à jour', style: TextStyle(color: s.onInverseSurface))),
                   Text('Annuler', style: TextStyle(color: s.inversePrimary, fontWeight: FontWeight.w600)),
@@ -627,7 +628,7 @@ class _Strips extends StatelessWidget {
     return Column(children: [
       for (final (label, key, tones) in draft.paletteStrips())
         Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.only(bottom: Space.s3),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Container(width: 16, height: 16, decoration: BoxDecoration(color: key, shape: BoxShape.circle)),
@@ -638,7 +639,7 @@ class _Strips extends StatelessWidget {
             ]),
             const SizedBox(height: 6),
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(Radii.md),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(children: [
@@ -655,7 +656,7 @@ class _Strips extends StatelessWidget {
                             height: 48,
                             color: color,
                             alignment: Alignment.bottomCenter,
-                            padding: const EdgeInsets.only(bottom: 6),
+                            padding: const EdgeInsets.only(bottom: Space.s2),
                             child: Text('$tone',
                                 style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: tone < 55 ? Colors.white : Colors.black)),
                           ),
@@ -700,8 +701,8 @@ class _Roles extends StatelessWidget {
           Container(
             width: w,
             height: 84,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
+            padding: const EdgeInsets.all(Space.s3),
+            decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(Radii.md)),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(child: Text(label, style: TextStyle(color: fg, fontWeight: FontWeight.w600, fontSize: 13))),

@@ -122,9 +122,9 @@ class _KitDrawerState extends State<KitDrawer> {
       width: 300,
       child: SafeArea(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Padding(padding: EdgeInsets.fromLTRB(20, 16, 16, 12), child: KitBrand()),
+          const Padding(padding: EdgeInsets.fromLTRB(Space.s5, Space.s4, Space.s4, Space.s3), child: KitBrand()),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: Space.s3),
             child: TextField(
               onChanged: (v) => setState(() => _q = v),
               // Recherche pilule sans contour ; liseré primaire seulement au focus.
@@ -138,11 +138,11 @@ class _KitDrawerState extends State<KitDrawer> {
           ),
           const SizedBox(height: 8),
           Expanded(
-            child: ListView(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), children: [
+            child: ListView(padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s1), children: [
               if (q.isNotEmpty) ...[
                 if (matches.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(Space.s6),
                     child: Text('Aucun résultat pour « $_q »', textAlign: TextAlign.center, style: TextStyle(color: c.textMuted)),
                   ),
                 ...matches,
@@ -152,7 +152,7 @@ class _KitDrawerState extends State<KitDrawer> {
                 _tile(context, Icons.dashboard_customize_outlined, 'Layouts', () => go(2)),
                 _tile(context, Icons.auto_awesome_outlined, 'Harnais (assistant IA)', () => go(3)),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 16, 12, 6),
+                  padding: const EdgeInsets.fromLTRB(Space.s3, Space.s4, Space.s3, Space.s2),
                   child: Text('COMPOSANTS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1, color: c.textMuted)),
                 ),
                 for (final cat in kCategories)
@@ -160,7 +160,7 @@ class _KitDrawerState extends State<KitDrawer> {
                     data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                     child: ExpansionTile(
                       dense: true,
-                      tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+                      tilePadding: const EdgeInsets.symmetric(horizontal: Space.s3),
                       leading: Icon(cat.icon, size: 20, color: c.textSecondary),
                       title: Text(cat.label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: c.textPrimary)),
                       childrenPadding: const EdgeInsets.only(left: 28),
@@ -183,7 +183,7 @@ class _KitDrawerState extends State<KitDrawer> {
     return ListTile(
       dense: dense || indent,
       visualDensity: dense ? VisualDensity.compact : null,
-      contentPadding: EdgeInsets.only(left: indent ? 24 : 12, right: 12),
+      contentPadding: EdgeInsets.only(left: indent ? Space.s6 : Space.s3, right: Space.s3),
       leading: icon == null ? null : Icon(icon, size: 20),
       minLeadingWidth: 20,
       title: Text(label, style: TextStyle(fontSize: dense ? 13 : 14, fontWeight: bold ? FontWeight.w700 : FontWeight.w500, color: c.textPrimary)),

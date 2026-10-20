@@ -69,7 +69,7 @@ class MarkdownView extends StatelessWidget {
         i++;
         blocks.add(Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(Space.s3),
           decoration: BoxDecoration(color: c.hover, borderRadius: Radii.rm),
           child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Text(buf.join('\n'), style: KitText.mono.copyWith(color: c.textPrimary, fontSize: 12))),
         ));
@@ -79,7 +79,7 @@ class MarkdownView extends StatelessWidget {
       if (h != null) {
         final lvl = h.group(1)!.length;
         final st = (lvl == 1 ? KitText.h2 : lvl == 2 ? KitText.h3 : KitText.h4).copyWith(color: c.textPrimary);
-        blocks.add(Padding(padding: const EdgeInsets.only(top: 4), child: para(h.group(2)!, style: st)));
+        blocks.add(Padding(padding: const EdgeInsets.only(top: Space.s1), child: para(h.group(2)!, style: st)));
         i++;
         continue;
       }
@@ -94,7 +94,7 @@ class MarkdownView extends StatelessWidget {
           buf.add(lines[i++].replaceFirst(RegExp(r'^>\s?'), ''));
         }
         blocks.add(Container(
-          padding: const EdgeInsets.fromLTRB(12, 6, 8, 6),
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s2, Space.s2, Space.s2),
           decoration: BoxDecoration(border: Border(left: BorderSide(color: c.primary, width: 3)), color: c.primaryLight),
           child: para(buf.join(' '), style: base.copyWith(color: c.textSecondary, fontStyle: FontStyle.italic)),
         ));
@@ -110,7 +110,7 @@ class MarkdownView extends StatelessWidget {
         blocks.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           for (final (mark, t) in items)
             Padding(
-              padding: const EdgeInsets.only(bottom: 3),
+              padding: const EdgeInsets.only(bottom: Space.s1),
               child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 SizedBox(
                   width: 22,
@@ -208,7 +208,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Container(
           color: c.hover.withValues(alpha: 0.5),
-          padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+          padding: const EdgeInsets.fromLTRB(Space.s2, Space.s2, Space.s2, Space.s2),
           child: Row(children: [
             Expanded(
               child: Align(
@@ -229,13 +229,13 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
         if (!_preview)
           SizedBox(
             height: 44,
-            child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: 4), children: [
+            child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: Space.s1), children: [
               for (final (icon, tip, fn) in tools) IconButton(tooltip: tip, iconSize: 20, onPressed: fn, icon: Icon(icon)),
             ]),
           ),
         const Divider(height: 1),
         if (_preview)
-          Padding(padding: const EdgeInsets.all(14), child: MarkdownView(_ctrl.text))
+          Padding(padding: const EdgeInsets.all(Space.s4), child: MarkdownView(_ctrl.text))
         else
           TextField(
             controller: _ctrl,
@@ -251,7 +251,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
-              contentPadding: EdgeInsets.all(14),
+              contentPadding: EdgeInsets.all(Space.s4),
             ),
           ),
       ]),
@@ -426,7 +426,7 @@ class _RichTextEditorState extends State<RichTextEditor> {
         Container(
           color: c.hover.withValues(alpha: 0.5),
           height: 48,
-          child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4), children: [
+          child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: Space.s1, vertical: Space.s1), children: [
             tool(Icons.format_bold, 'Gras', RtAttr.bold),
             tool(Icons.format_italic, 'Italique', RtAttr.italic),
             tool(Icons.format_underline, 'Souligné', RtAttr.underline),
@@ -449,12 +449,12 @@ class _RichTextEditorState extends State<RichTextEditor> {
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
-            contentPadding: EdgeInsets.all(14),
+            contentPadding: EdgeInsets.all(Space.s4),
             hintText: 'Rédigez votre message…',
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
+          padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s2),
           child: Text('$chars caractère(s)', textAlign: TextAlign.right, style: TextStyle(fontSize: 11.5, color: c.textMuted)),
         ),
       ]),

@@ -75,7 +75,7 @@ class _CommandPaletteState extends State<_CommandPalette> {
       height: MediaQuery.sizeOf(context).height * 0.85,
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 8, 8),
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s2, Space.s2),
           child: Row(children: [
             Expanded(
               child: TextField(
@@ -88,9 +88,9 @@ class _CommandPaletteState extends State<_CommandPalette> {
                   hintText: 'Page, action, client…',
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(Space.s3),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s0_5),
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: c.border)),
                       child: Text('⌘K', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted)),
                     ),
@@ -104,10 +104,10 @@ class _CommandPaletteState extends State<_CommandPalette> {
         Expanded(
           child: scored.isEmpty
               ? EmptyState(compact: true, icon: Icons.search_off, title: 'Aucune commande', subtitle: 'Aucun résultat pour « $_q ».')
-              : ListView(padding: const EdgeInsets.fromLTRB(8, 0, 8, 16), children: [
+              : ListView(padding: const EdgeInsets.fromLTRB(Space.s2, 0, Space.s2, Space.s4), children: [
                   for (final g in groups.entries) ...[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+                      padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, Space.s1),
                       child: Text(g.key.toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.8, color: c.textMuted)),
                     ),
                     for (final cmd in g.value)
@@ -249,7 +249,7 @@ Future<void> startTour(BuildContext context, List<TourStep> steps) async {
           borderRadius: Radii.rl,
           elevation: 10,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 12, 10),
+            padding: const EdgeInsets.fromLTRB(18, Space.s4, Space.s3, Space.s3),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
                 Container(width: 34, height: 34, decoration: BoxDecoration(color: c.primaryLight, shape: BoxShape.circle), child: Icon(step.icon, size: 18, color: c.primary)),
@@ -298,7 +298,7 @@ class _SpotlightPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rr = RRect.fromRectAndRadius(hole, const Radius.circular(16));
+    final rr = RRect.fromRectAndRadius(hole, const Radius.circular(Radii.lg));
     canvas.drawPath(Path.combine(PathOperation.difference, Path()..addRect(Offset.zero & size), Path()..addRRect(rr)), Paint()..color = Colors.black.withValues(alpha: 0.62));
     canvas.drawRRect(
       rr,
@@ -362,7 +362,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
           FilterChip(label: const Text('Non lues'), selected: _unreadOnly, onSelected: (v) => setState(() => _unreadOnly = v)),
           const SizedBox(width: 8),
           for (final cat in cats)
-            Padding(padding: const EdgeInsets.only(right: 6), child: ChoiceChip(label: Text(cat), selected: _cat == cat, onSelected: (_) => setState(() => _cat = cat))),
+            Padding(padding: const EdgeInsets.only(right: Space.s2), child: ChoiceChip(label: Text(cat), selected: _cat == cat, onSelected: (_) => setState(() => _cat = cat))),
         ]),
       ),
       const SizedBox(height: 6),
@@ -371,7 +371,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
         Dismissible(
           key: ValueKey(e.$1.title),
           direction: DismissDirection.endToStart,
-          background: Container(alignment: Alignment.centerRight, padding: const EdgeInsets.only(right: 20), color: c.errorLight, child: Icon(Icons.delete_outline, color: c.errorText)),
+          background: Container(alignment: Alignment.centerRight, padding: const EdgeInsets.only(right: Space.s5), color: c.errorLight, child: Icon(Icons.delete_outline, color: c.errorText)),
           onDismissed: (_) {
             setState(() => _items.remove(e));
             _emit();
@@ -383,7 +383,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
               _emit();
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+              padding: const EdgeInsets.symmetric(vertical: Space.s3, horizontal: Space.s1),
               decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
               child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Container(width: 38, height: 38, decoration: BoxDecoration(shape: BoxShape.circle, color: e.$1.tone.light(c)), child: Icon(e.$1.icon, size: 19, color: e.$1.tone.color(c))),
@@ -396,7 +396,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
                     Text('${Fmt.ago(now.subtract(Duration(minutes: e.$1.minutesAgo)), now)} · ${e.$1.category}', style: TextStyle(fontSize: 11, color: c.textMuted)),
                   ]),
                 ),
-                if (!e.$2) Container(margin: const EdgeInsets.only(top: 6, left: 6), width: 9, height: 9, decoration: BoxDecoration(color: c.primary, shape: BoxShape.circle)),
+                if (!e.$2) Container(margin: const EdgeInsets.only(top: Space.s2, left: Space.s2), width: 9, height: 9, decoration: BoxDecoration(color: c.primary, shape: BoxShape.circle)),
               ]),
             ),
           ),

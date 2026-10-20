@@ -47,10 +47,10 @@ class _MapsGalleryState extends State<MapsGallery> {
               child: Column(children: [
                 SizedBox(
                   height: 52,
-                  child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.all(8), children: [
+                  child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.all(Space.s2), children: [
                     for (final b in Basemap.values)
                       Padding(
-                        padding: const EdgeInsets.only(right: 6),
+                        padding: const EdgeInsets.only(right: Space.s2),
                         child: ChoiceChip(avatar: Icon(b.icon, size: 16), label: Text(b.label), selected: _basemap == b, onSelected: (_) => setState(() => _basemap = b)),
                       ),
                   ]),
@@ -80,10 +80,10 @@ class _MapsGalleryState extends State<MapsGallery> {
                 ),
                 SizedBox(
                   height: 64,
-                  child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.all(10), children: [
+                  child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.all(Space.s3), children: [
                     for (final m in kFlotte)
                       Padding(
-                        padding: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.only(right: Space.s2),
                         child: ChoiceChip(
                           avatar: Icon(m.icon, size: 16, color: m.tone.color(c)),
                           label: Text(m.tooltip ?? m.id),
@@ -120,7 +120,7 @@ class _MapsGalleryState extends State<MapsGallery> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 KitMap(height: 300, radius: 0, routes: kTrajets, markers: kTrajetEtapes, fitToContent: true),
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(Space.s3),
                   child: Wrap(spacing: 16, runSpacing: 6, children: [
                     for (final r in kTrajets)
                       Row(mainAxisSize: MainAxisSize.min, children: [
@@ -167,7 +167,7 @@ class _MapsGalleryState extends State<MapsGallery> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 KitMap(height: 340, radius: 0, zoom: 13, drawTools: const [DrawTool.marker, DrawTool.line, DrawTool.polygon], onShapesChanged: (s) => setState(() => _shapes = s)),
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(Space.s3),
                   child: _shapes.isEmpty
                       ? Text('Aucune forme dessinée.', style: TextStyle(fontSize: 12.5, color: c.textMuted))
                       : Wrap(spacing: 6, runSpacing: 6, children: [

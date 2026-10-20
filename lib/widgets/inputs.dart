@@ -217,7 +217,7 @@ class DropZone extends StatelessWidget {
               if (f != null) onChanged([...files, f]);
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 28, horizontal: Space.s4),
               child: Column(children: [
                 Icon(Icons.cloud_upload_outlined, size: 40, color: c.primary),
                 const SizedBox(height: 8),
@@ -231,10 +231,10 @@ class DropZone extends StatelessWidget {
       ),
       for (final f in files)
         Padding(
-          padding: const EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.only(top: Space.s2),
           child: KitCard(
             radius: Radii.m,
-            padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
+            padding: const EdgeInsets.fromLTRB(Space.s3, Space.s2, Space.s1, Space.s2),
             child: Row(children: [
               Icon(f.icon, color: c.primary),
               const SizedBox(width: 10),

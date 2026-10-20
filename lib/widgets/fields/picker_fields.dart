@@ -226,7 +226,7 @@ class _TreeSelectState extends State<TreeSelect> {
       ],
       Container(
         decoration: BoxDecoration(borderRadius: Radii.rm, border: Border.all(color: c.border)),
-        padding: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(vertical: Space.s1),
         child: Column(children: [for (final n in widget.nodes) if (_matches(n)) ..._build(c, n, 0)]),
       ),
       const SizedBox(height: 8),
@@ -243,7 +243,7 @@ class _TreeSelectState extends State<TreeSelect> {
       InkWell(
         onTap: () => n.isLeaf ? _toggle(n) : setState(() => open ? _open.remove(n.id) : _open.add(n.id)),
         child: Padding(
-          padding: EdgeInsets.only(left: 4.0 + depth * 22, right: 8),
+          padding: EdgeInsets.only(left: Space.s1 + depth * 22, right: Space.s2),
           child: Row(children: [
             SizedBox(
               width: 32,
@@ -306,9 +306,9 @@ class _TransferListState extends State<TransferList> {
       ],
     );
     if (wide) {
-      return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [Expanded(child: left), Padding(padding: const EdgeInsets.all(8), child: buttons), Expanded(child: right)]));
+      return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [Expanded(child: left), Padding(padding: const EdgeInsets.all(Space.s2), child: buttons), Expanded(child: right)]));
     }
-    return Column(children: [left, Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: buttons), right]);
+    return Column(children: [left, Padding(padding: const EdgeInsets.symmetric(vertical: Space.s2), child: buttons), right]);
   }
 
   Widget _panel(KitColors c, String title, List<String> items, Set<String> sel, String q, ValueChanged<String> onQ) {
@@ -317,21 +317,21 @@ class _TransferListState extends State<TransferList> {
       decoration: BoxDecoration(color: c.card, borderRadius: Radii.rm, border: Border.all(color: c.border)),
       child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+          padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, Space.s2),
           child: Row(children: [
             Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary))),
             Text('${sel.length}/${items.length}', style: TextStyle(fontSize: 12, color: c.textMuted)),
           ]),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: Space.s2),
           child: TextField(onChanged: onQ, decoration: const InputDecoration(hintText: 'Rechercher…', prefixIcon: Icon(Icons.search, size: 18))),
         ),
         SizedBox(
           height: 180,
           child: shown.isEmpty
               ? Center(child: Text('Aucun élément', style: TextStyle(color: c.textMuted, fontSize: 12.5)))
-              : ListView(padding: const EdgeInsets.symmetric(vertical: 4), children: [
+              : ListView(padding: const EdgeInsets.symmetric(vertical: Space.s1), children: [
                   for (final e in shown)
                     CheckboxListTile(
                       dense: true,

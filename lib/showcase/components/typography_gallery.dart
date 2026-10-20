@@ -92,7 +92,7 @@ class _TypographyGalleryState extends State<TypographyGallery> {
                   InkWell(
                     onTap: () => copyToClipboard(context, 'KitText.$n'),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
                       decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.divider))),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         SizedBox(
@@ -142,7 +142,7 @@ class _TypographyGalleryState extends State<TypographyGallery> {
               KitCard(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   for (final (w, n) in const [(FontWeight.w300, 'Light 300'), (FontWeight.w400, 'Regular 400'), (FontWeight.w500, 'Medium 500'), (FontWeight.w600, 'Semibold 600'), (FontWeight.w700, 'Bold 700'), (FontWeight.w800, 'Extrabold 800')])
-                    Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: Text('${fam == Fonts.heading ? 'Outfit' : 'Inter'} $n', style: TextStyle(fontFamily: fam, fontWeight: w, fontSize: 16, color: c.textPrimary))),
+                    Padding(padding: const EdgeInsets.symmetric(vertical: Space.s0_5), child: Text('${fam == Fonts.heading ? 'Outfit' : 'Inter'} $n', style: TextStyle(fontFamily: fam, fontWeight: w, fontSize: 16, color: c.textPrimary))),
                 ]),
               ),
           ],
@@ -253,7 +253,7 @@ class _TypographyGalleryState extends State<TypographyGallery> {
                   ('Date longue', Fmt.dateLong(DateTime(2026, 10, 16))),
                   ('Relative', Fmt.ago(DateTime.now().subtract(const Duration(minutes: 12)))),
                 ])
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 3), child: Row(children: [Expanded(child: Text(l, style: t.bodySm)), Text(v, style: t.body.copyWith(fontWeight: FontWeight.w600))])),
+                  Padding(padding: const EdgeInsets.symmetric(vertical: Space.s1), child: Row(children: [Expanded(child: Text(l, style: t.bodySm)), Text(v, style: t.body.copyWith(fontWeight: FontWeight.w600))])),
               ]),
             ),
           ],
@@ -333,7 +333,7 @@ Avant de commencer, vérifiez que le véhicule est **à l’arrêt** et le conta
                 TextField(controller: TextEditingController(text: _input), maxLines: 3, onChanged: (v) => setState(() => _input = v)),
                 Row(children: [Icon(Icons.arrow_downward, size: 18, color: c.primary), const SizedBox(width: 6), Text('Corrigé', style: t.label)]),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(Space.s3),
                   decoration: BoxDecoration(color: c.successLight, borderRadius: Radii.rm),
                   child: Text.rich(TextSpan(children: [
                     for (final (s, k) in revealSpaces(frenchTypography(_input)))
@@ -385,7 +385,7 @@ Avant de commencer, vérifiez que le véhicule est **à l’arrêt** et le conta
               code: "TextStyle(fontFamily: '$_family', fontSize: ${_size.round()}, fontWeight: FontWeight.w${_weight.value}, letterSpacing: ${_pgTracking.toStringAsFixed(1)}, height: ${_pgLh.toStringAsFixed(2)})",
               child: Gap([
                 Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(Space.s4),
                   decoration: BoxDecoration(color: c.fieldBg, borderRadius: Radii.rm),
                   child: Text(_pgText, style: TextStyle(fontFamily: _family, fontSize: _size, fontWeight: _weight, letterSpacing: _pgTracking, height: _pgLh, color: c.textPrimary)),
                 ),

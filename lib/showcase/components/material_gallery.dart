@@ -66,7 +66,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
                       backgroundColor: c.card,
                       isExpanded: _openPanel == i,
                       headerBuilder: (_, open) => ListTile(leading: Icon(ic, color: open ? c.primary : c.textSecondary), title: Text(t, style: TextStyle(fontWeight: FontWeight.w600, color: open ? c.primary : c.textPrimary))),
-                      body: Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), child: Text(body, style: TextStyle(color: c.textSecondary))),
+                      body: Padding(padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4), child: Text(body, style: TextStyle(color: c.textSecondary))),
                     ),
                 ],
               ),
@@ -80,7 +80,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
                   ('Quelle est la précision GPS ?', 'Entre 2 et 5 m en zone dégagée ; jusqu’à 15 m en milieu urbain dense.'),
                   ('Puis-je exporter l’historique ?', 'Oui, au format XLSX ou CSV depuis l’onglet Trajets (90 jours glissants).'),
                 ])
-                  ExpansionTile(title: Text(q, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)), childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 14), expandedAlignment: Alignment.centerLeft, children: [Text(a, style: TextStyle(color: c.textSecondary))]),
+                  ExpansionTile(title: Text(q, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)), childrenPadding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4), expandedAlignment: Alignment.centerLeft, children: [Text(a, style: TextStyle(color: c.textSecondary))]),
               ]),
             ),
           ],
@@ -94,7 +94,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
               label: 'Explorateur de fichiers',
               hint: _treeSel,
               flush: true,
-              child: Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Column(children: [for (final n in kFilesTree) ..._treeNode(c, n, 0)])),
+              child: Padding(padding: const EdgeInsets.symmetric(vertical: Space.s2), child: Column(children: [for (final n in kFilesTree) ..._treeNode(c, n, 0)])),
             ),
           ],
         ),
@@ -178,7 +178,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
               label: 'Outlined',
               child: Card.outlined(
                 child: Padding(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(Space.s4),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text('ABONNEMENT', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.8, color: c.textMuted)),
                     const SizedBox(height: 4),
@@ -235,7 +235,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
                     context: context,
                     builder: (ctx) => SafeArea(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                        padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4),
                         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text('Partager le rapport', style: TextStyle(fontFamily: Fonts.heading, fontSize: 18, fontWeight: FontWeight.w600, color: c.textPrimary)),
                           const SizedBox(height: 16),
@@ -277,7 +277,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
                       color: Theme.of(context).colorScheme.surfaceContainerLow,
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(Radii.l)),
                       elevation: 6,
-                      child: ListView(controller: sc, padding: const EdgeInsets.fromLTRB(16, 8, 16, 16), children: [
+                      child: ListView(controller: sc, padding: const EdgeInsets.fromLTRB(Space.s4, Space.s2, Space.s4, Space.s4), children: [
                         Center(child: Container(width: 32, height: 4, decoration: BoxDecoration(color: c.textMuted, borderRadius: Radii.pill))),
                         const SizedBox(height: 8),
                         Text('8 véhicules à proximité', style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary)),
@@ -381,7 +381,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
         }),
         child: Container(
           color: _treeSel == n.label ? c.primaryLight : null,
-          padding: EdgeInsets.only(left: 8.0 + depth * 20, right: 12, top: 7, bottom: 7),
+          padding: EdgeInsets.only(left: Space.s2 + depth * Space.s5, right: Space.s3, top: Space.s2, bottom: Space.s2),
           child: Row(children: [
             SizedBox(width: 22, child: n.isLeaf ? null : AnimatedRotation(turns: open ? 0.25 : 0, duration: const Duration(milliseconds: 150), child: Icon(Icons.chevron_right, size: 18, color: c.textSecondary))),
             Icon(n.isLeaf ? (n.icon ?? Icons.insert_drive_file) : (open ? Icons.folder_open : Icons.folder), size: 19, color: n.isLeaf ? c.textSecondary : c.warning),
@@ -405,7 +405,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
       builder: (context, cand, _) => AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         constraints: const BoxConstraints(minHeight: 160),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(Space.s2),
         decoration: BoxDecoration(
           color: cand.isNotEmpty ? tone.light(c) : c.hover.withValues(alpha: 0.5),
           borderRadius: Radii.rm,
@@ -416,10 +416,10 @@ class _MaterialGalleryState extends State<MaterialGallery> {
           const SizedBox(height: 6),
           for (final it in items)
             Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.only(bottom: Space.s2),
               child: LongPressDraggable<String>(
                 data: it,
-                feedback: Material(elevation: 6, borderRadius: Radii.rm, child: Container(width: 150, padding: const EdgeInsets.all(10), child: Text(it))),
+                feedback: Material(elevation: 6, borderRadius: Radii.rm, child: Container(width: 150, padding: const EdgeInsets.all(Space.s3), child: Text(it))),
                 childWhenDragging: Opacity(opacity: 0.3, child: _chipCard(c, it)),
                 child: _chipCard(c, it),
               ),
@@ -430,7 +430,7 @@ class _MaterialGalleryState extends State<MaterialGallery> {
   }
 
   Widget _chipCard(KitColors c, String t) => Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(Space.s3),
         decoration: BoxDecoration(color: c.card, borderRadius: Radii.rm),
         child: Text(t, style: const TextStyle(fontSize: 12.5)),
       );

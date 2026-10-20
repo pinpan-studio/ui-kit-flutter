@@ -37,7 +37,7 @@ abstract final class AppTheme {
 
     const buttonText = TextStyle(fontFamily: Fonts.body, fontSize: 14, fontWeight: FontWeight.w600);
     const buttonSize = Size(64, 40);
-    const buttonPadding = EdgeInsets.symmetric(horizontal: 20);
+    const buttonPadding = EdgeInsets.symmetric(horizontal: Space.s5);
     const pill = StadiumBorder();
 
     OutlineInputBorder border(Color c, [double w = 1]) =>
@@ -93,13 +93,13 @@ abstract final class AppTheme {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: scheme.primaryContainer,
         foregroundColor: scheme.onPrimaryContainer,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.lg)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: kc.fieldBg,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s3),
         hintStyle: TextStyle(color: kc.textMuted, fontSize: 14),
         labelStyle: TextStyle(color: kc.textSecondary, fontSize: 14),
         prefixIconColor: kc.textSecondary,
@@ -112,7 +112,7 @@ abstract final class AppTheme {
         disabledBorder: border(kc.border.withValues(alpha: 0.5)),
       ),
       chipTheme: ChipThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.sm)),
         // Puces remplies, sans contour (style « sans bordure »).
         side: BorderSide.none,
         backgroundColor: kc.fieldBg,
@@ -165,7 +165,7 @@ abstract final class AppTheme {
         subtitleTextStyle: TextStyle(fontFamily: Fonts.body, fontSize: 12.5, color: kc.textSecondary),
       ),
       tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(color: scheme.inverseSurface, borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: scheme.inverseSurface, borderRadius: BorderRadius.circular(Radii.sm)),
         textStyle: TextStyle(color: scheme.onInverseSurface, fontSize: 12),
       ),
       popupMenuTheme: PopupMenuThemeData(

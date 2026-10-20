@@ -80,7 +80,7 @@ class KitButton extends StatelessWidget {
     final style = ButtonStyle(
       minimumSize: WidgetStatePropertyAll(Size(expand ? double.infinity : 64, _height)),
       fixedSize: expand ? null : WidgetStatePropertyAll(Size.fromHeight(_height)),
-      padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: size == KitButtonSize.compact ? 14 : 20)),
+      padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: size == KitButtonSize.compact ? Space.s4 : Space.s5)),
       shape: WidgetStatePropertyAll(border),
       elevation: WidgetStatePropertyAll(elevation),
       textStyle: WidgetStatePropertyAll(TextStyle(fontFamily: Fonts.body, fontSize: size == KitButtonSize.compact ? 13 : 14, fontWeight: FontWeight.w600)),
@@ -119,13 +119,13 @@ class FilterChipButton extends StatelessWidget {
         customBorder: const StadiumBorder(),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 7, 8, 7),
+          padding: const EdgeInsets.fromLTRB(Space.s4, Space.s2, Space.s2, Space.s2),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: active ? col : c.textSecondary)),
             if (count != null) ...[
               const SizedBox(width: 6),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1),
+                padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: 1),
                 decoration: BoxDecoration(color: active ? tone.color(c).withValues(alpha: 0.18) : c.hover, borderRadius: Radii.pill),
                 child: Text('$count', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: active ? col : c.textMuted)),
               ),
@@ -159,7 +159,7 @@ class SplitButton extends StatelessWidget {
           InkWell(
             onTap: onPressed,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 10, 14, 10),
+              padding: const EdgeInsets.fromLTRB(18, Space.s3, Space.s4, Space.s3),
               child: Row(children: [
                 Icon(icon, size: 18, color: c.onPrimary),
                 const SizedBox(width: 8),
@@ -174,7 +174,7 @@ class SplitButton extends StatelessWidget {
             itemBuilder: (_) => [
               for (final (l, i) in items) PopupMenuItem(value: l, child: Row(children: [Icon(i, size: 20), const SizedBox(width: 12), Text(l)])),
             ],
-            child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Icon(Icons.arrow_drop_down, color: c.onPrimary)),
+            child: Padding(padding: const EdgeInsets.symmetric(horizontal: Space.s2), child: Icon(Icons.arrow_drop_down, color: c.onPrimary)),
           ),
         ]),
       ),
@@ -196,7 +196,7 @@ class LineAction extends StatelessWidget {
       borderRadius: Radii.rs,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+        padding: const EdgeInsets.symmetric(vertical: Space.s1, horizontal: Space.s0_5),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: c.primary, decoration: TextDecoration.underline, decorationColor: c.primary.withValues(alpha: 0.4))),
           if (icon != null) ...[const SizedBox(width: 4), Icon(icon, size: 14, color: c.primary)],

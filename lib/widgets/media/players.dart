@@ -163,7 +163,7 @@ class _KitVideoPlayerState extends State<KitVideoPlayer> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 10, 6, 0),
+                        padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s2, 0),
                         child: Row(
                           children: [
                             Expanded(
@@ -182,7 +182,7 @@ class _KitVideoPlayerState extends State<KitVideoPlayer> {
                                 for (final s in const [0.5, 1.0, 1.5, 2.0]) PopupMenuItem(value: s, child: Text('×${s.toString().replaceAll('.0', '').replaceAll('.', ',')}')),
                               ],
                               child: Padding(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(Space.s2),
                                 child: Text(
                                   '×${_pb.speed.toString().replaceAll('.0', '').replaceAll('.', ',')}',
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
@@ -203,7 +203,7 @@ class _KitVideoPlayerState extends State<KitVideoPlayer> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: Space.s1),
                         child: Row(
                           children: [
                             Text(
@@ -224,7 +224,7 @@ class _KitVideoPlayerState extends State<KitVideoPlayer> {
                                       thumbColor: Colors.white,
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(horizontal: Space.s3),
                                       child: Slider(
                                         value: _pb.ratio,
                                         onChanged: (v) {
@@ -271,7 +271,7 @@ class _KitVideoPlayerState extends State<KitVideoPlayer> {
               if (_flash != null)
                 Center(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s2),
                     decoration: BoxDecoration(color: Colors.black54, borderRadius: Radii.pill),
                     child: Text(
                       _flash!,
@@ -352,7 +352,7 @@ class _YoutubeFacadeState extends State<YoutubeFacade> {
                 child: Container(
                   width: 68,
                   height: 48,
-                  decoration: BoxDecoration(color: const Color(0xFFFF0000), borderRadius: BorderRadius.circular(12)),
+                  decoration: BoxDecoration(color: const Color(0xFFFF0000), borderRadius: BorderRadius.circular(Radii.md)),
                   child: const Icon(Icons.play_arrow, color: Colors.white, size: 34),
                 ),
               ),
@@ -360,8 +360,8 @@ class _YoutubeFacadeState extends State<YoutubeFacade> {
                 right: 10,
                 bottom: 10,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(4)),
+                  padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s0_5),
+                  decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(Radii.xs)),
                   child: Text(
                     widget.duration,
                     style: const TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w600),
@@ -435,7 +435,7 @@ class _KitAudioPlayerState extends State<KitAudioPlayer> {
     );
     if (widget.compact) {
       return Container(
-        padding: const EdgeInsets.fromLTRB(6, 6, 12, 6),
+        padding: const EdgeInsets.fromLTRB(Space.s2, Space.s2, Space.s3, Space.s2),
         decoration: BoxDecoration(
           color: c.card,
           borderRadius: Radii.pill,
@@ -456,7 +456,7 @@ class _KitAudioPlayerState extends State<KitAudioPlayer> {
       );
     }
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(Space.s4),
       decoration: BoxDecoration(
         color: c.card,
         borderRadius: Radii.rl,

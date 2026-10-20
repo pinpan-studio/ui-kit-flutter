@@ -77,9 +77,9 @@ class _Card extends StatelessWidget {
       padding: EdgeInsets.zero,
       onTap: () => l.open(context),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Container(height: 150, color: c.hover.withValues(alpha: 0.6), padding: const EdgeInsets.all(14), child: Center(child: _Wireframe(l.wire))),
+        Container(height: 150, color: c.hover.withValues(alpha: 0.6), padding: const EdgeInsets.all(Space.s4), child: Center(child: _Wireframe(l.wire))),
         Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(Space.s4),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Icon(l.icon, color: c.primary, size: 20),
@@ -110,15 +110,15 @@ class _Wireframe extends StatelessWidget {
     final accent = c.primary.withValues(alpha: 0.7);
     final phone = Container(
       width: 74,
-      decoration: BoxDecoration(color: c.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: c.textMuted.withValues(alpha: 0.5), width: 2)),
+      decoration: BoxDecoration(color: c.card, borderRadius: BorderRadius.circular(Radii.md), border: Border.all(color: c.textMuted.withValues(alpha: 0.5), width: 2)),
       padding: const EdgeInsets.all(5),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: switch (wire) {
         _Wire.shell => [b(h: 10, color: accent), const SizedBox(height: 5), Row(children: [Expanded(child: b(h: 18)), const SizedBox(width: 3), Expanded(child: b(h: 18))]), const SizedBox(height: 4), b(h: 30), const Spacer(), b(h: 10)],
         _Wire.detail => [b(h: 28, color: accent), const SizedBox(height: 4), Row(children: [for (var i = 0; i < 3; i++) Expanded(child: Padding(padding: const EdgeInsets.all(1), child: b(h: 5)))]), const SizedBox(height: 4), b(h: 14), const SizedBox(height: 3), b(h: 14), const SizedBox(height: 3), b(h: 14)],
         _Wire.auth => [const Spacer(), Center(child: b(w: 18, h: 18, color: accent, r: 6)), const SizedBox(height: 6), b(h: 7), const SizedBox(height: 3), b(h: 7), const SizedBox(height: 5), b(h: 9, color: accent, r: 9), const Spacer()],
         _Wire.public => [b(h: 8), const SizedBox(height: 5), b(w: 36, h: 9), const SizedBox(height: 5), b(h: 34), const Spacer(), b(h: 10, color: accent, r: 10)],
-        _Wire.drawer => [b(h: 8), const SizedBox(height: 4), b(h: 20), const Spacer(), Container(height: 60, decoration: BoxDecoration(color: accent.withValues(alpha: 0.35), borderRadius: const BorderRadius.vertical(top: Radius.circular(8))))],
-        _Wire.dialog => [b(h: 8), const Spacer(), Container(height: 70, decoration: BoxDecoration(color: c.card, borderRadius: BorderRadius.circular(8), boxShadow: Elevations.e3(Theme.of(context).brightness)), padding: const EdgeInsets.all(4), child: Column(children: [b(h: 6), const SizedBox(height: 3), b(h: 6), const Spacer(), b(h: 8, color: accent)]))],
+        _Wire.drawer => [b(h: 8), const SizedBox(height: 4), b(h: 20), const Spacer(), Container(height: 60, decoration: BoxDecoration(color: accent.withValues(alpha: 0.35), borderRadius: const BorderRadius.vertical(top: Radius.circular(Radii.sm))))],
+        _Wire.dialog => [b(h: 8), const Spacer(), Container(height: 70, decoration: BoxDecoration(color: c.card, borderRadius: BorderRadius.circular(Radii.sm), boxShadow: Elevations.e3(Theme.of(context).brightness)), padding: const EdgeInsets.all(Space.s1), child: Column(children: [b(h: 6), const SizedBox(height: 3), b(h: 6), const Spacer(), b(h: 8, color: accent)]))],
         _Wire.kit => [b(h: 8), const SizedBox(height: 4), Row(children: [for (var i = 0; i < 3; i++) Expanded(child: Padding(padding: const EdgeInsets.all(1), child: b(h: 6, r: 6)))]), const SizedBox(height: 4), b(h: 22), const SizedBox(height: 3), b(h: 22), const Spacer(), b(h: 10, color: accent)],
       }),
     );
