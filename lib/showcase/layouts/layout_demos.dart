@@ -16,6 +16,7 @@ import '../../widgets/fields/basic_fields.dart';
 import '../../widgets/interaction.dart';
 import '../../widgets/kit_buttons.dart';
 import '../../widgets/navigation.dart';
+import '../../core/haptics.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // Exemples vivants des gabarits d'écran (ouverts depuis /layouts).
@@ -189,7 +190,7 @@ class _InterventionsBody extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('INT-${(412 + i).toString().padLeft(4, '0')}', style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted)),
+                  Text('INT-${(412 + i).toString().padLeft(4, '0')}', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted)),
                   Text(t, style: const TextStyle(fontWeight: FontWeight.w600)),
                   Text(s, style: TextStyle(fontSize: 12, color: tone.text(c))),
                 ]),
@@ -235,7 +236,10 @@ class _AccountPanel extends StatelessWidget {
         secondary: const Icon(Icons.dark_mode_outlined),
         title: const Text('Thème sombre'),
         value: context.isDark,
-        onChanged: (_) => ThemeController.instance.toggle(),
+        onChanged: (_) {
+          kitHaptic();
+          ThemeController.instance.toggle();
+        },
       ),
       ListTile(
         leading: const Icon(Icons.palette_outlined),

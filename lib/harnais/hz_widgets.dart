@@ -21,6 +21,7 @@ import '../widgets/planning/planning_models.dart';
 import '../widgets/planning/planning_views.dart';
 import '../widgets/selects.dart';
 import 'hz_models.dart';
+import '../core/haptics.dart';
 
 /// Rappels vers le store (réponses interactives, formulaires).
 class HzActions {
@@ -347,7 +348,7 @@ class HzWidgetView extends StatelessWidget {
                     Row(children: [
                       Container(width: 32, height: 32, decoration: BoxDecoration(color: card.tone.light(c), borderRadius: BorderRadius.circular(Radii.md)), child: Icon(card.icon, size: 18, color: card.tone.color(c))),
                       const Spacer(),
-                      if (card.meta != null) Text(card.meta!, style: TextStyle(fontSize: 10.5, color: c.textMuted)),
+                      if (card.meta != null) Text(card.meta!, style: TextStyle(fontSize: 11, color: c.textMuted)),
                     ]),
                     const SizedBox(height: 8),
                     Text(card.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700)),
@@ -512,7 +513,7 @@ class _HzTableState extends State<_HzTable> {
                     width: width(col),
                     padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s3),
                     child: Row(children: [
-                      Flexible(child: Text(col.label.toUpperCase(), style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.4, color: _sort == col.key ? c.primary : c.textSecondary))),
+                      Flexible(child: Text(col.label.toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.4, color: _sort == col.key ? c.primary : c.textSecondary))),
                       if (_sort == col.key) Icon(_asc ? Icons.arrow_upward : Icons.arrow_downward, size: 13, color: c.primary),
                     ]),
                   ),
@@ -681,7 +682,7 @@ class _HzFormState extends State<_HzForm> {
           ),
           Text(_describe(f, _v[f.key]), style: const TextStyle(fontWeight: FontWeight.w700)),
         ]),
-      'toggle' => SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(f.label), value: _v[f.key] == true, onChanged: set),
+      'toggle' => SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(f.label), value: _v[f.key] == true, onChanged: withHaptic(set)),
       'checkbox' => CheckboxListTile(contentPadding: EdgeInsets.zero, controlAffinity: ListTileControlAffinity.leading, title: Text(f.label), value: _v[f.key] == true, onChanged: set),
       'rating' => RatingInput(value: ((_v[f.key] as num?) ?? 0).toDouble(), onChanged: set, labels: const ['Mauvais', 'Passable', 'Correct', 'Très bien', 'Excellent']),
       'textarea' => TextFormField(initialValue: _v[f.key] as String?, maxLines: 3, minLines: 2, onChanged: set, decoration: InputDecoration(hintText: f.placeholder)),
@@ -943,7 +944,7 @@ class _Heatmap extends StatelessWidget {
         child: Column(children: [
           Row(children: [
             const SizedBox(width: 34),
-            for (var j = 0; j < cols.length; j++) SizedBox(width: 26, child: Text(j.isEven ? cols[j] : '', textAlign: TextAlign.center, style: TextStyle(fontSize: 9.5, color: c.textMuted))),
+            for (var j = 0; j < cols.length; j++) SizedBox(width: 26, child: Text(j.isEven ? cols[j] : '', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: c.textMuted))),
           ]),
           for (var i = 0; i < rows.length; i++)
             Row(children: [
@@ -999,7 +1000,7 @@ class _Compare extends StatelessWidget {
                 if (rec) const StatusBadge('Recommandé', tone: KitTone.primary, uppercase: false),
                 Text(name, style: TextStyle(fontWeight: FontWeight.w700, color: rec ? c.primary : c.textPrimary)),
                 Text(price, style: const TextStyle(fontFamily: Fonts.heading, fontWeight: FontWeight.w700)),
-                if (note != null) Text(note, textAlign: TextAlign.center, style: TextStyle(fontSize: 10.5, color: c.textMuted)),
+                if (note != null) Text(note, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: c.textMuted)),
               ]),
             ),
         ]),
@@ -1126,7 +1127,7 @@ class _JsonNodeState extends State<_JsonNode> {
             WidgetSpan(child: Icon(_open ? Icons.arrow_drop_down : Icons.arrow_right, size: 16, color: c.textMuted)),
             ?key,
             TextSpan(text: _open ? open : '$open … $close  ', style: TextStyle(color: c.textMuted)),
-            if (!_open) TextSpan(text: '${entries.length} élément(s)', style: TextStyle(color: c.textMuted, fontSize: 10.5)),
+            if (!_open) TextSpan(text: '${entries.length} élément(s)', style: TextStyle(color: c.textMuted, fontSize: 11)),
           ])),
         ),
         if (_open) ...[
@@ -1167,7 +1168,7 @@ class HzAttachmentPreview extends StatelessWidget {
         const SizedBox(width: 8),
         Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
           ConstrainedBox(constraints: const BoxConstraints(maxWidth: 150), child: Text(a.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600))),
-          Text(a.size, style: TextStyle(fontSize: 10.5, color: c.textMuted)),
+          Text(a.size, style: TextStyle(fontSize: 11, color: c.textMuted)),
         ]),
       ]),
     );

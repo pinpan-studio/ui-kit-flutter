@@ -18,6 +18,11 @@ abstract final class KitText {
   static const bodySm = TextStyle(fontFamily: Fonts.body, fontSize: 13, height: 1.55, fontWeight: FontWeight.w400);
   static const label = TextStyle(fontFamily: Fonts.body, fontSize: 12, height: 1.4, fontWeight: FontWeight.w600);
   static const caption = TextStyle(fontFamily: Fonts.body, fontSize: 12, height: 1.4, fontWeight: FontWeight.w400);
+  /// Petite étiquette (puces, filtres, métadonnées compactes).
+  static const labelSm = TextStyle(fontFamily: Fonts.body, fontSize: 11.5, height: 1.4, fontWeight: FontWeight.w600);
+
+  /// Plus petit texte lisible : badges, compteurs, légendes de graphique. Jamais pour un texte cliquable.
+  static const micro = TextStyle(fontFamily: Fonts.body, fontSize: 11, height: 1.35, fontWeight: FontWeight.w500);
   static const overline = TextStyle(fontFamily: Fonts.body, fontSize: 11, height: 1.4, fontWeight: FontWeight.w700, letterSpacing: 0.66);
   static const mono = TextStyle(fontFamily: Fonts.mono, fontSize: 12.5, height: 1.5);
   static const brand = TextStyle(fontFamily: Fonts.brand, fontSize: 18, fontWeight: FontWeight.w600);
@@ -47,6 +52,8 @@ class KitTextColors {
   TextStyle get bodySm => KitText.bodySm.copyWith(color: c.textSecondary);
   TextStyle get label => KitText.label.copyWith(color: c.textSecondary);
   TextStyle get caption => KitText.caption.copyWith(color: c.textMuted);
+  TextStyle get labelSm => KitText.labelSm.copyWith(color: c.textSecondary);
+  TextStyle get micro => KitText.micro.copyWith(color: c.textMuted);
   TextStyle get overline => KitText.overline.copyWith(color: c.textMuted);
   TextStyle get mono => KitText.mono.copyWith(color: c.textPrimary);
 }

@@ -93,7 +93,7 @@ class PlanningCard extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, Space.s3),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Row(children: [
-              Expanded(child: Text(item.ref ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted))),
+              Expanded(child: Text(item.ref ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted))),
               if (item.badge != null) Flexible(child: StatusBadge(item.badge!, tone: item.badgeTone ?? KitTone.neutral)),
             ]),
             const SizedBox(height: 4),
@@ -314,7 +314,7 @@ class _GanttTimelineState extends State<GanttTimeline> {
           SizedBox(
             width: labelW,
             child: Column(children: [
-              Container(height: headH, color: c.tableHeader, alignment: Alignment.centerLeft, padding: const EdgeInsets.only(left: Space.s3), child: Text(widget.groups != null ? 'RESSOURCE' : 'PHASE', style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: c.textSecondary))),
+              Container(height: headH, color: c.tableHeader, alignment: Alignment.centerLeft, padding: const EdgeInsets.only(left: Space.s3), child: Text(widget.groups != null ? 'RESSOURCE' : 'PHASE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: c.textSecondary))),
               for (final r in rows)
                 Container(
                   height: rowH,
@@ -325,7 +325,7 @@ class _GanttTimelineState extends State<GanttTimeline> {
                     Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
                         Text(r.$1, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary)),
-                        if (r.$2 != null) Text(r.$2!, maxLines: 1, style: TextStyle(fontSize: 10.5, color: c.textMuted, fontFamily: Fonts.mono)),
+                        if (r.$2 != null) Text(r.$2!, maxLines: 1, style: TextStyle(fontSize: 11, color: c.textMuted, fontFamily: Fonts.mono)),
                       ]),
                     ),
                   ]),
@@ -352,7 +352,7 @@ class _GanttTimelineState extends State<GanttTimeline> {
                         color: c.tableHeader,
                         alignment: Alignment.center,
                         child: Column(mainAxisSize: MainAxisSize.min, children: [
-                          Text(kWeekdaysShort[addDays(start, d).weekday - 1].substring(0, _dayW < 36 ? 1 : 3), style: TextStyle(fontSize: 10, color: c.textMuted)),
+                          Text(kWeekdaysShort[addDays(start, d).weekday - 1].substring(0, _dayW < 36 ? 1 : 3), style: TextStyle(fontSize: 11, color: c.textMuted)),
                           Text('${addDays(start, d).day}', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: sameDay(addDays(start, d), today) ? c.primary : c.textPrimary)),
                         ]),
                       ),
@@ -428,7 +428,7 @@ class NoteGrid extends StatelessWidget {
             ),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Expanded(child: Text(it.ref ?? '', style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted))),
+                Expanded(child: Text(it.ref ?? '', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted))),
                 GestureDetector(onTap: () => onToggle(it), child: Icon(it.done ? Icons.check_circle : Icons.circle_outlined, size: 20, color: it.done ? c.success : c.textMuted)),
               ]),
               const SizedBox(height: 6),
@@ -680,7 +680,7 @@ class _AgendaViewState extends State<AgendaView> {
                   left: 0,
                   right: 0,
                   child: Row(children: [
-                    SizedBox(width: gutter, child: Text('${h.toString().padLeft(2, '0')}:00', style: TextStyle(fontSize: 10.5, color: c.textMuted))),
+                    SizedBox(width: gutter, child: Text('${h.toString().padLeft(2, '0')}:00', style: TextStyle(fontSize: 11, color: c.textMuted))),
                     Expanded(child: Container(height: 1, color: c.border)),
                   ]),
                 ),
@@ -702,7 +702,7 @@ class _AgendaViewState extends State<AgendaView> {
                           maxHeight: double.infinity,
                           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Text(it.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: c.textPrimary)),
-                            Text('${Fmt.time(it.start!)}${it.end == null ? '' : ' – ${Fmt.time(it.end!)}'}', maxLines: 1, style: TextStyle(fontSize: 10.5, color: c.textSecondary)),
+                            Text('${Fmt.time(it.start!)}${it.end == null ? '' : ' – ${Fmt.time(it.end!)}'}', maxLines: 1, style: TextStyle(fontSize: 11, color: c.textSecondary)),
                           ]),
                         ),
                       ),

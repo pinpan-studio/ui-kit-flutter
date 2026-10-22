@@ -276,7 +276,7 @@ class _TextDiffState extends State<TextDiff> {
               child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 SizedBox(
                   width: 30,
-                  child: Text('${l.newNo ?? l.oldNo ?? ''}', textAlign: TextAlign.right, style: style.copyWith(color: c.textMuted, fontSize: 10.5, fontFamily: Fonts.mono)),
+                  child: Text('${l.newNo ?? l.oldNo ?? ''}', textAlign: TextAlign.right, style: style.copyWith(color: c.textMuted, fontSize: 11, fontFamily: Fonts.mono)),
                 ),
                 SizedBox(
                   width: 20,

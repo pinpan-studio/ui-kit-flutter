@@ -10,6 +10,7 @@ import '../../widgets/inputs.dart';
 import '../../widgets/selects.dart';
 import '../doc/doc.dart';
 import 'package:ui_kit_flutter/theme/tokens.dart';
+import '../../core/haptics.dart';
 
 final _villes = [for (final v in kVilles) SelectOption(v, v, icon: Icons.location_on_outlined)];
 final _secteurs = [for (final s in kSecteurs) SelectOption(s, s)];
@@ -539,8 +540,8 @@ class _FormsGalleryState extends State<FormsGallery> {
           Demo(
             label: 'Switch',
             child: Column(children: [
-              SwitchListTile(contentPadding: EdgeInsets.zero, value: _notif, onChanged: (v) => setState(() => _notif = v), title: const Text('Notifications push'), subtitle: const Text('Alertes de zone et de vitesse')),
-              SwitchListTile(contentPadding: EdgeInsets.zero, value: _sms, onChanged: (v) => setState(() => _sms = v), title: const Text('Rappel SMS au client')),
+              SwitchListTile(contentPadding: EdgeInsets.zero, value: _notif, onChanged: withHaptic((v) => setState(() => _notif = v)), title: const Text('Notifications push'), subtitle: const Text('Alertes de zone et de vitesse')),
+              SwitchListTile(contentPadding: EdgeInsets.zero, value: _sms, onChanged: withHaptic((v) => setState(() => _sms = v)), title: const Text('Rappel SMS au client')),
               SwitchListTile(contentPadding: EdgeInsets.zero, value: _dark, onChanged: null, title: const Text('Désactivé')),
             ]),
           ),

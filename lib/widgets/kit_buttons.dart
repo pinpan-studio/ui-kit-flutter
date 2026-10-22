@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/kit_colors.dart';
 import '../theme/tokens.dart';
+import '../core/haptics.dart';
 
 /// Variantes de bouton du kit (correspondance avec Angular Material) :
 /// primary = mat-flat-button · raised = mat-raised-button · secondary = stroked primaire ·
@@ -37,10 +38,10 @@ class KitButton extends StatelessWidget {
   final KitButtonShape shape;
 
   double get _height => switch (size) {
-        KitButtonSize.compact => 32,
-        KitButtonSize.standard => 40,
-        KitButtonSize.create => 42,
-        KitButtonSize.large => 48,
+        KitButtonSize.compact => Sizes.buttonCompact,
+        KitButtonSize.standard => Sizes.buttonStandard,
+        KitButtonSize.create => Sizes.buttonCreate,
+        KitButtonSize.large => Sizes.buttonLarge,
       };
 
   @override
@@ -64,7 +65,7 @@ class KitButton extends StatelessWidget {
     };
 
     final busy = loading;
-    final iconSize = size == KitButtonSize.compact ? 16.0 : 18.0;
+    final iconSize = size == KitButtonSize.compact ? Sizes.buttonIconCompact : Sizes.buttonIcon;
     final leading = busy
         ? SizedBox(width: iconSize, height: iconSize, child: CircularProgressIndicator(strokeWidth: 2, color: fg))
         : icon == null
@@ -78,7 +79,7 @@ class KitButton extends StatelessWidget {
     ]);
 
     final style = ButtonStyle(
-      minimumSize: WidgetStatePropertyAll(Size(expand ? double.infinity : 64, _height)),
+      minimumSize: WidgetStatePropertyAll(Size(expand ? double.infinity : Sizes.buttonMinWidth, _height)),
       fixedSize: expand ? null : WidgetStatePropertyAll(Size.fromHeight(_height)),
       padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: size == KitButtonSize.compact ? Space.s4 : Space.s5)),
       shape: WidgetStatePropertyAll(border),
@@ -117,7 +118,12 @@ class FilterChipButton extends StatelessWidget {
       shape: StadiumBorder(side: BorderSide(color: active ? tone.color(c).withValues(alpha: 0.6) : c.border)),
       child: InkWell(
         customBorder: const StadiumBorder(),
-        onTap: onTap,
+        onTap: onTap == null
+            ? null
+            : () {
+                kitHaptic();
+                onTap!();
+              },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(Space.s4, Space.s2, Space.s2, Space.s2),
           child: Row(mainAxisSize: MainAxisSize.min, children: [

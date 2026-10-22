@@ -6,6 +6,8 @@ import 'package:ui_kit_flutter/theme/kit_colors.dart';
 import 'package:ui_kit_flutter/theme/theme_controller.dart';
 import 'package:ui_kit_flutter/theme/theme_palettes.dart';
 import 'package:ui_kit_flutter/theme/theme_studio.dart';
+import 'package:ui_kit_flutter/theme/tokens.dart';
+import 'package:ui_kit_flutter/theme/kit_text.dart';
 import 'package:ui_kit_flutter/widgets/common.dart';
 import 'package:ui_kit_flutter/widgets/fields/picker_fields.dart';
 
@@ -15,6 +17,27 @@ double _contrast(Color a, Color b) {
 }
 
 void main() {
+  // Mêmes valeurs que `__tests__/theme.test.ts` du kit React Native : les deux kits partagent leurs jetons.
+  group('jetons partagés avec le kit React Native', () {
+    test('cible tactile et dimensions', () {
+      expect(kMinTouch, 48);
+      expect([Sizes.buttonCompact, Sizes.buttonStandard, Sizes.buttonCreate, Sizes.buttonLarge], [32, 40, 42, 48]);
+      expect([Sizes.iconSm, Sizes.iconMd, Sizes.iconLg, Sizes.avatar, Sizes.appBar, Sizes.toc], [16, 20, 24, 36, 64, 48]);
+    });
+    test('couches d\'état', () {
+      expect([StateLayers.hover, StateLayers.focus, StateLayers.pressed, StateLayers.dragged], [0.08, 0.12, 0.12, 0.16]);
+      expect([StateLayers.disabledContainer, StateLayers.disabledContent], [0.12, 0.38]);
+    });
+    test('durées d\'animation croissantes', () {
+      final ms = [Motion.instant, Motion.fast, Motion.base, Motion.medium, Motion.slow, Motion.emphasized].map((d) => d.inMilliseconds);
+      expect(ms, [100, 150, 200, 250, 300, 400]);
+    });
+    test('petits styles typographiques', () {
+      expect(KitText.micro.fontSize, 11);
+      expect(KitText.labelSm.fontSize, 11.5);
+    });
+  });
+
   test('identifiants de thème uniques et thème par défaut présent', () {
     final ids = kitPalettes.map((p) => p.id).toList();
     expect(ids.toSet().length, ids.length);

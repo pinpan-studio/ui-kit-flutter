@@ -6,6 +6,7 @@ import '../core/format.dart';
 import '../theme/kit_colors.dart';
 import '../theme/kit_text.dart';
 import '../theme/tokens.dart';
+import '../core/haptics.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // Briques partagées du kit (équivalents de shared/components/*).
@@ -60,7 +61,7 @@ class CountDot extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 5),
       alignment: Alignment.center,
       decoration: BoxDecoration(color: tone.color(c), borderRadius: Radii.pill),
-      child: Text(count > 99 ? '99+' : '$count', style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w700)),
+      child: Text(count > 99 ? '99+' : '$count', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
     );
   }
 }
@@ -441,7 +442,10 @@ class SegmentedToggle<T> extends StatelessWidget {
     final c = context.kc;
     final children = [
       for (final (v, label, icon) in options)
-        _seg(context, c, v == value, label, icon, () => onChanged(v)),
+        _seg(context, c, v == value, label, icon, () {
+          if (v != value) kitHaptic();
+          onChanged(v);
+        }),
     ];
     return Container(
       padding: const EdgeInsets.all(Space.s1),
@@ -454,7 +458,7 @@ class SegmentedToggle<T> extends StatelessWidget {
 
   Widget _seg(BuildContext context, KitColors c, bool active, String label, IconData? icon, VoidCallback onTap) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
+      duration: Motion.of(context, const Duration(milliseconds: 180)),
       decoration: BoxDecoration(
         color: active ? c.card : Colors.transparent,
         borderRadius: Radii.pill,
@@ -697,7 +701,7 @@ class FormFieldLabel extends StatelessWidget {
       child,
       if (error != null || hint != null) ...[
         const SizedBox(height: 4),
-        Text(error ?? hint!, style: TextStyle(fontSize: 11.5, color: error != null ? c.errorText : c.textMuted)),
+        Text(error ?? hint!, style: TextStyle(fontSize: 12, color: error != null ? c.errorText : c.textMuted)),
       ],
     ]);
   }

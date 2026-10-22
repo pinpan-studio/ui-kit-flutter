@@ -138,3 +138,66 @@ abstract final class Elevations {
           BoxShadow(color: Color(0x80000000), blurRadius: 20, spreadRadius: -6, offset: Offset(0, 10)),
         ];
 }
+
+/// Taille minimale d'une cible tactile (Material / `MIN_TOUCH` du kit React Native).
+const double kMinTouch = 48;
+
+/// Dimensions récurrentes des composants (`sizes` du kit React Native).
+abstract final class Sizes {
+  /// Hauteurs de `KitButtonSize` : compact / standard / create / large.
+  static const double buttonCompact = 32;
+  static const double buttonStandard = 40;
+  static const double buttonCreate = 42;
+  static const double buttonLarge = 48;
+  static const double buttonMinWidth = 64;
+
+  /// Icône dans un bouton : 16 en compact, 18 sinon.
+  static const double buttonIconCompact = 16;
+  static const double buttonIcon = 18;
+
+  static const double iconSm = 16;
+  static const double iconMd = 20;
+  static const double iconLg = 24;
+  static const double avatar = 36;
+
+  /// Hauteur de la barre d'application et du sommaire en puces.
+  static const double appBar = 64;
+  static const double toc = 48;
+}
+
+/// Opacités des couches d'état M3 (`--state-*` d'Angular, `stateLayers` du kit React Native).
+abstract final class StateLayers {
+  static const double hover = 0.08;
+  static const double focus = 0.12;
+  static const double pressed = 0.12;
+  static const double dragged = 0.16;
+
+  /// Fond et contenu d'un élément désactivé.
+  static const double disabledContainer = 0.12;
+  static const double disabledContent = 0.38;
+}
+
+/// Durées et courbes d'animation partagées (`motion` du kit React Native).
+abstract final class Motion {
+  static const Duration instant = Duration(milliseconds: 100);
+  static const Duration fast = Duration(milliseconds: 150);
+  static const Duration base = Duration(milliseconds: 200);
+  static const Duration medium = Duration(milliseconds: 250);
+  static const Duration slow = Duration(milliseconds: 300);
+  static const Duration emphasized = Duration(milliseconds: 400);
+
+  /// Transition d'un état à l'autre sur place.
+  static const Curve standard = Curves.easeInOutCubic;
+
+  /// Entrée à l'écran (feuilles, menus, éléments qui apparaissent).
+  static const Curve decelerate = Curves.easeOutCubic;
+
+  /// Sortie de l'écran.
+  static const Curve accelerate = Curves.easeInCubic;
+
+  /// Mouvement mis en avant (changement de page, élément principal).
+  static const Curve emphasizedCurve = Curves.easeOutQuart;
+
+  /// [d], ou zéro quand le système demande de réduire les animations (`useReducedMotion` React Native).
+  static Duration of(BuildContext context, Duration d) => MediaQuery.disableAnimationsOf(context) ? Duration.zero : d;
+}

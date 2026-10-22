@@ -11,6 +11,7 @@ import '../../widgets/dialogs.dart';
 import '../../widgets/feedback.dart';
 import '../../widgets/kit_buttons.dart';
 import '../doc/doc.dart';
+import '../../core/haptics.dart';
 
 /// `/components/feedback` — alertes, snackbars, modales, dialogs, confirmations, drawers,
 /// tooltips, chargements, squelettes, erreurs, envoi multiple, bannières, résultat, annulation.
@@ -571,6 +572,7 @@ class _FeedbackGalleryState extends State<FeedbackGallery> {
                   : const SizedBox(width: double.infinity),
             ),
             SwitchListTile(value: !_offline, onChanged: (v) {
+              kitHaptic();
               setState(() => _offline = !v);
               if (v) showKitSnack(context, 'Connexion rétablie', kind: SnackKind.success);
             }, title: const Text('Connexion réseau'), secondary: Icon(_offline ? Icons.wifi_off : Icons.wifi)),

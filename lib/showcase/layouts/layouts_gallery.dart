@@ -90,7 +90,7 @@ class _Card extends StatelessWidget {
             const SizedBox(height: 6),
             Text(l.description, style: TextStyle(fontSize: 12.5, height: 1.45, color: c.textSecondary)),
             const SizedBox(height: 8),
-            Text(l.file, style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted)),
+            Text(l.file, style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted)),
           ]),
         ),
       ]),

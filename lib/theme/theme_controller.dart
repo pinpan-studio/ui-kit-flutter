@@ -9,6 +9,7 @@ import 'kit_palette.dart';
 import 'theme_palettes.dart';
 import 'theme_studio.dart';
 import 'package:ui_kit_flutter/theme/tokens.dart';
+import '../core/haptics.dart';
 
 /// Thème purement visuel — équivalent de `ThemeService` : mode (clair / sombre / système)
 /// et thème de couleur M3 : palette prédéfinie ([kitPalettes]) ou thème personnalisé du studio.
@@ -97,7 +98,10 @@ class ThemeToggleButton extends StatelessWidget {
     return IconButton(
       tooltip: dark ? 'Passer en thème clair' : 'Passer en thème sombre',
       icon: Icon(dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
-      onPressed: ThemeController.instance.toggle,
+      onPressed: () {
+        kitHaptic();
+        ThemeController.instance.toggle();
+      },
     );
   }
 }
@@ -174,7 +178,10 @@ class ThemeSettings extends StatelessWidget {
               ],
               selected: {controller.mode},
               showSelectedIcon: false,
-              onSelectionChanged: (s) => controller.setMode(s.first),
+              onSelectionChanged: (s) {
+                kitHaptic();
+                controller.setMode(s.first);
+              },
             ),
             const SizedBox(height: 24),
             Row(
@@ -204,7 +211,10 @@ class ThemeSettings extends StatelessWidget {
                     label: p.label,
                     colors: p.scheme(brightness),
                     selected: !controller.isCustom && p.id == controller.palette.id,
-                    onTap: () => controller.setPalette(p.id),
+                    onTap: () {
+                      kitHaptic();
+                      controller.setPalette(p.id);
+                    },
                   ),
               ],
             ),

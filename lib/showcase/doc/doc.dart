@@ -7,18 +7,11 @@ import '../../theme/kit_colors.dart';
 import '../../theme/kit_text.dart';
 import '../../theme/theme_controller.dart';
 import '../../theme/tokens.dart';
+import '../kit_shell.dart';
 
 /// Section documentée : ancre + titre + description + démos (`<kit-section>`).
 class DocSection {
-  const DocSection({
-    required this.id,
-    required this.title,
-    required this.children,
-    this.description,
-    this.source,
-    this.cols = 1,
-    this.tocLabel,
-  });
+  const DocSection({required this.id, required this.title, required this.children, this.description, this.source, this.cols = 1, this.tocLabel});
 
   final String id, title;
   final String? description, source, tocLabel;
@@ -107,12 +100,7 @@ class _DocPageState extends State<DocPage> {
   Future<void> _goTo(String id, {bool animate = true}) async {
     final ctx = _keys[id]?.currentContext;
     if (ctx == null) return;
-    await Scrollable.ensureVisible(
-      ctx,
-      duration: animate ? const Duration(milliseconds: 420) : Duration.zero,
-      curve: Curves.easeInOutCubic,
-      alignment: 0.0,
-    );
+    await Scrollable.ensureVisible(ctx, duration: animate ? const Duration(milliseconds: 420) : Duration.zero, curve: Curves.easeInOutCubic, alignment: 0.0);
   }
 
   @override
@@ -148,18 +136,24 @@ class _DocPageState extends State<DocPage> {
                 ),
               ),
       ),
-      body: SingleChildScrollView(
+      body: ScrollToTopOnReselect(
         controller: _scroll,
-        padding: EdgeInsets.fromLTRB(pad, Space.l, pad, 96 + MediaQuery.paddingOf(context).bottom),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1280),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              _Hero(icon: widget.icon, eyebrow: widget.eyebrow, title: widget.title, subtitle: widget.subtitle),
-              const SizedBox(height: Space.l),
-              if (widget.header != null) ...[widget.header!, const SizedBox(height: Space.l)],
-              for (final s in widget.sections) _SectionView(key: _keys[s.id], section: s),
-            ]),
+        child: SingleChildScrollView(
+          controller: _scroll,
+          padding: EdgeInsets.fromLTRB(pad, Space.l, pad, 96 + MediaQuery.paddingOf(context).bottom),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1280),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _Hero(icon: widget.icon, eyebrow: widget.eyebrow, title: widget.title, subtitle: widget.subtitle),
+                  const SizedBox(height: Space.l),
+                  if (widget.header != null) ...[widget.header!, const SizedBox(height: Space.l)],
+                  for (final s in widget.sections) _SectionView(key: _keys[s.id], section: s),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -176,26 +170,35 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.kc;
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-        width: 56,
-        height: 56,
-        decoration: BoxDecoration(shape: BoxShape.circle, color: c.primaryLight),
-        child: Icon(icon, size: 28, color: c.primary),
-      ),
-      const SizedBox(width: Space.m),
-      Expanded(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(eyebrow.toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1.1, color: c.textMuted)),
-          const SizedBox(height: 2),
-          Text(title, style: KitText.h2.copyWith(fontSize: 26, fontWeight: FontWeight.w700, color: c.textPrimary)),
-          if (subtitle != null) ...[
-            const SizedBox(height: 4),
-            Text(subtitle!, style: TextStyle(fontSize: 14, height: 1.5, color: c.textSecondary)),
-          ],
-        ]),
-      ),
-    ]);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: c.primaryLight),
+          child: Icon(icon, size: 28, color: c.primary),
+        ),
+        const SizedBox(width: Space.m),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                eyebrow.toUpperCase(),
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1.1, color: c.textMuted),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                title,
+                style: KitText.h2.copyWith(fontSize: 26, fontWeight: FontWeight.w700, color: c.textPrimary),
+              ),
+              if (subtitle != null) ...[const SizedBox(height: 4), Text(subtitle!, style: TextStyle(fontSize: 14, height: 1.5, color: c.textSecondary))],
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -216,7 +219,10 @@ class _TocChip extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: Space.s3, vertical: Space.s2),
-          child: Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: active ? c.primary : c.textSecondary)),
+          child: Text(
+            label,
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: active ? c.primary : c.textSecondary),
+          ),
         ),
       ),
     );
@@ -233,35 +239,49 @@ class _SectionView extends StatelessWidget {
     final s = section;
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.xl),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 10, runSpacing: 4, children: [
-          Text(s.title, style: KitText.h3.copyWith(color: c.textPrimary)),
-          if (s.source != null)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s0_5),
-              decoration: BoxDecoration(color: c.hover, borderRadius: BorderRadius.circular(Radii.sm)),
-              child: Text(s.source!, style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted)),
-            ),
-        ]),
-        if (s.description != null) ...[
-          const SizedBox(height: Space.s),
-          Text(s.description!, style: TextStyle(fontSize: 13, height: 1.5, color: c.textSecondary)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 10,
+            runSpacing: 4,
+            children: [
+              Text(s.title, style: KitText.h3.copyWith(color: c.textPrimary)),
+              if (s.source != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: Space.s2, vertical: Space.s0_5),
+                  decoration: BoxDecoration(color: c.hover, borderRadius: BorderRadius.circular(Radii.sm)),
+                  child: Text(
+                    s.source!,
+                    style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted),
+                  ),
+                ),
+            ],
+          ),
+          if (s.description != null) ...[const SizedBox(height: Space.s), Text(s.description!, style: TextStyle(fontSize: 13, height: 1.5, color: c.textSecondary))],
+          const SizedBox(height: Space.m),
+          LayoutBuilder(
+            builder: (context, cons) {
+              final cols = math.min(s.cols, Breakpoints.columns(cons.maxWidth, max: s.cols));
+              if (cols <= 1) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < s.children.length; i++) ...[if (i > 0) const SizedBox(height: Space.m), s.children[i]],
+                  ],
+                );
+              }
+              final w = (cons.maxWidth - Space.m * (cols - 1)) / cols;
+              return Wrap(
+                spacing: Space.m,
+                runSpacing: Space.m,
+                children: [for (final ch in s.children) SizedBox(width: w, child: ch)],
+              );
+            },
+          ),
         ],
-        const SizedBox(height: Space.m),
-        LayoutBuilder(builder: (context, cons) {
-          final cols = math.min(s.cols, Breakpoints.columns(cons.maxWidth, max: s.cols));
-          if (cols <= 1) {
-            return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              for (var i = 0; i < s.children.length; i++) ...[
-                if (i > 0) const SizedBox(height: Space.m),
-                s.children[i],
-              ],
-            ]);
-          }
-          final w = (cons.maxWidth - Space.m * (cols - 1)) / cols;
-          return Wrap(spacing: Space.m, runSpacing: Space.m, children: [for (final ch in s.children) SizedBox(width: w, child: ch)]);
-        }),
-      ]),
+      ),
     );
   }
 }
@@ -294,46 +314,61 @@ class _DemoState extends State<Demo> {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(color: c.card, borderRadius: Radii.rl),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          constraints: const BoxConstraints(minHeight: 40),
-          padding: const EdgeInsets.fromLTRB(Space.s4, Space.s1, Space.s1, Space.s1),
-          color: c.hover.withValues(alpha: 0.5),
-          child: Row(children: [
-            if (widget.hint != null) ...[
-              Flexible(child: Text(widget.label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: c.textPrimary))),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(widget.hint!, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: c.textMuted)),
-              ),
-            ] else
-              Expanded(child: Text(widget.label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: c.textPrimary))),
-            if (widget.code != null)
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                iconSize: 18,
-                tooltip: _showCode ? 'Masquer le code' : 'Voir le code',
-                color: _showCode ? c.primary : c.textMuted,
-                onPressed: () => setState(() => _showCode = !_showCode),
-                icon: Icon(_showCode ? Icons.code_off : Icons.code),
-              )
-            else
-              const SizedBox(height: 32),
-          ]),
-        ),
-        Container(
-          color: widget.muted ? c.bg : null,
-          padding: widget.flush ? EdgeInsets.zero : (widget.padding ?? const EdgeInsets.all(Space.m)),
-          child: widget.child,
-        ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 200),
-          alignment: Alignment.topCenter,
-          child: !_showCode
-              ? const SizedBox(width: double.infinity)
-              : CodeBlock(code: widget.code!.trim()),
-        ),
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            constraints: const BoxConstraints(minHeight: 40),
+            padding: const EdgeInsets.fromLTRB(Space.s4, Space.s1, Space.s1, Space.s1),
+            color: c.hover.withValues(alpha: 0.5),
+            child: Row(
+              children: [
+                if (widget.hint != null) ...[
+                  Flexible(
+                    child: Text(
+                      widget.label,
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: c.textPrimary),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      widget.hint!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 11, color: c.textMuted),
+                    ),
+                  ),
+                ] else
+                  Expanded(
+                    child: Text(
+                      widget.label,
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: c.textPrimary),
+                    ),
+                  ),
+                if (widget.code != null)
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 18,
+                    tooltip: _showCode ? 'Masquer le code' : 'Voir le code',
+                    color: _showCode ? c.primary : c.textMuted,
+                    onPressed: () => setState(() => _showCode = !_showCode),
+                    icon: Icon(_showCode ? Icons.code_off : Icons.code),
+                  )
+                else
+                  const SizedBox(height: 32),
+              ],
+            ),
+          ),
+          Container(color: widget.muted ? c.bg : null, padding: widget.flush ? EdgeInsets.zero : (widget.padding ?? const EdgeInsets.all(Space.m)), child: widget.child),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 200),
+            alignment: Alignment.topCenter,
+            child: !_showCode ? const SizedBox(width: double.infinity) : CodeBlock(code: widget.code!.trim()),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -352,28 +387,41 @@ class CodeBlock extends StatelessWidget {
     const fg = Color(0xFFE2E8F0);
     return Container(
       decoration: BoxDecoration(color: bg, borderRadius: rounded ? Radii.rm : null),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Row(children: [
-          const SizedBox(width: 14),
-          if (file != null)
-            Expanded(child: Text(file!, style: const TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: Color(0xFF94A3B8))))
-          else
-            const Spacer(),
-          IconButton(
-            iconSize: 16,
-            visualDensity: VisualDensity.compact,
-            color: const Color(0xFF94A3B8),
-            tooltip: 'Copier',
-            onPressed: () => copyToClipboard(context, code, label: 'Extrait copié dans le presse-papiers'),
-            icon: const Icon(Icons.content_copy),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const SizedBox(width: 14),
+              if (file != null)
+                Expanded(
+                  child: Text(
+                    file!,
+                    style: const TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: Color(0xFF94A3B8)),
+                  ),
+                )
+              else
+                const Spacer(),
+              IconButton(
+                iconSize: 16,
+                visualDensity: VisualDensity.compact,
+                color: const Color(0xFF94A3B8),
+                tooltip: 'Copier',
+                onPressed: () => copyToClipboard(context, code, label: 'Extrait copié dans le presse-papiers'),
+                icon: const Icon(Icons.content_copy),
+              ),
+            ],
           ),
-        ]),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4),
-          child: SelectableText(code, style: const TextStyle(fontFamily: Fonts.mono, fontSize: 11.5, height: 1.55, color: fg)),
-        ),
-      ]),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(Space.s4, 0, Space.s4, Space.s4),
+            child: SelectableText(
+              code,
+              style: const TextStyle(fontFamily: Fonts.mono, fontSize: 11.5, height: 1.55, color: fg),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -387,11 +435,16 @@ class DemoNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.kc;
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Icon(icon, size: 16, color: c.textMuted),
-      const SizedBox(width: 6),
-      Expanded(child: Text(text, style: TextStyle(fontSize: 12, height: 1.45, color: c.textMuted))),
-    ]);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: c.textMuted),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(text, style: TextStyle(fontSize: 12, height: 1.45, color: c.textMuted)),
+        ),
+      ],
+    );
   }
 }
 
@@ -403,8 +456,7 @@ class DemoWrap extends StatelessWidget {
   final WrapAlignment alignment;
 
   @override
-  Widget build(BuildContext context) =>
-      Wrap(spacing: spacing, runSpacing: runSpacing, alignment: alignment, crossAxisAlignment: WrapCrossAlignment.center, children: children);
+  Widget build(BuildContext context) => Wrap(spacing: spacing, runSpacing: runSpacing, alignment: alignment, crossAxisAlignment: WrapCrossAlignment.center, children: children);
 }
 
 /// Colonne espacée.
@@ -414,7 +466,11 @@ class Gap extends StatelessWidget {
   final double gap;
 
   @override
-  Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
-        for (var i = 0; i < children.length; i++) ...[if (i > 0) SizedBox(height: gap), children[i]],
-      ]);
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      for (var i = 0; i < children.length; i++) ...[if (i > 0) SizedBox(height: gap), children[i]],
+    ],
+  );
 }

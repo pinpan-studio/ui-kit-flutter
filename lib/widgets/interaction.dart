@@ -5,6 +5,7 @@ import '../data/showcase_data.dart';
 import '../theme/kit_colors.dart';
 import '../theme/tokens.dart';
 import 'common.dart';
+import '../core/haptics.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // Interactions : palette de commandes, popover, visite guidée,
@@ -173,7 +174,7 @@ class _PopoverState extends State<Popover> {
               alignment: Alignment.topLeft,
               child: TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0.92, end: 1),
-                duration: const Duration(milliseconds: 160),
+                duration: Motion.of(context, const Duration(milliseconds: 160)),
                 curve: Curves.easeOut,
                 builder: (_, v, child) => Transform.scale(
                   scale: v,
@@ -233,7 +234,7 @@ Future<void> startTour(BuildContext context, List<TourStep> steps) async {
           onTap: () {},
           child: TweenAnimationBuilder<Rect?>(
             tween: RectTween(end: rect),
-            duration: const Duration(milliseconds: 300),
+            duration: Motion.of(context, const Duration(milliseconds: 300)),
             curve: Curves.easeOutCubic,
             builder: (_, r, _) => CustomPaint(painter: _SpotlightPainter(r ?? rect)),
           ),
@@ -416,6 +417,7 @@ class LongPressMenu<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPressStart: (d) async {
+        kitHaptic();
         final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
         final v = await showMenu<T>(
           context: context,

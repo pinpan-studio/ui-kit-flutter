@@ -709,7 +709,7 @@ class _Roles extends StatelessWidget {
                 Text('${contrastRatio(bg, fg).toStringAsFixed(1)}:1', style: TextStyle(color: fg, fontSize: 11, fontWeight: FontWeight.w700)),
               ]),
               const Spacer(),
-              Text('${colorHex(bg)} / ${colorHex(fg)}', style: TextStyle(color: fg.withValues(alpha: 0.85), fontSize: 10.5, fontFamily: 'SpaceMono')),
+              Text('${colorHex(bg)} / ${colorHex(fg)}', style: TextStyle(color: fg.withValues(alpha: 0.85), fontSize: 11, fontFamily: 'SpaceMono')),
             ]),
           ),
       ]);

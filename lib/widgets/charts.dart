@@ -77,7 +77,7 @@ class KitChart extends StatelessWidget {
     );
     final tooltipBg = Theme.of(context).colorScheme.inverseSurface;
     final tipStyle = TextStyle(color: Theme.of(context).colorScheme.onInverseSurface, fontSize: 11.5, fontWeight: FontWeight.w600);
-    final axisStyle = TextStyle(fontSize: 10.5, color: c.textMuted);
+    final axisStyle = TextStyle(fontSize: 11, color: c.textMuted);
     final step = labels.length > 8 ? (labels.length / 6).ceil() : 1;
 
     AxisTitles bottom() => AxisTitles(

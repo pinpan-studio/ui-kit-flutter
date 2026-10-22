@@ -248,7 +248,7 @@ class _AddressFieldState extends State<AddressField> {
           Icon(p.icon, size: 18, color: c.primary),
           const SizedBox(width: 6),
           Expanded(child: Text('${p.label} — ${p.detail}', style: TextStyle(fontSize: 12.5, color: c.textPrimary, fontWeight: FontWeight.w600))),
-          Text('${p.point.latitude.toStringAsFixed(4)}, ${p.point.longitude.toStringAsFixed(4)}', style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted)),
+          Text('${p.point.latitude.toStringAsFixed(4)}, ${p.point.longitude.toStringAsFixed(4)}', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted)),
         ])
       else
         Text('Recherchez une adresse ou touchez la carte.', style: TextStyle(fontSize: 12, color: c.textMuted)),

@@ -4,6 +4,7 @@ import '../theme/kit_colors.dart';
 import '../theme/tokens.dart';
 import '../widgets/common.dart';
 import '../widgets/kit_buttons.dart';
+import '../widgets/selects.dart';
 import 'ex_scaffold.dart';
 
 // ─── Contact ────────────────────────────────────────────────────────────────
@@ -44,16 +45,16 @@ class _ContactState extends State<ContactFormExample> {
             ? ExSuccess(title: 'Message envoyé', message: 'Merci ! Nous revenons vers vous très vite.', onReset: () => setState(() => _sent = false))
             : ExGap([
                 const ExRow([
-                  KitTextField(label: 'Nom complet', hint: 'Jean Kouassi', icon: Icons.person_outline, required: true),
-                  KitTextField(label: 'E-mail', hint: 'nom@entreprise.ci', icon: Icons.alternate_email, required: true),
+                  KitTextField(label: 'Nom complet', hint: 'Jean Kouassi', icon: Icons.person_outline, required: true, textInputAction: TextInputAction.next),
+                  KitTextField(label: 'E-mail', hint: 'nom@entreprise.ci', icon: Icons.alternate_email, required: true, keyboardType: TextInputType.emailAddress, textInputAction: TextInputAction.next),
                 ]),
-                const KitTextField(label: 'Téléphone', hint: '07 07 12 34 56', icon: Icons.phone),
-                DropdownButtonFormField<String>(
-                  initialValue: _subject,
-                  isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Objet'),
-                  items: [for (final s in ['Demande de démo', 'Devis', 'Support', 'Partenariat']) DropdownMenuItem(value: s, child: Text(s))],
-                  onChanged: (v) => setState(() => _subject = v!),
+                const KitTextField(label: 'Téléphone', hint: '07 07 12 34 56', icon: Icons.phone, keyboardType: TextInputType.phone, textInputAction: TextInputAction.done),
+                // Sélecteur en feuille du kit (comme `SearchableSelect` React Native), pas un menu déroulant.
+                SearchableSelect<String>(
+                  label: 'Objet',
+                  value: _subject,
+                  options: [for (final s in ['Demande de démo', 'Devis', 'Support', 'Partenariat']) SelectOption(s, s)],
+                  onChanged: (v) => setState(() => _subject = v ?? _subject),
                 ),
                 const KitTextField(label: 'Message', hint: 'Décrivez votre besoin : contexte, volumes, délais…', maxLines: 5, minLines: 4),
                 Align(alignment: Alignment.centerRight, child: KitButton(label: 'Envoyer', icon: Icons.send, onPressed: () => setState(() => _sent = true))),
@@ -89,7 +90,9 @@ class _BookingState extends State<BookingFormExample> {
               ChoiceChip(label: Text(list[i]), selected: _slot == offset + i, onSelected: (_) => setState(() => _slot = offset + i)),
           ]),
         ]);
-    return ExPage(title: 'Réservation', children: [
+    return ExPage(title: 'Réservation', bottom: _done ? null : ExActionBar(children: [
+      Expanded(child: KitButton(label: 'Confirmer la réservation', expand: true, icon: Icons.event_available, onPressed: _slot < 0 ? null : () => setState(() => _done = true))),
+    ]), children: [
       if (_done)
         KitCard(child: ExSuccess(title: 'Réservation confirmée', message: '${_types[_type].$1} · ${_days[_day]} octobre à ${[..._morning, ..._afternoon][_slot]}', onReset: () => setState(() { _done = false; _slot = -1; })))
       else ...[
@@ -120,8 +123,6 @@ class _BookingState extends State<BookingFormExample> {
         ExRow([slots('Matin', _morning, 0), slots('Après-midi', _afternoon, 4)]),
         const SizedBox(height: Space.s4),
         const KitTextField(label: 'Remarque (facultatif)', maxLines: 3),
-        const SizedBox(height: Space.s4),
-        KitButton(label: 'Confirmer la réservation', expand: true, icon: Icons.event_available, onPressed: _slot < 0 ? null : () => setState(() => _done = true)),
       ],
     ]);
   }
@@ -256,9 +257,9 @@ class _CheckoutState extends State<CheckoutFormExample> {
     switch (_step) {
       case 0:
         return ExGap([
-          const ExRow([KitTextField(label: 'Nom complet', initialValue: 'Aya Koné'), KitTextField(label: 'Téléphone', initialValue: '+225 07 07 12 34 56')]),
-          const KitTextField(label: 'Adresse', initialValue: 'Cocody Angré, 8e tranche'),
-          const KitTextField(label: 'Indications', hint: 'Portail bleu, à côté de la pharmacie…'),
+          const ExRow([KitTextField(label: 'Nom complet', initialValue: 'Aya Koné', textInputAction: TextInputAction.next), KitTextField(label: 'Téléphone', initialValue: '+225 07 07 12 34 56', keyboardType: TextInputType.phone, textInputAction: TextInputAction.next)]),
+          const KitTextField(label: 'Adresse', initialValue: 'Cocody Angré, 8e tranche', keyboardType: TextInputType.streetAddress, textInputAction: TextInputAction.next),
+          const KitTextField(label: 'Indications', hint: 'Portail bleu, à côté de la pharmacie…', textInputAction: TextInputAction.done),
           RadioGroup<int>(
             groupValue: _ship,
             onChanged: (v) => setState(() => _ship = v!),
@@ -273,10 +274,10 @@ class _CheckoutState extends State<CheckoutFormExample> {
             for (var i = 0; i < _pays.length; i++) ChoiceChip(avatar: Icon(_pays[i].$2, size: 18), label: Text(_pays[i].$1), selected: _pay == i, onSelected: (_) => setState(() => _pay = i)),
           ]),
           if (_pay == 3) ...[
-            const KitTextField(label: 'Numéro de carte', hint: '4242 4242 4242 4242', icon: Icons.credit_card),
-            const ExRow([KitTextField(label: 'Expiration', hint: 'MM / AA'), KitTextField(label: 'CVC', hint: '123')]),
+            const KitTextField(label: 'Numéro de carte', hint: '4242 4242 4242 4242', icon: Icons.credit_card, keyboardType: TextInputType.number, textInputAction: TextInputAction.next),
+            const ExRow([KitTextField(label: 'Expiration', hint: 'MM / AA', keyboardType: TextInputType.number, textInputAction: TextInputAction.next), KitTextField(label: 'CVC', hint: '123', keyboardType: TextInputType.number, textInputAction: TextInputAction.done)]),
           ] else
-            const KitTextField(label: 'Numéro Mobile Money', initialValue: '07 07 12 34 56', icon: Icons.phone_android),
+            const KitTextField(label: 'Numéro Mobile Money', initialValue: '07 07 12 34 56', icon: Icons.phone_android, keyboardType: TextInputType.phone, textInputAction: TextInputAction.done),
         ]);
       default:
         return Text('Vérifiez votre commande puis confirmez. Paiement : ${_pays[_pay].$1}, livraison : ${_ships[_ship].$1}.');
@@ -295,13 +296,13 @@ class _CheckoutState extends State<CheckoutFormExample> {
           for (var i = 0; i < 3; i++) StatusBadge('${i + 1}. ${labels[i]}', uppercase: false, tone: i == _step ? KitTone.primary : (i < _step ? KitTone.success : KitTone.neutral)),
         ]),
         _stepBody(),
-        Wrap(alignment: WrapAlignment.spaceBetween, spacing: Space.s2, runSpacing: Space.s2, children: [
-          KitButton(label: 'Retour', variant: KitButtonVariant.ghost, onPressed: _step == 0 ? null : () => setState(() => _step--)),
-          KitButton(label: _step == 2 ? 'Payer' : 'Continuer', onPressed: () => setState(() => _step == 2 ? _done = true : _step++)),
-        ]),
       ]),
     );
-    return ExPage(title: 'Commande', maxWidth: 1080, children: [
+    final bar = ExActionBar(children: [
+      KitButton(label: 'Retour', variant: KitButtonVariant.ghost, onPressed: _step == 0 ? null : () => setState(() => _step--)),
+      KitButton(label: _step == 2 ? 'Payer' : 'Continuer', onPressed: () => setState(() => _step == 2 ? _done = true : _step++)),
+    ]);
+    return ExPage(title: 'Commande', maxWidth: 1080, bottom: bar, children: [
       LayoutBuilder(builder: (context, box) {
         if (box.maxWidth < Breakpoints.lg) return ExGap([form, _summary(context)]);
         return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(flex: 3, child: form), const SizedBox(width: Space.s6), Expanded(flex: 2, child: _summary(context))]);
@@ -329,7 +330,7 @@ class _OnboardingState extends State<OnboardingFormExample> {
   Widget _body() {
     switch (_step) {
       case 0:
-        return const ExGap([ExHeading('Faisons connaissance'), ExRow([KitTextField(label: 'Prénom', initialValue: 'Koffi'), KitTextField(label: 'Nom', initialValue: 'Yao')]), KitTextField(label: 'Fonction', initialValue: 'Directeur des opérations')]);
+        return const ExGap([ExHeading('Faisons connaissance'), ExRow([KitTextField(label: 'Prénom', initialValue: 'Koffi', textInputAction: TextInputAction.next), KitTextField(label: 'Nom', initialValue: 'Yao', textInputAction: TextInputAction.next)]), KitTextField(label: 'Fonction', initialValue: 'Directeur des opérations')]);
       case 1:
         return ExGap([
           const ExHeading('Votre organisation'),
@@ -363,17 +364,16 @@ class _OnboardingState extends State<OnboardingFormExample> {
 
   @override
   Widget build(BuildContext context) {
-    return ExPage(title: 'Configurons votre espace', children: [
+    final bar = ExActionBar(children: [
+      KitButton(label: 'Retour', variant: KitButtonVariant.ghost, onPressed: _step == 0 ? null : () => setState(() => _step--)),
+      KitButton(label: _step == 3 ? 'Terminer' : 'Continuer', onPressed: () => _step == 3 ? exDemo(context, 'Espace configuré') : setState(() => _step++)),
+    ]);
+    return ExPage(title: 'Configurons votre espace', bottom: bar, children: [
       Text('Étape ${_step + 1} sur 4 · ${_steps[_step]}', style: TextStyle(color: context.kc.textMuted)),
       const SizedBox(height: Space.s2),
       KitProgressBar(value: (_step + 1) / 4),
       const SizedBox(height: Space.s6),
       KitCard(padding: const EdgeInsets.all(Space.s6), child: _body()),
-      const SizedBox(height: Space.s4),
-      Wrap(alignment: WrapAlignment.spaceBetween, spacing: Space.s2, runSpacing: Space.s2, children: [
-        KitButton(label: 'Retour', variant: KitButtonVariant.ghost, onPressed: _step == 0 ? null : () => setState(() => _step--)),
-        KitButton(label: _step == 3 ? 'Terminer' : 'Continuer', onPressed: () => _step == 3 ? exDemo(context, 'Espace configuré') : setState(() => _step++)),
-      ]),
     ]);
   }
 }
@@ -421,8 +421,8 @@ class _ApplicationState extends State<ApplicationFormExample> {
       SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: [for (final s in _sections) Padding(padding: const EdgeInsets.only(right: Space.s2), child: StatusBadge(s, uppercase: false))])),
       const SizedBox(height: Space.s4),
       _section('Identité', Icons.person_outline, const ExGap([
-        ExRow([KitTextField(label: 'Prénom', initialValue: 'Mariam'), KitTextField(label: 'Nom', initialValue: 'Touré')]),
-        ExRow([KitTextField(label: 'Date de naissance', hint: 'jj/mm/aaaa'), KitTextField(label: 'Téléphone', hint: '+225 07 …')]),
+        ExRow([KitTextField(label: 'Prénom', initialValue: 'Mariam', textInputAction: TextInputAction.next), KitTextField(label: 'Nom', initialValue: 'Touré', textInputAction: TextInputAction.next)]),
+        ExRow([KitTextField(label: 'Date de naissance', hint: 'jj/mm/aaaa', keyboardType: TextInputType.datetime, textInputAction: TextInputAction.next), KitTextField(label: 'Téléphone', hint: '+225 07 …', keyboardType: TextInputType.phone, textInputAction: TextInputAction.done)]),
       ])),
       _section('Expérience', Icons.work_outline, ExGap([
         for (final j in _jobs)

@@ -335,7 +335,6 @@ class _TransferListState extends State<TransferList> {
                   for (final e in shown)
                     CheckboxListTile(
                       dense: true,
-                      visualDensity: VisualDensity.compact,
                       value: sel.contains(e),
                       onChanged: (v) => setState(() => v! ? sel.add(e) : sel.remove(e)),
                       title: Text(e),

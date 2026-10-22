@@ -168,7 +168,7 @@ class _HarnaisScreenState extends State<HarnaisScreen> {
                     _Composer(store: _store, placeholder: 'Répondre…'),
                     Padding(
                       padding: const EdgeInsets.only(bottom: Space.s2),
-                      child: Text('Réponses simulées localement — démonstration statique du UI Kit.', style: TextStyle(fontSize: 10.5, color: c.textMuted)),
+                      child: Text('Réponses simulées localement — démonstration statique du UI Kit.', style: TextStyle(fontSize: 11, color: c.textMuted)),
                     ),
                   ]),
           ),
@@ -286,7 +286,7 @@ class _ConversationListState extends State<_ConversationList> {
 
   Widget _head(KitColors c, String t) => Padding(
         padding: const EdgeInsets.fromLTRB(Space.s3, Space.s3, Space.s3, Space.s1),
-        child: Text(t.toUpperCase(), style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.8, color: c.textMuted)),
+        child: Text(t.toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.8, color: c.textMuted)),
       );
 }
 
@@ -443,7 +443,7 @@ class _MessageView extends StatelessWidget {
             child: Text(text, style: TextStyle(fontSize: 14, height: 1.45, color: c.textPrimary)),
           ),
           const SizedBox(height: 2),
-          Text(m.time, style: TextStyle(fontSize: 10.5, color: c.textMuted)),
+          Text(m.time, style: TextStyle(fontSize: 11, color: c.textMuted)),
         ]),
       );
     }
@@ -456,7 +456,7 @@ class _MessageView extends StatelessWidget {
           const SizedBox(width: 6),
           Text('Harnais', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: c.textPrimary)),
           const SizedBox(width: 6),
-          Text(m.time, style: TextStyle(fontSize: 10.5, color: c.textMuted)),
+          Text(m.time, style: TextStyle(fontSize: 11, color: c.textMuted)),
           if (m.streaming) ...[const SizedBox(width: 8), SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.8, color: c.tertiary))],
         ]),
         const SizedBox(height: 8),

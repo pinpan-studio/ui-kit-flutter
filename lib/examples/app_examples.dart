@@ -11,6 +11,8 @@ import '../widgets/charts.dart';
 import '../widgets/common.dart';
 import '../widgets/kit_buttons.dart';
 import 'ex_scaffold.dart';
+import '../core/snack.dart';
+import '../core/haptics.dart';
 
 // ─── Briques communes ───────────────────────────────────────────────────────
 
@@ -464,7 +466,7 @@ class _ClientsState extends State<ClientsExample> {
   Widget build(BuildContext context) {
     final rows = _rows;
     final total = kExClients.fold(0, (s, x) => s + x.revenue);
-    return ExPage(title: 'Clients', maxWidth: 1280, children: [
+    return ExPage(title: 'Clients', maxWidth: 1280, onRefresh: () => exRefresh(context), children: [
       Text('CRM', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: context.kc.textMuted)),
       ExHeader('Clients', subtitle: '${kExClients.length} comptes · ${(total / 1e6).round()} M FCFA de chiffre d’affaires cumulé', actions: [
         KitButton(label: 'Importer', icon: Icons.upload, variant: KitButtonVariant.outline, onPressed: () => showFilePicker(context)),
@@ -549,21 +551,25 @@ class ClientDetailExample extends StatelessWidget {
         const SizedBox(height: Space.s4),
         const TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [Tab(text: 'Coordonnées'), Tab(text: 'Factures'), Tab(text: 'Activité')]),
         const SizedBox(height: Space.s4),
-        SizedBox(
-          height: 420,
-          child: TabBarView(children: [
-            SingleChildScrollView(child: ResponsiveGrid(minItemWidth: 240, spacing: Space.s3, children: [
+        // Onglet actif à sa hauteur naturelle : toute la page défile d'un seul tenant (pas de défilement imbriqué).
+        Builder(builder: (context) {
+          final tabs = DefaultTabController.of(context);
+          return AnimatedBuilder(
+            animation: tabs,
+            builder: (context, _) => [
+            ResponsiveGrid(minItemWidth: 240, spacing: Space.s3, children: [
               for (final i in infos) KitCard(child: Row(children: [Icon(i.$1, color: kc.primary), const SizedBox(width: Space.s3), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(i.$2, style: TextStyle(fontSize: 12, color: kc.textMuted)), Text(i.$3, overflow: TextOverflow.ellipsis)]))])),
-            ])),
-            ListView(children: [
+            ]),
+            Column(children: [
               for (final i in kExInvoices)
                 ExTile(leading: const Icon(Icons.receipt_long), title: i.ref, subtitle: '${exDate(i.date)} · ${exMoney(i.amount)}', trailing: StatusBadge(i.status, tone: i.tone, uppercase: false)),
             ]),
-            ListView(children: [
+            Column(children: [
               for (final a in kExActivity) ExTile(leading: Icon(a.icon, color: a.tone.text(kc)), title: a.text, subtitle: '${a.at} · ${a.who}'),
             ]),
-          ]),
-        ),
+            ][tabs.index],
+          );
+        }),
       ]),
     );
   }
@@ -667,9 +673,26 @@ class _InboxState extends State<InboxExample> {
       const SizedBox(height: Space.s2),
       Expanded(child: msgs.isEmpty
           ? const EmptyState(icon: Icons.inbox, title: 'Aucun message', subtitle: 'Ce dossier est vide.')
-          : ListView(padding: const EdgeInsets.symmetric(horizontal: Space.s2), children: [
+          : RefreshIndicator(
+              onRefresh: () => exRefresh(context),
+              child: ListView(physics: const AlwaysScrollableScrollPhysics(), padding: const EdgeInsets.symmetric(horizontal: Space.s2), children: [
               for (final m in msgs)
-                ExTile(
+                // Balayer vers la droite : archiver, avec « Annuler » (`SwipeRow` du kit React Native).
+                Dismissible(
+                  key: ValueKey('msg-${m.id}'),
+                  direction: _folder == 'archive' ? DismissDirection.none : DismissDirection.startToEnd,
+                  background: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: Space.s5),
+                    decoration: BoxDecoration(color: c.primaryLight, borderRadius: Radii.rm),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.archive_outlined, color: c.primary), const SizedBox(width: Space.s2), Text('Archiver', style: TextStyle(color: c.primary, fontWeight: FontWeight.w600))]),
+                  ),
+                  onDismissed: (_) {
+                    kitHaptic();
+                    setState(() => _archived.add(m.id));
+                    showKitSnack(context, 'Message archivé', action: 'Annuler', onAction: () => setState(() => _archived.remove(m.id)));
+                  },
+                  child: ExTile(
                   selected: wide && _current == m.id,
                   onTap: () { _open(m); if (!wide) exPush(context, m.from, StatefulBuilder(builder: (_, _) => _read(m.id, wide: false))); },
                   leading: KitAvatar(name: m.from),
@@ -686,7 +709,8 @@ class _InboxState extends State<InboxExample> {
                     ]),
                   ]),
                 ),
-            ])),
+                ),
+            ]))),
     ]);
   }
 
@@ -936,7 +960,7 @@ class _BlogState extends State<BlogExample> {
     final featured = kArticles.firstWhere((a) => a.featured);
     final list = kArticles.where((a) => !a.featured && (_cat == 'Tous' || a.category == _cat)).toList();
     Widget meta(Article a) => Text('${a.author.name} · ${exDate(a.date)} · ${a.minutes} min de lecture', style: TextStyle(fontSize: 12, color: c.textMuted));
-    return ExPage(title: 'Blog', maxWidth: 1200, children: [
+    return ExPage(title: 'Blog', maxWidth: 1200, onRefresh: () => exRefresh(context), children: [
       const ExHeader('Le blog', subtitle: 'Design, produit et rédaction : ce que nous apprenons en construisant le kit.'),
       KitCard(
         onTap: () => _open(featured),
@@ -1442,7 +1466,7 @@ class _FeedState extends State<FeedExample> {
   }
 
   @override
-  Widget build(BuildContext context) => ExPage(title: 'Fil d’actualité', maxWidth: 640, children: [
+  Widget build(BuildContext context) => ExPage(title: 'Fil d’actualité', maxWidth: 640, onRefresh: () => exRefresh(context), children: [
         KitCard(child: Row(children: [
           KitAvatar(name: kCurrentUser.fullname),
           const SizedBox(width: Space.s3),
@@ -1526,7 +1550,7 @@ class _SettingsState extends State<SettingsExample> {
 
   Widget _switch(String t, String s, bool v, ValueChanged<bool> on) => Padding(
         padding: const EdgeInsets.symmetric(vertical: Space.s2),
-        child: Row(children: [Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(t, style: const TextStyle(fontWeight: FontWeight.w600)), Text(s, style: TextStyle(fontSize: 13, color: context.kc.textMuted))])), Switch(value: v, onChanged: on)]),
+        child: Row(children: [Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(t, style: const TextStyle(fontWeight: FontWeight.w600)), Text(s, style: TextStyle(fontSize: 13, color: context.kc.textMuted))])), Switch(value: v, onChanged: withHaptic(on))]),
       );
 
   Widget _body() {

@@ -82,7 +82,7 @@ class _SidecarState extends State<Sidecar> {
           ]),
         ),
         AnimatedContainer(
-          duration: const Duration(milliseconds: 240),
+          duration: Motion.of(context, const Duration(milliseconds: 240)),
           curve: Curves.easeOutCubic,
           width: open == null ? 0 : 220,
           decoration: BoxDecoration(color: c.card, border: Border(right: BorderSide(color: c.border))),
@@ -185,7 +185,7 @@ class StepsIndicator extends StatelessWidget {
           if (i > 0)
             Expanded(
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
+                duration: Motion.of(context, const Duration(milliseconds: 250)),
                 height: 2,
                 color: i <= current ? c.primary : c.border,
               ),
@@ -193,7 +193,7 @@ class StepsIndicator extends StatelessWidget {
           GestureDetector(
             onTap: onTap == null || i > current ? null : () => onTap!(i),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
+              duration: Motion.of(context, const Duration(milliseconds: 250)),
               width: 30,
               height: 30,
               alignment: Alignment.center,

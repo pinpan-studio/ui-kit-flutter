@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/haptics.dart';
 import '../core/snack.dart';
 import '../theme/kit_colors.dart';
 import '../theme/tokens.dart';
@@ -24,7 +25,7 @@ PreferredSizeWidget? exAppBar(BuildContext context, String title, {List<Widget> 
 
 /// Page d'exemple autonome : barre d'app, contenu centré à largeur max, défilement.
 class ExPage extends StatelessWidget {
-  const ExPage({super.key, required this.title, required this.children, this.maxWidth = 720, this.bottom, this.actions = const [], this.endDrawer, this.scaffoldKey});
+  const ExPage({super.key, required this.title, required this.children, this.maxWidth = 720, this.bottom, this.actions = const [], this.endDrawer, this.scaffoldKey, this.onRefresh});
 
   final String title;
   final List<Widget> children;
@@ -33,6 +34,9 @@ class ExPage extends StatelessWidget {
   final List<Widget> actions;
   final Widget? endDrawer;
   final Key? scaffoldKey;
+
+  /// Tirer pour actualiser (listes) : voir [exRefresh].
+  final Future<void> Function()? onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +48,8 @@ class ExPage extends StatelessWidget {
       body: LayoutBuilder(builder: (context, box) {
         final pad = box.maxWidth < Breakpoints.tablet ? Space.s4 : Space.s6;
         final shell = ExShellScope.of(context);
-        return SingleChildScrollView(
+        final scroll = SingleChildScrollView(
+          physics: onRefresh == null ? null : const AlwaysScrollableScrollPhysics(),
           padding: shell ? EdgeInsets.fromLTRB(pad, Space.s3, pad, pad) : EdgeInsets.all(pad),
           child: Center(
             child: ConstrainedBox(
@@ -56,6 +61,7 @@ class ExPage extends StatelessWidget {
             ),
           ),
         );
+        return onRefresh == null ? scroll : RefreshIndicator(onRefresh: onRefresh!, child: scroll);
       }),
     );
   }
@@ -134,3 +140,31 @@ class ExSuccess extends StatelessWidget {
 }
 
 void exDemo(BuildContext context, String what) => showKitSnack(context, '$what (démo)');
+
+/// Actualisation simulée d'une liste d'exemple (données statiques) : courte attente, retour haptique,
+/// puis « Liste à jour » (`useExRefresh` du kit React Native).
+Future<void> exRefresh(BuildContext context) async {
+  await Future<void>.delayed(const Duration(milliseconds: 700));
+  kitHaptic();
+  if (context.mounted) showKitSnack(context, 'Liste à jour', kind: SnackKind.success);
+}
+
+/// Barre d'action collée en bas d'un formulaire (passée en `ExPage.bottom`) : toujours à portée du pouce,
+/// au-dessus du clavier et de la barre système (`ExActionBar` du kit React Native).
+class ExActionBar extends StatelessWidget {
+  const ExActionBar({super.key, required this.children});
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.kc;
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
+        decoration: BoxDecoration(color: c.card, border: Border(top: BorderSide(color: c.border))),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: children),
+      ),
+    );
+  }
+}

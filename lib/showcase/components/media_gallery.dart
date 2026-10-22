@@ -158,7 +158,7 @@ class MediaGallery extends StatelessWidget {
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                                   decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(Radii.xs)),
-                                  child: Text(d, style: const TextStyle(color: Colors.white, fontSize: 10.5)),
+                                  child: Text(d, style: const TextStyle(color: Colors.white, fontSize: 11)),
                                 ),
                               ),
                             ]),

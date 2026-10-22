@@ -191,7 +191,7 @@ class _Themes extends StatelessWidget {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: fg)),
                   const SizedBox(height: 14),
-                  Text('$token · ${_hex(bg)}', style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: fg.withValues(alpha: 0.8))),
+                  Text('$token · ${_hex(bg)}', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: fg.withValues(alpha: 0.8))),
                 ]),
               ),
             ),
@@ -298,8 +298,8 @@ class _Swatch extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: c.textPrimary)),
-        Text('kc.$token', style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textSecondary)),
-        Text(hex, style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted)),
+        Text('kc.$token', style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textSecondary)),
+        Text(hex, style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted)),
         if (note != null) Text(note!, style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: c.textMuted)),
       ]),
     );
@@ -335,7 +335,7 @@ class _TypeScale extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: Space.s4, vertical: Space.s3),
             decoration: BoxDecoration(border: i == 0 ? null : Border(top: BorderSide(color: c.divider))),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(rows[i].$1, style: TextStyle(fontFamily: Fonts.mono, fontSize: 10.5, color: c.textMuted)),
+              Text(rows[i].$1, style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textMuted)),
               const SizedBox(height: 4),
               rows[i].$2,
             ]),
@@ -406,7 +406,7 @@ class _RadiiDemo extends StatelessWidget {
                   child: box(
                     Column(mainAxisSize: MainAxisSize.min, children: [
                       Text(n.split('.').last, style: TextStyle(fontFamily: Fonts.mono, fontSize: 11, color: c.textSecondary)),
-                      Text('$px px', style: TextStyle(fontSize: 10.5, color: c.textMuted)),
+                      Text('$px px', style: TextStyle(fontSize: 11, color: c.textMuted)),
                     ]),
                     radius: r,
                   ),
@@ -476,7 +476,7 @@ class _IconGridState extends State<_IconGrid> {
                       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                         Icon(e.value, color: c.textPrimary),
                         const SizedBox(height: 6),
-                        Text(e.key, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 9.5, color: c.textMuted)),
+                        Text(e.key, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: c.textMuted)),
                       ]),
                     ),
                   ),

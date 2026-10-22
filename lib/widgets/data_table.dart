@@ -7,6 +7,7 @@ import '../theme/kit_text.dart';
 import '../theme/tokens.dart';
 import 'common.dart';
 import 'inputs.dart';
+import 'kit_buttons.dart';
 
 /// Colonne d'un tableau du kit.
 class KitColumn<T> {
@@ -89,6 +90,9 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
   bool _asc = true;
   int _page = 1;
   late int _pageSize = widget.pageSize;
+
+  /// Cartes sur téléphone : nombre de cartes affichées, augmenté par « Afficher plus » (pas de pages).
+  late int _shown = widget.pageSize;
   late ViewMode _mode = widget.initialMode;
   final Set<T> _sel = {};
   late final Set<int> _hidden = {for (var i = 0; i < widget.columns.length; i++) if (widget.columns[i].hidden) i};
@@ -110,7 +114,9 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
     final all = _filtered;
     final pages = math.max(1, (all.length / _pageSize).ceil());
     if (_page > pages) _page = pages;
-    final rows = all.skip((_page - 1) * _pageSize).take(_pageSize).toList();
+    // Sur téléphone, les cartes se chargent au fil de la lecture ; les pages restent pour la liste et la tablette.
+    final progressive = _mode == ViewMode.card && MediaQuery.sizeOf(context).width < Breakpoints.md;
+    final rows = progressive ? all.take(_shown).toList() : all.skip((_page - 1) * _pageSize).take(_pageSize).toList();
     final cols = [for (var i = 0; i < widget.columns.length; i++) if (!_hidden.contains(i)) i];
 
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -123,6 +129,7 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
               onChanged: (v) => setState(() {
                 _q = v;
                 _page = 1;
+                _shown = _pageSize;
               }),
             ),
           )
@@ -144,7 +151,7 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
       const SizedBox(height: 10),
       // Barre de sélection.
       AnimatedSize(
-        duration: const Duration(milliseconds: 200),
+        duration: Motion.of(context, const Duration(milliseconds: 200)),
         child: _sel.isEmpty
             ? const SizedBox(width: double.infinity)
             : Container(
@@ -189,7 +196,15 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
       else
         _table(context, c, rows, all, cols),
       const SizedBox(height: 8),
-      KitPaginator(
+      if (progressive)
+        _ShowMore(
+          shown: math.min(_shown, all.length),
+          total: all.length,
+          step: _pageSize,
+          onMore: () => setState(() => _shown += _pageSize),
+        )
+      else
+        KitPaginator(
         page: _page,
         pageSize: _pageSize,
         total: all.length,
@@ -331,5 +346,25 @@ class _KitDataTableState<T> extends State<KitDataTable<T>> {
         Expanded(child: scrollPart),
       ]),
     );
+  }
+}
+
+/// Pied de liste en cartes sur téléphone : compteur et « Afficher plus » (`ShowMore` du kit React Native).
+class _ShowMore extends StatelessWidget {
+  const _ShowMore({required this.shown, required this.total, required this.step, required this.onMore});
+  final int shown, total, step;
+  final VoidCallback onMore;
+
+  @override
+  Widget build(BuildContext context) {
+    final rest = total - shown;
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      if (rest > 0)
+        KitButton(label: 'Afficher ${math.min(step, rest)} de plus', icon: Icons.expand_more, variant: KitButtonVariant.outline, expand: true, onPressed: onMore),
+      Padding(
+        padding: const EdgeInsets.only(top: Space.s2),
+        child: Text('$shown sur $total', textAlign: TextAlign.center, style: context.t.caption),
+      ),
+    ]);
   }
 }
